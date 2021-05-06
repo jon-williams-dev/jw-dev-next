@@ -1,15 +1,19 @@
-.container {
-  max-width: 36rem;
-  padding: 0 1rem;
-  margin: 3rem auto 6rem;
+.colorBar {
+	position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    width: 100%;
+    height: 20px;
+    background: linear-gradient(to right, #EF476F, #FFD166, #00BF8E, #118AB2);    
 }
 
-.header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.footer a:link {
+  color: white;
 }
-
-.backToHome {
-  margin: 3rem 0 0;
+.footer a:visited {
+  color: white;
+}
+.footer a:hover {
+  color: #118AB2;
 }

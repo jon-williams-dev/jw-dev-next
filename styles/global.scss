@@ -1,0 +1,23 @@
+//important - import before bulma
+// as if you inmport it after it will not override bulma 
+@import './colors.scss';
+//$primary: $jw-pink;
+$body-background-color: whitesmoke;
+$body-family: "Jost","Helvetica Neue",helvetica,"Apple Color Emoji",arial,sans-serif;
+$link: $jw-blue;
+$link-hover: $jw-green;
+$footer-background-color: $jw-green;
+$footer-color: white;
+$hero-body-padding: 3rem 3rem;
+
+$footer-padding: 3rem 1.5rem 3rem;
+
+
+@import 'bulma/bulma';
+
+@font-face {
+  font-family: "Jost";
+  src: url("/fonts/Jost/Jost-Regular.ttf");
+  font-style: normal;
+  font-display: swap;
+}

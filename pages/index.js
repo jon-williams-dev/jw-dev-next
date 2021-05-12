@@ -29,38 +29,39 @@ export default function Home() {
           <a>Profile</a>
          </Link>
       </section>*/}
+      <div className="container">
+        <section className="hero is-fullheight">
+          <div className="hero-body">
+            <div className="content is-large">
+              <div className="block">
+                <Image
+                  priority
+                  src="/images/logo.png"
+                  height={160}
+                  width={400}
+                  alt="Jon Williams"
+                      />
+              </div>
+              <div className="block">
+                <p className="title">Hi, my name is Jon. {/*Im from the UK and currently living in Germany.*/}</p>
+                <p>I'm a Full Stack Developer working at the <a href="https://is.mpg.de" target="_blank">Max Planck Institute for Intelligent Systems</a>. {/*<FontAwesomeIcon icon={faExternalLink} className="fa-sm" />*/}</p>
+                <p>When I'm not working, playing with my children or travelling in my van, I can be found in the forest running, riding motorbikes or in my garage making things.</p>
+              </div>
+              <div className="block has-text-grey">
+                {/*<FontAwesomeIcon icon={faLaptopCode} className={indexStyles.profileIcon} />*/}
+                <FontAwesomeIcon icon={faLaptopCode} className="fa-lg mr-5" />
+                <FontAwesomeIcon icon={faBaby} className="fa-lg mr-5" />
+                <FontAwesomeIcon icon={faShuttleVan} className="fa-lg mr-5" />
+                <FontAwesomeIcon icon={faTree} className="fa-lg mr-5" />
+                <FontAwesomeIcon icon={faRunning} className="fa-lg mr-5" />
+                <FontAwesomeIcon icon={faMotorcycle} className="fa-lg mr-5" />
+                <FontAwesomeIcon icon={faTools} className="fa-lg mr-5" />
+              </div>
 
-      <section className="hero is-fullheight">
-        <div className="hero-body">
-          <div className="content is-large">
-            <div className="block">
-              <Image
-                priority
-                src="/images/logo.png"
-                height={160}
-                width={400}
-                alt="Jon Williams"
-                    />
             </div>
-            <div className="block">
-              <p className="title">Hi, my name is Jon. {/*Im from the UK and currently living in Germany.*/}</p>
-              <p>I'm a Full Stack Developer working at the <a href="https://is.mpg.de" target="_blank">Max Planck Institute for Intelligent Systems</a>. {/*<FontAwesomeIcon icon={faExternalLink} className="fa-sm" />*/}</p>
-              <p>When I'm not working, playing with my children or travelling in my van, I can be found in the forest running, riding motorbikes or in my garage making things.</p>
-            </div>
-            <div className="block has-text-grey">
-              {/*<FontAwesomeIcon icon={faLaptopCode} className={indexStyles.profileIcon} />*/}
-              <FontAwesomeIcon icon={faLaptopCode} className="fa-lg mr-5" />
-              <FontAwesomeIcon icon={faBaby} className="fa-lg mr-5" />
-              <FontAwesomeIcon icon={faShuttleVan} className="fa-lg mr-5" />
-              <FontAwesomeIcon icon={faTree} className="fa-lg mr-5" />
-              <FontAwesomeIcon icon={faRunning} className="fa-lg mr-5" />
-              <FontAwesomeIcon icon={faMotorcycle} className="fa-lg mr-5" />
-              <FontAwesomeIcon icon={faTools} className="fa-lg mr-5" />
-            </div>
-
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </Layout>
   )
 }

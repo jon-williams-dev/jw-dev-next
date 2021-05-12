@@ -8,9 +8,15 @@ $link: $jw-blue;
 $link-hover: $jw-green;
 $footer-background-color: $jw-green;
 $footer-color: white;
+
 $hero-body-padding: 3rem 3rem;
 
 $footer-padding: 3rem 1.5rem 3rem;
+
+$navbar-background-color: transparent;
+$navbar-height: 6rem;
+$navbar-item-img-max-height: 5rem;
+
 
 
 @import 'bulma/bulma';
@@ -20,4 +26,26 @@ $footer-padding: 3rem 1.5rem 3rem;
   src: url("/fonts/Jost/Jost-Regular.ttf");
   font-style: normal;
   font-display: swap;
+}
+
+.is-fullheight-with-navbar-jw {
+	//	nav: 6rem
+	//	padding-top: 0.5rem
+	//	padding-botton: 0.5rem
+	//	color-bar: 1.5rem
+	min-height: calc(100vh - 8.5rem) !important;
+//	min-height: calc(100vh - 6rem);
+}
+
+.hero.is-pink {
+    background-color: $jw-pink;
+    color: #fff;
+}
+.hero.is-green {
+    background-color: $jw-green;
+    color: #fff;
+}
+.hero.is-blue {
+    background-color: $jw-blue;
+    color: #fff;
 }

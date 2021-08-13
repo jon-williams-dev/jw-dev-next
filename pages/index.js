@@ -1,3 +1,5 @@
+// import { getSortedBikesData } from '../lib/bikes'
+
 // import Head from 'next/head'
 import Image from 'next/image'
 import Layout, { siteTitle } from '../components/layout'
@@ -34,6 +36,14 @@ export default function Home() {
           <div className="hero-body">
             <div className="content is-large">
               <div className="block">
+
+                <h1 className="title">
+                  Read{' '}
+                  <Link href="/house">
+                    <a>house index</a>
+                  </Link>
+                </h1>
+
                 <Image
                   priority
                   src="/images/logo.png"
@@ -102,4 +112,16 @@ export default function Home() {
 //       </footer>
 //     </div>
 //   )
+// }
+
+
+
+
+// export async function getStaticProps() {
+//   const allBiketsData = getSortedBikesData()
+//   return {
+//     props: {
+//       allBikesData
+//     }
+//   }
 // }

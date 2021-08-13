@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEnvelope } from '@fortawesome/pro-duotone-svg-icons'
 
 const name = 'Jon Williams'
-export const siteTitle = 'Jon Williams Dev'
+export const siteTitle = 'Jon Williams'
 
 export default function Layout({ children, home }) {
   return (

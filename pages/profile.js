@@ -29,6 +29,7 @@ export default function Profile() {
         </Head>
 
         <Nav />
+        
 
         {/*<section className="hero is-fullheight is-fullheight-with-navbar-jw">*/}
         <section className="hero is-halfheight">

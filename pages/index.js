@@ -9,7 +9,7 @@ import indexStyles from '../styles/index.module.scss'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTelescope, faLaptopCode, faBaby, faShuttleVan, faTools, faTree, faRunning, faMotorcycle, faExternalLink } from '@fortawesome/pro-duotone-svg-icons'
-// import { faLaptop } from '@fortawesome/pro-duotone-svg-icons'
+import { faLaptop } from '@fortawesome/pro-duotone-svg-icons'
 
 export default function Home() {
   return (
@@ -66,6 +66,8 @@ export default function Home() {
                 <FontAwesomeIcon icon={faRunning} className="fa-lg mr-5" />
                 <FontAwesomeIcon icon={faMotorcycle} className="fa-lg mr-5" />
                 <FontAwesomeIcon icon={faTools} className="fa-lg mr-5" />
+
+                <FontAwesomeIcon icon={["fal", "coffee"]} />
               </div>
 
             </div>

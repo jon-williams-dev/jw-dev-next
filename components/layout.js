@@ -3,8 +3,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import styles from './layout.module.css'
 // import utilStyles from '../styles/utils.module.css'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEnvelope } from '@fortawesome/pro-duotone-svg-icons'
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+// import { faEnvelope } from '@fortawesome/pro-duotone-svg-icons'
 
 const name = 'Jon Williams'
 export const siteTitle = 'Jon Williams'
@@ -78,7 +78,8 @@ export default function Layout({ children, home }) {
   		<footer className="footer">
 				<div className="container">
           <div className={styles.footer}>
-					 <p className="is-size-5">Reach out: <FontAwesomeIcon icon={faEnvelope} className="" /> <strong><a href="mailto:jon.williams@hey.com">jon.williams@hey.com</a></strong></p>
+					 {/*<p className="is-size-5">Reach out: <FontAwesomeIcon icon={faEnvelope} className="" /> <strong><a href="mailto:jon.williams@hey.com">jon.williams@hey.com</a></strong></p>*/}
+           {<p className="is-size-5">Reach out: <strong><a href="mailto:jon.williams@hey.com">jon.williams@hey.com</a></strong></p>}
           </div>
 				</div>
 		  </footer>

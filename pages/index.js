@@ -7,9 +7,12 @@ import Layout, { siteTitle } from '../components/layout'
 import Link from 'next/link'
 import indexStyles from '../styles/index.module.scss'
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTelescope, faLaptopCode, faBaby, faShuttleVan, faTools, faTree, faRunning, faMotorcycle, faExternalLink } from '@fortawesome/pro-duotone-svg-icons'
-import { faLaptop } from '@fortawesome/pro-duotone-svg-icons'
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+// import { faTelescope, faLaptopCode, faBaby, faShuttleVan, faTools, faTree, faRunning, faMotorcycle, faExternalLink } from '@fortawesome/pro-duotone-svg-icons'
+// import { faLaptop } from '@fortawesome/pro-duotone-svg-icons'
+
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+// import { faCoffee } from '@fortawesome/free-solid-svg-icons'
 
 export default function Home() {
   return (
@@ -59,7 +62,7 @@ export default function Home() {
               </div>
               <div className="block has-text-grey">
                 {/*<FontAwesomeIcon icon={faLaptopCode} className={indexStyles.profileIcon} />*/}
-                <FontAwesomeIcon icon={faLaptopCode} className="fa-lg mr-5" />
+                {/*<FontAwesomeIcon icon={faLaptopCode} className="fa-lg mr-5" />
                 <FontAwesomeIcon icon={faBaby} className="fa-lg mr-5" />
                 <FontAwesomeIcon icon={faShuttleVan} className="fa-lg mr-5" />
                 <FontAwesomeIcon icon={faTree} className="fa-lg mr-5" />
@@ -67,7 +70,7 @@ export default function Home() {
                 <FontAwesomeIcon icon={faMotorcycle} className="fa-lg mr-5" />
                 <FontAwesomeIcon icon={faTools} className="fa-lg mr-5" />
 
-                <FontAwesomeIcon icon={["fal", "coffee"]} />
+                <FontAwesomeIcon icon={["fal", "coffee"]} />*/}
               </div>
 
             </div>

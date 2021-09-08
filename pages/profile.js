@@ -4,8 +4,8 @@ import Layout from '../components/layout'
 import Nav from '../components/nav'
 import Image from 'next/image'
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTelescope, faLaptopCode, faBaby, faShuttleVan, faTools, faTree, faRunning, faMotorcycle, faExternalLink } from '@fortawesome/pro-duotone-svg-icons'
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+// import { faTelescope, faLaptopCode, faBaby, faShuttleVan, faTools, faTree, faRunning, faMotorcycle, faExternalLink } from '@fortawesome/pro-duotone-svg-icons'
 
 export default function Profile() {
   return (

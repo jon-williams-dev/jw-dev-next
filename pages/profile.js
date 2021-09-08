@@ -56,13 +56,13 @@ export default function Profile() {
                       <p>When I'm not working, playing with my children or travelling in my van, I can be found in the forest running, riding motorbikes or in my garage making things.</p>
                     </div>
                     <div className="block has-text-grey">
-                      <FontAwesomeIcon icon={faLaptopCode} className="fa-lg mr-5" />
+                      {/*<FontAwesomeIcon icon={faLaptopCode} className="fa-lg mr-5" />
                       <FontAwesomeIcon icon={faBaby} className="fa-lg mr-5" />
                       <FontAwesomeIcon icon={faShuttleVan} className="fa-lg mr-5" />
                       <FontAwesomeIcon icon={faTree} className="fa-lg mr-5" />
                       <FontAwesomeIcon icon={faRunning} className="fa-lg mr-5" />
                       <FontAwesomeIcon icon={faMotorcycle} className="fa-lg mr-5" />
-                      <FontAwesomeIcon icon={faTools} className="fa-lg mr-5" />
+                      <FontAwesomeIcon icon={faTools} className="fa-lg mr-5" />*/}
                     </div>
                   </div>
                 </div>

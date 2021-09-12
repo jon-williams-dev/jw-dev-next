@@ -2,9 +2,9 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
 import styles from './layout.module.css'
-// import utilStyles from '../styles/utils.module.css'
+
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-// import { faEnvelope } from '@fortawesome/pro-duotone-svg-icons'
+// import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
 
 const name = 'Jon Williams'
 export const siteTitle = 'Jon Williams'
@@ -35,51 +35,14 @@ export default function Layout({ children, home }) {
       	</Head>
 
       	<div className={styles.colorBar}></div>
-  
-      	{/*<header className={styles.header}>
-        	{home ? (
-          		<>
-            		<Image
-              			priority
-						src="/images/profile.jpg"
-						className={utilStyles.borderCircle}
-						height={144}
-						width={144}
-						alt={name}
-            		/>
-            		<h1 className={utilStyles.heading2Xl}>{name}</h1>
-          		</>
-        	) : (
-          		<>
-            		<Link href="/">
-              			<a>
-                			<Image
-								priority
-								src="/images/profile.jpg"
-								className={utilStyles.borderCircle}
-								height={108}
-								width={108}
-								alt={name}
-                			/>
-              			</a>
-            		</Link>
-            		
-            		<h2 className={utilStyles.headingLg}>
-              			<Link href="/">
-                			<a className={utilStyles.colorInherit}>{name}</a>
-              			</Link>
-            		</h2>
-          		</>
-        	)}
-      	</header>*/}
 
   		<main>{children}</main>
 
-  		<footer className="footer">
+  		<footer className="footer footer-fixed">
 				<div className="container">
           <div className={styles.footer}>
 					 {/*<p className="is-size-5">Reach out: <FontAwesomeIcon icon={faEnvelope} className="" /> <strong><a href="mailto:jon.williams@hey.com">jon.williams@hey.com</a></strong></p>*/}
-           {<p className="is-size-5">Reach out: <strong><a href="mailto:jon.williams@hey.com">jon.williams@hey.com</a></strong></p>}
+           <p className="is-size-5">Reach out: <strong><a href="mailto:jon.williams@hey.com">jon.williams@hey.com</a></strong></p>
           </div>
 				</div>
 		  </footer>

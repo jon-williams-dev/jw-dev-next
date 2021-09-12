@@ -20,8 +20,8 @@ export default function Home() {
                   <Image
                     priority
                     src="/images/logo.png"
-                    height={320}
-                    width={800}
+                    height={240}
+                    width={600}
                     alt="Jon Williams"
                   />
                 </div>

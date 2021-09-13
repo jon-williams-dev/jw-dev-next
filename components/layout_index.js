@@ -38,7 +38,7 @@ export default function Layout({ children, home }) {
 
   		<main>{children}</main>
 
-  		<footer className="footer">
+  		<footer className="footer footer-fixed">
 				<div className="container">
           <div className={styles.footer}>
 					 {/*<p className="is-size-5">Reach out: <FontAwesomeIcon icon={faEnvelope} className="" /> <strong><a href="mailto:jon.williams@hey.com">jon.williams@hey.com</a></strong></p>*/}

@@ -4,6 +4,7 @@ import Layout, { siteTitle } from '../components/layout_index'
 import Link from 'next/link'
 import indexStyles from '../styles/index.module.scss'
 
+
 /*import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTelescope, faLaptopCode, faBaby, faShuttleVan, faTools, faTree, faRunning, faMotorcycle, faExternalLink } from '@fortawesome/free-solid-svg-icons'
 */

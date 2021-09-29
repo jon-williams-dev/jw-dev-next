@@ -123,9 +123,19 @@ export default function Profile() {
                       <p>I am a reliable, motivated and enthusiastic Developer with many years experience. I provide high attention to detail and have an instinct for good design.</p>
                       <p>My professional career began as a Front-End Developer, however, I have always been interested in the overlap between design and development and soon moved into the world of Full Stack Development.</p>
                       <p>I strive to create attractive, usable and functional applications. I design, build, test and deploy applications covering all phases of the application development life cycle, from start to finish.</p>
-                      <p>I am currently working as a Rails Developer and my daily toolbox consists of, but not limited to: 
-                      <p>
-                        <span className="tag is-info mr-2">Ruby on Rails</span>
+                    </div>
+                    
+                    {/*(AnyCable GO (better))*/}
+                    {/*Load balancing ... */}
+
+                    {/* 
+                        Current Projects
+                    */}
+                    <div className="block mb-6">
+                      <h3>Current Work</h3>
+                      <p>I am currently working as a Rails Developer at the <a href="https://is.mpg.de" target="_blank">Max Planck Institute for Intelligent Systems</a> where I have developed and am responsible for many websites and applications.</p>
+                      <p>My daily toolbox consists of, but not limited to: 
+                        <span className="tag is-info mr-2 ml-2">Ruby on Rails</span>
                         <span className="tag is-info mr-2">RailsAPI</span>
                         <span className="tag is-info mr-2">RSpec</span>
                         <span className="tag is-info mr-2">Phusion Passenger</span>
@@ -143,20 +153,12 @@ export default function Profile() {
                         <span className="tag is-info mr-2">GitLab</span>
                         <span className="tag is-info mr-2">Bamboo</span>
                         <span className="tag is-info mr-2">Adobe Suite (PhotoShop)</span>
-                        and all the other various tools, libraries and technologies related to and required by them.</p>
+                        and all the other various tools, libraries and technologies related to and required by them.
                       </p>
-                       {/* <p>
-                          <span className="tag is-dark">Dark</span>
-                          <span className="tag is-white">White</span>
-                          <span className="tag is-link">Link</span>
-                          <span className="tag is-info">Info</span>
-                          <span className="tag is-warning">Warning</span>
-                          <span className="tag is-danger">Danger</span>
-                        </p>*/}
                       <p>
                         {/*In my (limited) spare time I like to dabble with and learn new relevant skills and techologies, some of which currently on the hitlist include: Node React Gatsby Django laravel MongoDB ... I also oftently find myself helping out friends with any technical or layout aspects of there Worpress websites and blogs*/}
-                        Im a fast learner and am interested in learning (and willing to learn) new skills, tools and technologies, some of which currently on the hitlist include: 
-                        <span className="tag is-primary mr-2  ml-2">Docker</span>
+                        Im always interested (and willing) to learn new skills, tools and technologies, some of which currently on the hitlist include: 
+                        <span className="tag is-primary mr-2 ml-2">Docker</span>
                         <span className="tag is-primary mr-2">Hotwire</span>
                         <span className="tag is-primary mr-2">Stimulus JS</span>
                         <span className="tag is-primary mr-2">TailwindCSS</span>
@@ -169,27 +171,24 @@ export default function Profile() {
                         <span className="tag is-primary mr-2">Actioncable</span>
                         to name but a few.
                       </p>
-                    </div>
-                    
-                    {/*(AnyCable GO (better))*/}
-                    {/*Load balancing ... */}
-
-                    {/* 
-                        Current Projects
-                    */}
-                    <div className="block mb-6">
-                      <h3>Current Projects</h3>
-                      <p>I am currently working at the Max Planck Institute for Intelligent Systems where I have developed and am responsible for many websites and applications.</p>
-                      <p>My most recent (ongoing) project is a Custom Content Management System (CMS) named as the "Scientific Web Engine" ... which I have developed to support Institute websites for groups, projects, collaborations and general scientific and research requirements.</p>
-                      <p>The CMS is continually in development with already many websites running on it, some of which high profile including Cyber Valley, ELLIS, IMPRS-IS and CLS:</p>
+                      <p>My most recent (ongoing) project is the <a href="http://engine.is.tue.mpg.de/" target="_blank">Scientific Web Engine</a>, a Custom Content Management System (CMS) which I have developed to support Institute websites for groups, projects, collaborations and general scientific and research requirements.</p>
+                      <p>The CMS is continually in development with already many websites running on it, some of which high profile including <a href="https://cyber-valley.de/" target="_blank">Cyber Valley</a>, <a href="https://ellis.eu/" target="_blank">ELLIS</a>, <a href="https://imprs.is.mpg.de/" target="_blank">IMPRS-IS</a> and <a href="https://learning-systems.org/" target="_blank">CLS</a></p>
                     </div>
 
 
                     {/* 
-                        Summary
+                        Previous Work
                     */}
                     <div className="block mb-6">
-                      <h3>Summary</h3>
+                      <h3>Previous Work</h3>
+
+                      Software Engineer working within a small yet advanced and experienced
+team developing complex software products and Internet Applications.
+Current and recent projects that I have worked on have mainly been product based RIA front
+end work (user interfaces / components) that have been developed using the Adobe Flex /
+Flash (ActionScript 3, MXML) technology along with other supporting technologies (including
+Java, JSP, GSP, JS, BlazeDS, MS/MySQL etc ...). These products include: FusionReactor,
+FusionAnalytics and ShareDox:
                     </div>
                      
                   </div>

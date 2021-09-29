@@ -14,7 +14,7 @@ function bikeImageLoader({ src }) {
   return 'https://jwdev.free.resourcespace.com/' + src;
 }
 
-export default function Bike({ bikeData, bikeImages_pre }) {
+export default function Bike({ bikeData, bikeImages }) {
   return (
     <Layout bikes>
     	<Head>
@@ -63,12 +63,13 @@ export default function Bike({ bikeData, bikeImages_pre }) {
           <div className="container">
             <div className="content">
               <div class="columns is-multiline is-variable is-1">
-                {bikeImages_pre.map(img => {
+                {bikeImages.map(img => {
                   return (
                     <div class="column is-one-fifth pb-0 pt-0">
                       <Image
-                        priority
-                        src={img[1]}
+                        placeholder="blur"
+                        blurDataURL={img[0]["url_col"]}
+                        src={img[0]["url_pre"]}
                         height={480}
                         width={640}
                         alt={bikeData.make + " " +  bikeData.model}
@@ -96,20 +97,31 @@ export async function getStaticPaths() {
 // getStaticProps (Static Generation)
 // getServerSideProps (Server-side Rendering)
 export async function getStaticProps({ params }) {
-  
+
   const bikeData = await getBikeData(params.id)
-  const bikeImages_pre = await getCollectionImages(5)
+  const bikeImages = await getCollectionImages(bikeData.resourceSpaceCollection)
 
-  const bikeImagesArr_pre = [];
-  for(var i in bikeImages_pre.resourcePaths_pre.data)
-    bikeImagesArr_pre.push( [ i, bikeImages_pre.resourcePaths_pre.data[i] ] );
+  const bikeImagesArr = [];
+  for(var i in bikeImages.resourcePaths_pre.data)
+    // bikeImagesArr.push( [ i, bikeImages.resourcePaths_pre.data[i] ] );
+    bikeImagesArr.push(
+      [{
+        "ref": i, 
+        "url_col": bikeImages.resourcePaths_col.data[i],
+        "url_pre": bikeImages.resourcePaths_pre.data[i],
+        "url_scr": bikeImages.resourcePaths_scr.data[i]
+      }] 
+    );
 
-  return {
-    props: {
-      bikeData: bikeData,
-      bikeImages_pre: bikeImagesArr_pre
+    console.log(bikeImagesArr)
+
+    return {
+      props: {
+        bikeData: bikeData,
+        bikeImages: bikeImagesArr
+      }
     }
-  }
 }
 
 
+{/*<div class="column">{img[0]["url_pre"]}</div>*/}

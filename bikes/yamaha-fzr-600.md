@@ -5,6 +5,7 @@ model: 'FZR 600'
 year: '1991'
 km: '34,000 (miles)'
 price: '1000'
+resourceSpaceCollection: 7
 
 previewImage_pre: 'filestore\/jwdev\/1\/0\/7\/9_1a1114f9439ac68\/1079pre_2c2dc318503ca27.jpg?v=1632585712'
 previewImage_scr: 'filestore\/jwdev\/1\/0\/7\/9_1a1114f9439ac68\/1079scr_0eda6b75fb5f86f.jpg?v=1632585712'

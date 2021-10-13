@@ -63,10 +63,12 @@ export default function Bike({ bikeData, bikeImages, bikeImages2 }) {
                       alt={bikeData.make + " " +  bikeData.model}
                     />
                     <h3>{bikeData.header}</h3>
+                    
 
-                    <blockquote className="has-text-grey"><i>{bikeData.quote}</i></blockquote>
+                    {bikeData.quote ? <blockquote className="has-text-grey"><i>{bikeData.quote}</i></blockquote> : ''}
 
-                    <h4>Specifications:</h4>
+
+                    <h4>Specs:</h4>
                     <table class="table">
                       <tbody>
                         <tr>
@@ -84,6 +86,10 @@ export default function Bike({ bikeData, bikeImages, bikeImages2 }) {
                         <tr>
                           <td>Color</td>
                           <td>{bikeData.color}</td>
+                        </tr>
+                        <tr>
+                          <td>Location</td>
+                          <td>{bikeData.location}</td>
                         </tr>
                       </tbody>
                     </table>

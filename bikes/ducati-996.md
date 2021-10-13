@@ -5,7 +5,8 @@ model: '996'
 year: '2002'
 km: '57000'
 color: 'Red'
-price: '5750'
+price: 'VB'
+location: 'Baden-Württemberg, Germany'
 resourceSpaceCollection: 5
 
 previewImage_pre: 'filestore\/jwdev\/1\/0\/1\/4_50e0ccf2ac2e6c7\/1014pre_8b8cbd01bb0e4e7.jpg?v=1632567378'
@@ -38,7 +39,7 @@ Some of the work includes:
 The bike is 20 years old and has some signs of "wear and tear" (expected for the age, mileage and usage). The upper fairing has some damaged but an extra fairing is included (see photos).
 
 This example has some nice bits including Termignoni (carbon) pipes (including a DB Killer that can be removed), adjustable brake-shift set with reversed shift, Brembo brakes and an Ohlins rear shock. 
-The bike has also had the (now quite common) conversion to a monoposto making it more appealing and look even more "sporty". 
+The bike has also had the (now quite common) conversion from a "biposto" to a "monoposto" making it more appealing and look even more "sporty". 
 
 Being from 2002, It's one of the last 996's to be produced therefore benefiting from:
 - Marchesini wheels (introducing a new five-spoke scheme)
@@ -46,5 +47,3 @@ Being from 2002, It's one of the last 996's to be produced therefore benefiting 
 - Rear shock absorber change from a Showa to Öhlins.
 
 The bike is currently registered in Germany. Has a recent service/inspection and current TUV. and is ready to go.
-
-I would certainly recommend you to come and have a look at the bike so you can see with your own eyes if this 20-year-old superbike meets your expectations.

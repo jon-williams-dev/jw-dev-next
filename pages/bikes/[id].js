@@ -1,20 +1,43 @@
+import React, { useState, useCallback } from "react";
+import Carousel, { Modal, ModalGateway } from "react-images";
+
 import Layout, { siteTitle } from '../../components/layout'
 import Image from 'next/image'
 import Head from 'next/head'
 import Date from '../../components/date'
-import BikeGallery from '../../components/bike_gallery'
 // import { getAllBikeIds, getBikeData } from '../../lib/bikes'
 import { getAllBikeIds, getBikeData, getCollectionImages } from '../../lib/bikes'
 import Link from 'next/link'
 import Nav from '../../components/nav'
+
 import indexStyles from '../../styles/index.module.scss'
+
 import { sha256, sha224 } from 'js-sha256';
+import Gallery from "react-photo-gallery";
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCalendar } from '@fortawesome/free-solid-svg-icons'
+
 
 function bikeImageLoader({ src }) {
   return 'https://jwdev.free.resourcespace.com/' + src;
 }
 
-export default function Bike({ bikeData, bikeImages }) {
+export default function Bike({ bikeData, bikeImages, bikeImages2 }) {
+
+  const [currentImage, setCurrentImage] = useState(0);
+  const [viewerIsOpen, setViewerIsOpen] = useState(false);
+
+  const openLightbox = useCallback((event, { photo, index }) => {
+    setCurrentImage(index);
+    setViewerIsOpen(true);
+  }, []);
+
+  const closeLightbox = () => {
+    setCurrentImage(0);
+    setViewerIsOpen(false);
+  };
+
   return (
     <Layout bikes>
     	<Head>
@@ -31,11 +54,6 @@ export default function Bike({ bikeData, bikeImages }) {
 
                 <div className="block mb-6 mt-6">
                   <h1>{bikeData.make} {bikeData.model}</h1>
-                  <p>
-                    {bikeData.year}<br />
-                    {bikeData.km}<br />
-                    {bikeData.price}<br />
-                  </p>
                    <Image
                       priority
                       loader={bikeImageLoader}
@@ -44,10 +62,33 @@ export default function Bike({ bikeData, bikeImages }) {
                       width={1067}
                       alt={bikeData.make + " " +  bikeData.model}
                     />
-                  <p>
-                    <div dangerouslySetInnerHTML={{ __html: bikeData.contentHtml }} />
-                  </p>
+                    <h3>{bikeData.header}</h3>
 
+                    <blockquote className="has-text-grey"><i>{bikeData.quote}</i></blockquote>
+
+                    <h4>Specifications:</h4>
+                    <table class="table">
+                      <tbody>
+                        <tr>
+                          <td className="table-col-bike-width">Price</td>
+                          <td> {bikeData.price}</td>
+                        </tr>
+                        <tr>
+                          <td>Year</td>
+                          <td>{bikeData.year}</td>
+                        </tr>
+                        <tr>
+                          <td>Mileage</td>
+                          <td>{bikeData.km}</td>
+                        </tr>
+                        <tr>
+                          <td>Color</td>
+                          <td>{bikeData.color}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <h4>Description:</h4>
+                    <p><div dangerouslySetInnerHTML={{ __html: bikeData.contentHtml }} /></p>
                 </div>
 
               </div>
@@ -62,22 +103,45 @@ export default function Bike({ bikeData, bikeImages }) {
         <div className="hero-body">
           <div className="container">
             <div className="content">
-              <div class="columns is-multiline is-variable is-1">
+              {/*<Gallery photos={bikeImages2} />*/}
+               <Gallery photos={bikeImages2} onClick={openLightbox} columns={6} />
+                <ModalGateway>
+                  {viewerIsOpen ? (
+                    <Modal onClose={closeLightbox}>
+                      <Carousel
+                        currentIndex={currentImage}
+                        views={bikeImages2.map(x => ({
+                          ...x,
+                          srcset: x.srcSet,
+                          caption: x.title
+                        }))}
+                      />
+                    </Modal>
+                  ) : null}
+                </ModalGateway>
+              
+
+              
+
+{/*              <div class="columns is-multiline is-variable is-1">
+
+
                 {bikeImages.map(img => {
                   return (
                     <div class="column is-one-fifth pb-0 pt-0">
                       <Image
-                        placeholder="blur"
-                        blurDataURL={img[0]["url_col"]}
+                        loader={bikeImageLoader}
                         src={img[0]["url_pre"]}
-                        height={480}
                         width={640}
+                        height={480}
+                        blurDataURL={img[0]["url_col"]}
+                        placeholder="blur"
                         alt={bikeData.make + " " +  bikeData.model}
                       />
                     </div>
                   );
                 })}
-              </div>  
+              </div>  */}
             </div>
           </div>
         </div>            
@@ -102,23 +166,50 @@ export async function getStaticProps({ params }) {
   const bikeImages = await getCollectionImages(bikeData.resourceSpaceCollection)
 
   const bikeImagesArr = [];
-  for(var i in bikeImages.resourcePaths_pre.data)
+  const bikeImagesArr2 = await [];
+
+  for(var i in bikeImages.resourcePaths_pre.data) {
     // bikeImagesArr.push( [ i, bikeImages.resourcePaths_pre.data[i] ] );
     bikeImagesArr.push(
       [{
         "ref": i, 
-        "url_col": bikeImages.resourcePaths_col.data[i],
-        "url_pre": bikeImages.resourcePaths_pre.data[i],
-        "url_scr": bikeImages.resourcePaths_scr.data[i]
+        "url_col": bikeImages.resourcePaths_col.data[i].replace("https://jwdev.free.resourcespace.com/", ""),
+        "url_pre": bikeImages.resourcePaths_pre.data[i].replace("https://jwdev.free.resourcespace.com/", ""),
+        "url_scr": bikeImages.resourcePaths_scr.data[i].replace("https://jwdev.free.resourcespace.com/", "")
       }] 
     );
 
-    console.log(bikeImagesArr)
+
+    bikeImagesArr2.push(
+        {
+          "src": bikeImages.resourcePaths_scr.data[i],
+          "srcSet": [
+            bikeImages.resourcePaths_col.data[i] + " 100w",
+            bikeImages.resourcePaths_pre.data[i] + " 640w",
+            bikeImages.resourcePaths_scr.data[i] + " 1067w"
+          ],
+          sizes: ["(min-width: 480px) 50vw,(min-width: 1024px) 33.3vw,100vw"],
+          width: 1,
+          height: 1
+        }
+    );
+
+
+
+    // src: "https://source.unsplash.com/2ShvY8Lf6l0/1600x1200",
+    
+    // sizes: ["(min-width: 480px) 50vw,(min-width: 1024px) 33.3vw,100vw"],
+    // width: 4,
+    // height: 3
+  }
+
+  console.log(bikeImagesArr2)
 
     return {
       props: {
         bikeData: bikeData,
-        bikeImages: bikeImagesArr
+        bikeImages: bikeImagesArr,
+        bikeImages2: bikeImagesArr2
       }
     }
 }

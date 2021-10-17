@@ -6,8 +6,8 @@ import styles from './layout.module.css'
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 // import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
 
-const name = 'Jon Williams'
-export const siteTitle = 'Jon Williams'
+const name = 'JW Bikes'
+export const siteTitle = 'JW Bikes'
 
 export default function Layout({ children, home }) {
   return (
@@ -21,8 +21,8 @@ export default function Layout({ children, home }) {
           	/>
         	<link rel="icon" href="/favicon.ico" />
         	<title>{siteTitle}</title>
-        	<meta name="description" content="Jon Williams Full Stack Web Developer" />
-            <meta name="keywords" content="web,developer,web developer,full stack,freelance,freelancer,tuebingen,tübingen,germany,uk,england,ruby,rails,ruby on rails,ror,hotwire,react,next,html,css,javascript" />
+        	<meta name="description" content="JW Bikes" />
+            <meta name="keywords" content="motorbikes, motorcycles, motorrad, superbike, supersport, 90s, oldtimer, youngtimer, ducati, honda, kawasaki, suzuki, yamaha, fireblade, ninja" />
             <meta name="viewport" content="width=device-width, initial-scale=1" />
         	<meta
           		property="og:image"
@@ -40,7 +40,6 @@ export default function Layout({ children, home }) {
     		<footer className="footer">
   				<div className="container">
             <div className={styles.footer}>
-  					 {/*<p className="is-size-5">Reach out: <FontAwesomeIcon icon={faEnvelope} className="" /> <strong><a href="mailto:jon.williams@hey.com">jon.williams@hey.com</a></strong></p>*/}
              <p className="is-size-5">Reach out: <strong><a href="mailto:jon.williams@hey.com">jon.williams@hey.com</a></strong></p>
             </div>
   				</div>

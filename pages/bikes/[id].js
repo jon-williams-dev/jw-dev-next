@@ -1,14 +1,14 @@
 import React, { useState, useCallback } from "react";
 import Carousel, { Modal, ModalGateway } from "react-images";
 
-import Layout, { siteTitle } from '../../components/layout'
+import Layout, { siteTitle } from '../../components/layout_bikes'
 import Image from 'next/image'
 import Head from 'next/head'
 import Date from '../../components/date'
 // import { getAllBikeIds, getBikeData } from '../../lib/bikes'
 import { getAllBikeIds, getBikeData, getCollectionImages } from '../../lib/bikes'
 import Link from 'next/link'
-import Nav from '../../components/nav'
+import NavBikes from '../../components/nav_bikes'
 
 import indexStyles from '../../styles/index.module.scss'
 
@@ -43,13 +43,13 @@ export default function Bike({ bikeData, bikeImages, bikeImages2 }) {
     	<Head>
         <title>Jon Williams | {bikeData.make} {bikeData.model}</title>
       </Head>
-      <Nav />
+      <NavBikes />
        <section className="hero">
         <div className="hero-body">
           <div className="container">
             <div className="content is-medium">
 
-            <div class="columns is-mobile">
+            <div class="columns">
               <div class="column is-three-fifths is-offset-one-fifth">
 
                 <div className="block mb-6 mt-6">

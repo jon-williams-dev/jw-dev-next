@@ -1,8 +1,8 @@
 import Head from 'next/head'
 import Image from 'next/image'
-import Layout, { siteTitle } from '../components/layout'
+import Layout, { siteTitle } from '../components/layout_bikes'
 import Link from 'next/link'
-import Nav from '../components/nav'
+import NavBikes from '../components/nav_bikes'
 import indexStyles from '../styles/index.module.scss'
 import Date from '../components/date'
 import { getBikesData } from '../lib/bikes'
@@ -16,9 +16,9 @@ export default function Bikes ({ allBikesData }) {
   return (
     <Layout bikes>
       <Head>
-        <title>Jon Williams | Bikes</title>
+        <title>JW Bikes</title>
       </Head>
-      <Nav />
+      <NavBikes />
       <section className="hero">
         <div className="hero-body">
           <div className="container">
@@ -31,7 +31,7 @@ export default function Bikes ({ allBikesData }) {
               </div>
               <div class="columns">
                {allBikesData.map(({ id, make, model, year, previewImage_pre }) => (
-                  <div class="column is-one-quarter">
+                  <div class="column is-one-quarter cursor-hand">
                     <Link href={`/bikes/${id}`}>
                       <div class="card">
                         <div class="card-image">

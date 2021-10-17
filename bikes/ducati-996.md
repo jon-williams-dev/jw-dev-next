@@ -15,15 +15,19 @@ previewImage_scr: 'filestore/jwdev/1/0/1/4_50e0ccf2ac2e6c7/1014scr_630cb2b95f16f
 header: A usable Ducati 996 that needs to be ridden. 
 quote: The 916 presented in 1994 was matched to the 996cc superbike factory racer from 1999, Carl Fogarty won the 1998 superbike world title on this bike. The Ducati 996 was born. With several improvements and about 10 hp more than the 916, this is again a super sports machine. According to many it is the most beautiful bike ever built and already a true classic. But more than that, it's a pleasure to drive. Great roadholding and razor sharp steering characterise the 996.
 ---
-A Ducati 996 to ride and enjoy! 
 
-It's not perfect and is an a used condition so is a good example of a 996 to get out and have fun on. It starts, drives, runs, steers and brakes as it should - and sounds amazing.
+For Sale to ride and enjoy a Ducati 996
 
-I bought the bike in Holland (although is currently registered in Germany) with the plan to ride it, but unfortunately I have used it a lot less than expected, and therefore want to find it a better home where it can be appreciated as it should. 
+The bike is in a used condition but is a good example of a 996 to ride out and have fun on. 
 
-When I bought the bike, it came with little information and history. Due to this and the KM of the bike (57k), I have invested quite some time and money into the bike to get it to the standard that it should be and that im happy with. 
+It not only  sounds amazing, it starts well, runs, drives, steers and brakes as it should.
 
-Some of the work includes: 
+The bike was purchased in Holland but it is currently registered in Germany.
+
+It has been used a lot less than I expected and as a result I would like to find it a new home where it will be appreciated and enjoyed.
+
+The bike came to me with little history and information. Due to this and the KM of the bike (57k) I invested quite a lot of time and money to improve it to the standard that it should have been.
+<!-- Some of the work including: 
 - Full Service
 - Lubricants and auxiliaries, sealing rings, gaskets, various screws, nuts etc. 
 - Oil/filter change (Motul 300V Factory 15W50)
@@ -34,16 +38,18 @@ Some of the work includes:
 - Timing Belt
 - New tyres, Michelin Pilot Power, front (120/70ZR17 and rear 1(80/55ZR17)
 - Fork Seals
-- BOS silencer insert 748-998 
+- BOS silencer insert 748-998  -->
 
-The bike is 20 years old and has some signs of "wear and tear" (expected for the age, mileage and usage). The upper fairing has some damaged but an extra fairing is included (see photos).
+The bike is 20 years old and as to be expected shows some signs of “wear and tear“ as you would expect for its age, mileage and usage. The upper faring has some slight damage but an extra faring is included as part of the sale (see photos)
 
-This example has some nice bits including Termignoni (carbon) pipes (including a DB Killer that can be removed), adjustable brake-shift set with reversed shift, Brembo brakes and an Ohlins rear shock. 
-The bike has also had the (now quite common) conversion from a "biposto" to a "monoposto" making it more appealing and look even more "sporty". 
+The bike has some nice features including Termignoni ( carbon) pipes (including a DB Killer that can be removed), adjustable break shift set with reversed shift, Brembo brakes and an Ohlins rear shock. The bike has also had a conversion to a monoposto making it more appealing and looking more sporty.
 
-Being from 2002, It's one of the last 996's to be produced therefore benefiting from:
+As a 2002 model it was one of the last 996’s to be produced and therefore benefits from five spoke Marchesini wheels - titanium nitrided front forks to reduce stiction - and an Ohlins rear shock absorber.
+
+<!-- I welcome visual inspection of this 20 year old super bike so that you can be satisfied that it fully meets your expectations. -->
+<!-- Being from 2002, It's one of the last 996's to be produced therefore benefiting from:
 - Marchesini wheels (introducing a new five-spoke scheme)
 - Front forks were being titanium nitrided to reduce stiction. 
-- Rear shock absorber change from a Showa to Öhlins.
+- Rear shock absorber change from a Showa to Öhlins. -->
 
-The bike is currently registered in Germany. Has a recent service/inspection and current TUV. and is ready to go.
+The bike, as I said, is currently registered in Germany. Has a recent service/inspection and current TUV. and is therefore ready to go.

@@ -71,11 +71,19 @@ export default function Bike({ bikeData, bikeImages, bikeImages2 }) {
                     <h4>Specs:</h4>
                     <table class="table">
                       <tbody>
-                        <tr>
+                        {/*<tr>
                           <td className="table-col-bike-width">Price</td>
                           <td> {bikeData.price}</td>
-                        </tr>
+                        </tr>*/}
                         <tr>
+                          <td>Make</td>
+                          <td>{bikeData.make}</td>
+                        </tr>
+                         <tr>
+                          <td>Model</td>
+                          <td>{bikeData.model}</td>
+                        </tr>
+                         <tr>
                           <td>Year</td>
                           <td>{bikeData.year}</td>
                         </tr>
@@ -87,10 +95,10 @@ export default function Bike({ bikeData, bikeImages, bikeImages2 }) {
                           <td>Color</td>
                           <td>{bikeData.color}</td>
                         </tr>
-                        <tr>
+                        {/*<tr>
                           <td>Location</td>
                           <td>{bikeData.location}</td>
-                        </tr>
+                        </tr>*/}
                       </tbody>
                     </table>
                     <h4>Description:</h4>

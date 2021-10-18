@@ -8,9 +8,11 @@ export default function NavBikes({ children, home }) {
           <a class="navbar-item" href="/bikes">
             <Image
                   priority
-                  src="/images/jwBikes.png"
+                  // src="/images/jwBikes.png"
+                  src="/images/logo.png"
                   height={160}
-                  width={524}
+                  // width={524}
+                  width={400}
                   alt="JW Bikes"
             />
           </a>

@@ -24,7 +24,7 @@ export default function Bikes ({ allBikesData }) {
           <div className="container">
             <div className="content is-medium">
               <div className="block mb-6 mt-6">
-                <h1>Bikes</h1>
+                <h1>Bikessss</h1>
                 <p>I love motorbikes and usually have a few in the garage, most of which are for sale, and some of which are listed below.</p>
                 <p>If you are interested in any of the bikes on this page, have a look. I try to add an honest description and as many details and photos as possible, but if you have further questions regarding any of the bikes please get in touch: <a href="mailto:jon.williams@hey.com">jon.williams@hey.com</a>.</p>
                 <p>I'm always looking for new bikes and have a specific interest in 90s Sport Bikes (although am open to anything). If you have something interesting, <a href="mailto:jon.williams@hey.com">let me know</a>.</p>

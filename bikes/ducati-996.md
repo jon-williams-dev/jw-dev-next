@@ -20,14 +20,13 @@ For Sale to ride and enjoy a Ducati 996
 
 The bike is in a used condition but is a good example of a 996 to ride out and have fun on. 
 
-It not only  sounds amazing, it starts well, runs, drives, steers and brakes as it should.
+It not only sounds amazing, it starts well, runs, drives, steers and brakes as it should.
 
 The bike was purchased in Holland but it is currently registered in Germany.
 
-It has been used a lot less than I expected and as a result I would like to find it a new home where it will be appreciated and enjoyed.
+It has been used a lot less than expected and as a result is looking for a new home where it can be appreciated and enjoyed.
 
-The bike came to me with little history and information. Due to this and the KM of the bike (57k) I invested quite a lot of time and money to improve it to the standard that it should have been.
-<!-- Some of the work including: 
+The bike came to me with little history and information. Due to this and the KM of the bike (57k) I invested quite a lot of time and money to improve it to the standard that it should have been - some of the work including: 
 - Full Service
 - Lubricants and auxiliaries, sealing rings, gaskets, various screws, nuts etc. 
 - Oil/filter change (Motul 300V Factory 15W50)
@@ -38,18 +37,12 @@ The bike came to me with little history and information. Due to this and the KM 
 - Timing Belt
 - New tyres, Michelin Pilot Power, front (120/70ZR17 and rear 1(80/55ZR17)
 - Fork Seals
-- BOS silencer insert 748-998  -->
+- BOS silencer insert 748-998
 
-The bike is 20 years old and as to be expected shows some signs of “wear and tear“ as you would expect for its age, mileage and usage. The upper faring has some slight damage but an extra faring is included as part of the sale (see photos)
+The bike is 20 years old and as to be expected shows some signs of “wear and tear“ as you would expect for its age, mileage and usage. The upper faring has some slight damage but an extra faring is included as part of the sale!
 
-The bike has some nice features including Termignoni ( carbon) pipes (including a DB Killer that can be removed), adjustable break shift set with reversed shift, Brembo brakes and an Ohlins rear shock. The bike has also had a conversion to a monoposto making it more appealing and looking more sporty.
+The bike has some nice features including Termignoni (carbon) pipes (including a DB Killer that can be removed), adjustable break shift set with reversed shift, Brembo brakes and an Ohlins rear shock. The bike has also had a conversion to a monoposto making it more appealing and looking more sporty.
 
-As a 2002 model it was one of the last 996’s to be produced and therefore benefits from five spoke Marchesini wheels - titanium nitrided front forks to reduce stiction - and an Ohlins rear shock absorber.
+As a 2002 model it was one of the last 996’s to be produced and therefore benefits from five spoke Marchesini wheels - titanium nitrided front forks to reduce stiction - and as mentions, an Ohlins rear shock.
 
-<!-- I welcome visual inspection of this 20 year old super bike so that you can be satisfied that it fully meets your expectations. -->
-<!-- Being from 2002, It's one of the last 996's to be produced therefore benefiting from:
-- Marchesini wheels (introducing a new five-spoke scheme)
-- Front forks were being titanium nitrided to reduce stiction. 
-- Rear shock absorber change from a Showa to Öhlins. -->
-
-The bike, as I said, is currently registered in Germany. Has a recent service/inspection and current TUV. and is therefore ready to go.
+The bike is registered in Germany, has a recent service/inspection, has TUV and is therefore ready to go.

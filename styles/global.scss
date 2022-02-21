@@ -58,3 +58,10 @@ $table-background-color: whitesmoke;
   bottom: 0;
   width: 100%;
 }
+
+
+
+.tag:not(body).is-light {
+    background-color: #ddd;
+    color: rgba(0, 0, 0, 0.7);
+}

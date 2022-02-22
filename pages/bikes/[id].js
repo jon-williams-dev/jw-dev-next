@@ -40,7 +40,7 @@ export default function Bike({ bikeData, bikeImages, bikeImages2 }) {
 
   return (
     <Layout bikes>
-    	<Head>
+      <Head>
         <title>Jon Williams | {bikeData.make} {bikeData.model}</title>
       </Head>
       <NavBikes />
@@ -61,7 +61,9 @@ export default function Bike({ bikeData, bikeImages, bikeImages2 }) {
                       height={800}
                       width={1067}
                       alt={bikeData.make + " " +  bikeData.model}
+                      onClick={openLightbox}
                     />
+
                     <h3>{bikeData.header}</h3>
                     
 
@@ -207,8 +209,6 @@ export async function getStaticProps({ params }) {
           height: 1
         }
     );
-
-
 
     // src: "https://source.unsplash.com/2ShvY8Lf6l0/1600x1200",
     

@@ -208,16 +208,9 @@ export default function Profile() {
                     */}
                     <div className="block mb-6">
                       <h4>Previous Work</h4>
-
-                      Prior to my current employemnt .... 
-
-                      Software Engineer working within a small yet advanced and experienced
-team developing complex software products and Internet Applications.
-Current and recent projects that I have worked on have mainly been product based RIA front
-end work (user interfaces / components) that have been developed using the Adobe Flex /
-Flash (ActionScript 3, MXML) technology along with other supporting technologies (including
-Java, JSP, GSP, JS, BlazeDS, MS/MySQL etc ...). These products include: FusionReactor,
-FusionAnalytics and ShareDox:
+                      <p>Prior to my current position, I worked at Integral GmbH as a Software Engineer within a small yet advanced and experienced team developing complex software products and Internet Applications. I was mainly responsible for product based front end work (user interfaces and components) developed using the Adobe Flex/Flash (ActionScript 3, MXML) technology, later moving to Javascript Solutions (Angular) along with other supporting technologies (Java, JSP, GSP, JS, BlazeDS, MS/MySQL etc). Some of the products I worked on include: FusionReactor, FusionAnalytics and ShareDox.</p>
+                      <p>I worked at Intergral for approx. 7 years and have fond memories of the company and team. When I started I was less experienced than my peers and struggled a bit, but in turn learned a great amount and gained a lot of valuable knowledge and experience from a team of great people which helped form me into the developer I am today.</p>
+                      <p>Previous to Intergral, I worked at Hewlett Packard (HP) as a PHP Developer (with a focus on Front-End) working on internal core company managment applications.</p>
                     </div>
 
 
@@ -226,11 +219,9 @@ FusionAnalytics and ShareDox:
                     */}
                     <div className="block mb-6">
                       <h4>Side Projects</h4>
-                      <p>I'm always interested in interesting side projects!</p>
-                      <p>A current project im working on being a custom CRM for OverCross "<em>a tour operator for motorbike tours, off-road vehicle tours, round trips and group tours</em>" which will be deployed later this year.</p>
-                      <p>If you would like to work with me, please contact me with/for more information: <a href="mailto:jon.williams@hey.com">jon.williams@hey.com</a>.</p>
-
-                        
+                      <p>I'm always interested in exciting side projects!</p>
+                      <p>A current project being a custom CRM for OverCross "<em>... a tour operator for motorbike tours, off-road vehicle tours ... best known for long-distance travel and expeditions ...</em>" which will be deployed later this year.</p>
+                      <p>If you have an interesting project and/or would like to work with me, shoot me an email: <a href="mailto:jon.williams@hey.com">jon.williams@hey.com</a>.</p>
                     </div>
                      
                   </div>
@@ -257,14 +248,19 @@ FusionAnalytics and ShareDox:
 
                       <h3>Personal Profile</h3>
 
+                      <blockquote className="is-size-4">
+                        "<em>... when I'm not working, playing with my children or travelling in my van, I can be found in the forest running, riding motorbikes or in my garage making things ...</em>"
+                      </blockquote>
 
-                      <p className="is-size-4 has-text-centered">"<em>... when I'm not working, playing with my children or travelling in my van, I can be found in the forest running, riding motorbikes or in my garage making things ...</em>"</p>
+
+
+
                       <p>I am British, was born in Liverpool and grew up in the English countryside. I am currently located in South East Germany.</p>
                       <p>I have always had an interest tech with a focus on web from a young age and decided to dig deeper, continuing onto higher education where I confirmed my calling for web development.</p>
                       <p>I have many other interests, hobbies and activities that keep me busy including bringing up (playing) with my three children which consumes most of my time.</p>
                       <p>I love running, im not the fastest or fittest, but have a few marathons under my belt which im pretty proud of. I love to get out in the local forest for a run as often as I can to both keep fit and clear my head.</p>
-                      <p>Since a young age I have had a great interest in motorcycles. I remember getting old broken motorbikes which Id fix up to the best of my abilities using whatever tools I could find in my parents garage to then use (ride over a local field, as I was then too young have license).</p>
-                      <p>Growing older, my passion for motorcycles has remained. I love learning about, riding and working on them. In recent years I have become particularly interested in 90s sports bike (the bikes that I dreamt about when I was a lad) although I'm interested in anything on (two) wheels and always tend to have a few in the garage. My current project being a Honda CB750 cafe racer build. I of course, also like older cars with my daily driver being a 30 Year old Saab 900.</p>
+                      <p>Since a young age I have had a great interest in motorcycles. I remember getting old broken motorbikes which id fix up to the best of my abilities using whatever tools I could find in my parents garage to then use (ride over a local field, as I was then too young have license).</p>
+                      <p>Growing older, my passion for motorcycles has remained. I love learning about, riding and working on them. In recent years I have become particularly interested in 90s sports bikes, now modern classics (the bikes that I dreamt about when I was a lad) although I'm interested in anything on (two) wheels and always tend to have a few bikes in the garage. My current project being a Honda CB750 cafe racer build. I of course, also like older cars with my daily driver being a 30 Year old Saab 900.</p>
                       <p>At the end of 2020 we bought a house from the 50s which has become a large and ongoing renovation project. Although a lot of work, it's enjoyable work which we are doing in our own time and without (too much) stress. The advantage (and hope) being that we will one day have a nice family home which we can enjoy for many years, and the disadvantage (realism) is having to live on a constant building site.</p>
                       <p>I love travelling, having visited many countries and continents. Since becoming a father, a camper van seemed like a good and fun way to travel. I did some research and bought an empty "builders-van" which I have since converted (still converting) into a "camper-van-lite". As a family, we have used the van for many successful and enjoyable trips in and around Europe and plan many more in the future.</p>
                       <p>To relax and take my mind off everyday life every I enjoy exploring (trips and walks) with the family, meeting up with friends for a bit of banter and a beer or simply kicking back, listening to music or watching a film.</p>

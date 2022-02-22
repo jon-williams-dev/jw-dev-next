@@ -252,11 +252,8 @@ export default function Profile() {
                         "<em>... when I'm not working, playing with my children or travelling in my van, I can be found in the forest running, riding motorbikes or in my garage making things ...</em>"
                       </blockquote>
 
-
-
-
                       <p>I am British being born in Liverpool and spending my childhood growing up in the English countryside. I am currently located in South East Germany.</p>  
-                      <p>From a young age I developed an interest tech with a focus on the Web. I decided to explore more deeply which continued onto higher education where I confirmed my calling for Web development. </p>
+                      <p>From a young age I developed an interest in tech with a focus on the Web. I decided to explore more deeply which continued onto higher education where I confirmed my calling for Web development. </p>
                       <p>I have many other interests, hobbies and activities. Much of my leisure time is taken up raising our three children along with my partner Elena.</p>
                       <p>I love running. Im not the fastest or fittest, but have a few marathons under my belt of which I am quite proud. I love to run in the local forest , I find it clears my head and helps to keep me fit.</p>
                       <p>From a very young age I have had a fascination for motorcycles. I remember fixing up old broken motor bikes to the best of my abilities using whatever tools I could find in my parents garage. I was then able to ride them over a local field being too young to hold a license.</p>

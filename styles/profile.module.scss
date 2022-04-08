@@ -1,3 +1,20 @@
+.typingTextContainer {
+//  position: absolute;
+  display: grid;
+}
+.typingText, .typingTextDummy { 
+  grid-area: 1/1; 
+}
+
+.typingText {
+  margin-bottom: 0px !important;
+}
+
+.typingTextDummy {
+  visibility: hidden;
+}
+
+
 .stickyProfileImageContainer {
 	position:relative;	
 	height: 100%;

@@ -64,14 +64,45 @@ export default function Profile() {
                       />
               </div>
               <div className="block">
-                <p className="title">Hi, my name is Jon Williams.</p>
+                <p className="title">Hi, my name is Jon.</p>
                 <p>I'm a Full Stack Developer working at the <a href="https://is.mpg.de" target="_blank">Max Planck Institute for Intelligent Systems</a>.</p>
-                <div>  
 
+                <div>
+                  <div className={profileStyles.typingTextContainer}>
+
+                    <p className={profileStyles.typingText}>
+                      When I'm not working, playing with my children or travelling in my van, I can be found
+                      <TypeAnimation
+                        cursor={true}
+                        sequence={[
+                          ' in the forest running.',
+                          2000,
+                          ' riding motorbikes.',
+                          2000,
+                          ' in my garage making things.',
+                          2000,
+                        ]}
+                        wrapper="span"
+                        repeat={Infinity}
+                      />
+                    </p>
+
+                    {/* 
+                      hack:
+                      choose the longest string renderd ... 
+                      ... will set max size and prevert new line jumps
+                    */}
+                    <p className={profileStyles.typingTextDummy}>When I'm not working, playing with my children or travelling in my van, I can be found in my garage making things.</p>
+
+                  </div>
+                </div>
+
+
+
+                {/*<div>  
                   <p className="typing-text-trick-text">When I'm not working, playing with my children or travelling in my van, I can be found in my garage making things.</p>
                   <p>
                     When I'm not working, playing with my children or travelling in my van, I can be found 
-
                     <TypeAnimation
                       cursor={true}
                       // sequence={['This text will be repeated infinitely.', 1000, '']}
@@ -88,6 +119,8 @@ export default function Profile() {
                     />
                   </p>
                 </div>
+                */}
+
               </div>
               <div className="block has-text-grey">
                 <FontAwesomeIcon icon={faLaptopCode} className="fa-lg mr-5" />

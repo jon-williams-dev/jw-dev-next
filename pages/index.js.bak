@@ -1,0 +1,38 @@
+import Image from 'next/image'
+// import Layout, { siteTitle } from '../components/layout'
+import Layout, { siteTitle } from '../components/layout_index'
+import Link from 'next/link'
+import indexStyles from '../styles/index.module.scss'
+
+
+/*import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTelescope, faLaptopCode, faBaby, faShuttleVan, faTools, faTree, faRunning, faMotorcycle, faExternalLink } from '@fortawesome/free-solid-svg-icons'
+*/
+export default function Home() {
+  return (
+    <Layout home>
+
+      <div className="container">
+        <section className="hero is-fullheight">
+          <div className="hero-body">
+            <div className="container has-text-centered">
+      
+              <div className="content is-large">
+                <div className="block">
+                  <Image
+                    priority
+                    src="/images/logo.png"
+                    height={240}
+                    width={600}
+                    alt="Jon Williams"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+      
+    </Layout>
+  )
+}

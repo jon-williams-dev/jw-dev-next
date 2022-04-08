@@ -64,24 +64,30 @@ export default function Profile() {
                       />
               </div>
               <div className="block">
-                <p className="title">Hi, my name is Jon.</p>
+                <p className="title">Hi, my name is Jon Williams.</p>
                 <p>I'm a Full Stack Developer working at the <a href="https://is.mpg.de" target="_blank">Max Planck Institute for Intelligent Systems</a>.</p>
-                <p>When I'm not working, playing with my children or travelling in my van, I can be found 
-                  <TypeAnimation
-                    cursor={true}
-                    // sequence={['This text will be repeated infinitely.', 1000, '']}
-                    sequence={[
-                      ' in the forest running.',
-                      2000,
-                      ' riding motorbikes.',
-                      2000,
-                      ' in my garage making things.',
-                      2000,
-                    ]}
-                    wrapper="span"
-                    repeat={Infinity}
-                  />
-                </p>
+                <div>  
+
+                  <p className="typing-text-trick-text">When I'm not working, playing with my children or travelling in my van, I can be found in my garage making things.</p>
+                  <p>
+                    When I'm not working, playing with my children or travelling in my van, I can be found 
+
+                    <TypeAnimation
+                      cursor={true}
+                      // sequence={['This text will be repeated infinitely.', 1000, '']}
+                      sequence={[
+                        ' in the forest running.',
+                        2000,
+                        ' riding motorbikes.',
+                        2000,
+                        ' in my garage making things.',
+                        2000,
+                      ]}
+                      wrapper="span"
+                      repeat={Infinity}
+                    />
+                  </p>
+                </div>
               </div>
               <div className="block has-text-grey">
                 <FontAwesomeIcon icon={faLaptopCode} className="fa-lg mr-5" />
@@ -210,7 +216,7 @@ export default function Profile() {
                       <h4>Previous Work</h4>
                       <p>Prior to my current position, I worked at Integral GmbH as a Software Engineer within a small yet advanced and experienced team developing complex software products and Internet Applications. I was mainly responsible for product based front end work (user interfaces and components) developed using the Adobe Flex/Flash (ActionScript 3, MXML) technology, later moving to Javascript Solutions (Angular) along with other supporting technologies (Java, JSP, GSP, JS, BlazeDS, MS/MySQL etc). Some of the products I worked on include: FusionReactor, FusionAnalytics and ShareDox.</p>
                       <p>I worked at Intergral for approx. 7 years and have fond memories of the company and team. When I started I was less experienced than my peers and struggled a bit, but in turn learned a great amount and gained a lot of valuable knowledge and experience from a team of great people which helped form me into the developer I am today.</p>
-                      <p>Previous to Intergral, I worked at Hewlett Packard (HP) as a PHP Developer (with a focus on Front-End) working on internal core company managment applications.</p>
+                      <p>Previous to Intergral, I worked at Hewlett Packard (HP) as a Data Retrieval Expert / Web / App Developer working on internal business process related projects and applications.</p>
                     </div>
 
 

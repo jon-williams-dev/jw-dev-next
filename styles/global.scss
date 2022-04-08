@@ -65,3 +65,13 @@ $table-background-color: whitesmoke;
     background-color: #ddd;
     color: rgba(0, 0, 0, 0.7);
 }
+
+.typing-text-trick-text {
+    color: red;
+    position: absolute;
+    display: block;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+}

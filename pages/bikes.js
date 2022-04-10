@@ -1,7 +1,7 @@
 // import {gql} from '@apollo/client'
 import Head from 'next/head' 
 import Link from 'next/link'
-import client from '../apolloClient'
+// import client from '../apolloClient'
 
 export default function Bikes({bikes}) {
 

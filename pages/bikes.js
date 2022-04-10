@@ -1,75 +1,59 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import Layout, { siteTitle } from '../components/layout_bikes'
+import {gql} from '@apollo/client'
+import Head from 'next/head' 
 import Link from 'next/link'
-import NavBikes from '../components/nav_bikes'
-import indexStyles from '../styles/index.module.scss'
-import Date from '../components/date'
-import { getBikesData } from '../lib/bikes'
+import client from '../apolloClient'
 
-function bikeImageLoader({ src }) {
-  return 'https://jwdev.free.resourcespace.com/' + src;
-}
+export default function Bikes({bikes}) {
 
-export default function Bikes ({ allBikesData }) {
+  console.log(bikes);
 
   return (
-    <Layout bikes>
+    <div>
       <Head>
-        <title>JW Bikes</title>
+        <title>Jon Williams | Bikes</title>
       </Head>
-      <NavBikes />
-      <section className="hero">
-        <div className="hero-body">
-          <div className="container">
-            <div className="content is-medium">
-              <div className="block mb-6 mt-6">
-                <h1>Bikes</h1>
-                <p>Im a big motorbike fan and usually have a few in the garage, some of which id consider letting go to make space for others - see below.</p>
-                <p>If you are interested in any of the bikes on this page, have a look. I try to add an honest description with as many details and photos as possible, however, if you have further questions regarding any of the bikes, get in touch: <a href="mailto:jon.williams@hey.com">jon.williams@hey.com</a>.</p>
-                <p>I'm always looking for new bikes and have a specific interest in 90s Sport Bikes (although am open to anything). If you have something interesting, <a href="mailto:jon.williams@hey.com">let me know</a>.</p>
-              </div>
-              <div class="columns">
-               {allBikesData.map(({ id, make, model, year, previewImage_pre }) => (
-                  <div class="column is-one-quarter cursor-hand">
-                    <Link href={`/bikes/${id}`}>
-                      <div class="card">
-                        <div class="card-image">
-                             <Image
-                                priority
-                                loader={bikeImageLoader}
-                                src={previewImage_pre}
-                                height={480}
-                                width={640}
-                                alt="{make}"
-                              />
-                        </div>
-                        <div class="card-content">
-                          <div class="content">
-                            <p class="title is-4">{make} {model}</p>
-                            <p class="subtitle is-6">{year}</p>
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>            
-      </section>
-    </Layout>
+      <h1>Bikes</h1>
+    </div>
   )
 }
 
+
 export async function getStaticProps() {
 
-  const allBikesData = getBikesData()
+  const {data: bikes} = await client.query({
+    query: gql`
+      query {
+        bikes {
+          title
+          slug
+          make
+          model
+          year
+          mileage
+          price
+          color
+          header
+          quote
+          description {
+            markdown
+          }
+          image {
+            url
+          }
+        }
+      }
+        
+    `
+  })
+
+  console.log(bikes);
 
   return {
     props: {
-      allBikesData
+      bikes
     }
   }
 }
+
+
+

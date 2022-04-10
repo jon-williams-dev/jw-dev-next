@@ -101,7 +101,7 @@ export default function GaragePlans({planImages}) {
                               <td>Shed Measurements <small>(view: bottom-up)</small></td>
                             </tr>
                             <tr>
-                              <td><span className="tag is-info mr-2">T1</span> 350cm</td>
+                              <td><span className="tag is-info mr-2">T1</span> 400cm</td>
                               <td>Shed 1 <small>(Stäuperle 13)</small>:</td>
                             </tr>
                             <tr>

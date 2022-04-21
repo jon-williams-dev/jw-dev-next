@@ -1,6 +1,7 @@
 module.exports = {
   images: {
-    domains: ['jwdev.free.resourcespace.com'],
+    // domains: ['jwdev.free.resourcespace.com'],
+    domains: ['media.graphassets.com'],
   },
   webpack: (config, { isServer }) => {
     // Fixes npm packages that depend on `fs` module

@@ -2,7 +2,12 @@ import Head from 'next/head'
 import Link from 'next/link'
 import Layout from '../components/layout'
 import Nav from '../components/nav'
+
 import Image from 'next/image'
+import React, { useState, useCallback } from "react";
+import Carousel, { Modal, ModalGateway } from "react-images";
+import Gallery from "react-photo-gallery";
+
 // import style from '../styles/profile.module.scss'
 import profileStyles from '../styles/profile.module.scss'
 import TypeAnimation from 'react-type-animation';
@@ -18,6 +23,33 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTelescope, faLaptopCode, faBaby, faShuttleVan, faTools, faTree, faRunning, faMotorcycle, faExternalLink } from '@fortawesome/free-solid-svg-icons'
 
 export default function Profile() {
+
+
+  const [currentImage, setCurrentImage] = useState(0);
+  const [viewerIsOpen, setViewerIsOpen] = useState(false);
+
+  const pageImages = [
+    { src: "/images/cb750.jpg", height: 532, width: 924 },
+    { src: "/images/saab900.jpg", height: 800, width: 1022 }
+  ]
+
+  const openLightbox = useCallback((event, { photo, index }) => {
+    setCurrentImage(index);
+    setViewerIsOpen(true);
+  }, []);
+
+  const openLightboxSingle = useCallback((event) => {
+    setCurrentImage(0);
+    setViewerIsOpen(true);
+  }, []);
+
+  const closeLightbox = () => {
+    setCurrentImage(0);
+    setViewerIsOpen(false);
+  };
+
+
+
   return (
     <Layout profile>
       <div>
@@ -291,12 +323,35 @@ export default function Profile() {
                         "<em>... when I'm not working, playing with my children or travelling in my van, I can be found in the forest running, riding motorbikes or in my garage making things ...</em>"
                       </blockquote>
 
+
                       <p>I am British being born in Liverpool and spending my childhood growing up in the English countryside. I am currently located in South East Germany.</p>  
                       <p>From a young age I developed an interest in tech with a focus on the Web. I decided to explore more deeply which continued onto higher education where I confirmed my calling for Web development. </p>
                       <p>I have many other interests, hobbies and activities. Much of my leisure time is taken up raising our three children along with my partner Elena.</p>
                       <p>I love running. Im not the fastest or fittest, but have a few marathons under my belt of which I am quite proud. I love to run in the local forest , I find it clears my head and helps to keep me fit.</p>
                       <p>From a very young age I have had a fascination for motorcycles. I remember fixing up old broken motor bikes to the best of my abilities using whatever tools I could find in my parents garage. I was then able to ride them over a local field being too young to hold a license.</p>
-                      <p>As I get older my passion for motorcycles has not diminished. I love learning about, riding and working on them. In recent years I have become particularly interested in 90s sports bikes, now modern classics (the bikes that I dreamt about when I was a lad) although I'm interested in anything on (two) wheels and always tend to have a few bikes in the garage. My current project being a Honda CB750 cafe racer build. I of course, also like older cars with my daily driver being a 30 Year old Saab 900.</p>
+                      <p>As I get older my passion for motorcycles has not diminished. I love learning about, riding and working on them. In recent years I have become particularly interested in 90s sports bikes, now modern classics (the bikes that I dreamt about when I was a lad) although I'm interested in anything on (two) wheels and always tend to have a few bikes in the garage. My current project being a 
+                        <a onClick={openLightboxSingle}> Honda CB750 </a> 
+                         
+
+                        cafe racer build. I of course, also like older cars with my daily driver being a 30 Year old <a onClick={openLightboxSingle}>Saab 900</a>.</p>
+                     
+
+                       <ModalGateway>
+                        {viewerIsOpen ? (
+                          <Modal onClose={closeLightbox}>
+                            <Carousel
+                              currentIndex={currentImage}
+                              views={pageImages.map(x => ({
+                                ...x,
+                                srcset: x.srcSet,
+                                caption: x.title
+                              }))}
+                            />
+                          </Modal>
+                        ) : null}
+                      </ModalGateway>
+
+                      
                       <p>At the end of 2020 we bought a house from the 50s which has become a large and ongoing renovation project. Although a lot of work, it's enjoyable work which we are doing in our own time and without (too much) stress. The advantage (and hope) being that we will one day have a nice family home which we can enjoy for many years, and the disadvantage (realism) is having to live on a constant building site.</p>
                       <p>I love travelling, having visited many countries and continents. Since becoming a father, a camper van seemed like a good and fun way to travel. I did some research and bought an empty "builders-van" which I have since converted (still converting) into a "camper-van-lite". As a family, we have used the van for many successful and enjoyable trips in and around Europe and plan many more in the future.</p>
                       <p>To relax and take my mind off everyday life every I enjoy exploring (trips and walks) with the family, meeting up with friends for a bit of banter and a beer or simply kicking back, listening to music or watching a film.</p>

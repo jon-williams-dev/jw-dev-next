@@ -72,8 +72,8 @@ export default function BikePage ({bike}) {
 					                          <td>{bike.year}</td>
 					                        </tr>
 					                        <tr>
-					                          <td>Mileage</td>
-					                          <td>{bike.mileage}</td>
+					                          <td>Kilometers</td>
+					                          <td>{bike.mileage}KM</td>
 					                        </tr>
 					                        <tr>
 					                          <td>Color</td>

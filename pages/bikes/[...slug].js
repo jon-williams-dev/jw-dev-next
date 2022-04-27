@@ -38,12 +38,12 @@ export default function BikePage ({bike}) {
       		</Head>
       		<NavBikes />
       		<section className="hero">
-        		<div className="hero-body">
+        		<div className="hero-body pb-0">
           			<div className="container">
             			<div className="content is-medium">
             				<div class="columns">
               					<div class="column is-three-fifths is-offset-one-fifth">
-                					<div className="block mb-6 mt-6">
+                					<div className="block">
                   						<h1>{bike.title}</h1>
 						                   <Image
 						                      priority
@@ -73,10 +73,10 @@ export default function BikePage ({bike}) {
 					                        </tr>
 					                        <tr>
 					                          <td>Kilometers</td>
-					                          <td>{bike.mileage}KM</td>
+					                          <td>{bike.mileage} KM</td>
 					                        </tr>
 					                        <tr>
-					                          <td>Color</td>
+					                          <td>Colour</td>
 					                          <td>{bike.color}</td>
 					                        </tr>
 					                      </tbody>
@@ -89,7 +89,7 @@ export default function BikePage ({bike}) {
             				</div>
             			</div>
           			</div>
-        		</div>            
+        		</div>    
       		</section>
 
       		<section className="hero">

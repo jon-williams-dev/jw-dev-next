@@ -24,9 +24,12 @@ export default function Bikes({bikes}) {
              <div className="content is-medium">
                <div className="block mb-6 mt-6">
                  <h1>Bikes</h1>
-                 <p>Im a big motorbike fan and usually have a few in the garage, some of which id consider letting go to make space for others - see below.</p>
-                 <p>If you are interested in any of the bikes on this page, have a look. I try to add an honest description with as many details and photos as possible, however, if you have further questions regarding any of the bikes, get in touch: <a href="mailto:jon.williams@hey.com">jon.williams@hey.com</a>.</p>
-                 <p>I'm always looking for new bikes and have a specific interest in 90s Sport Bikes (although am open to anything). If you have something interesting, <a href="mailto:jon.williams@hey.com">let me know</a>.</p>
+                 <p>I love motorbikes and usually have a few in the garage, some of which id consider letting go to make space for others (listed below):</p>
+                 <p>I try to add an honest description with as many details and photos as possible, however, if you have further questions <a href="mailto:jon.williams@hey.com">get in touch</a>.</p>
+                 <p>
+                  I'm always interested in (and looking for) new bikes and have a specific interest in 90s Sport Bikes (although am open to anything).<br />
+                  If you have something interesting that you would like to move on, <a href="mailto:jon.williams@hey.com">let me know</a>.
+                 </p>
                </div>
                <div class="columns">
                 {bikes.map((bike, i) => (

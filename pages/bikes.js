@@ -69,7 +69,7 @@ export async function getStaticProps() {
   const {data} = await client.query({
     query: gql`
       query {
-        bikes {
+        bikes(orderBy: order_ASC) {
           title
           slug
           make
@@ -78,6 +78,9 @@ export async function getStaticProps() {
           mileage
           price
           color
+          color_hex {
+            hex
+          }
           header
           quote
           description {
@@ -88,7 +91,6 @@ export async function getStaticProps() {
           }
         }
       }
-        
     `
   })
 

@@ -153,6 +153,9 @@ export async function getStaticProps({params}) {
           mileage
           price
           color
+          color_hex {
+            hex
+          }
           header
           quote
           description {

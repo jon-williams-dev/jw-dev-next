@@ -48,7 +48,7 @@ export default function Bikes({bikes}) {
                          <div class="card-content">
                            <div class="content">
                              <p class="title is-4">{bike.title}</p>
-                             <p class="subtitle is-6">{bike.year}</p>
+                             {/*<p class="subtitle is-6">{bike.year}</p>*/}
                            </div>
                          </div>
                        </div>

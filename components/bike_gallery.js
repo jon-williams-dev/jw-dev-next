@@ -9,20 +9,3 @@ export default function BikeGallery({ collection, bikePhotos }) {
     </div>
   )
 }
-
-// export async function componentDidMount({ params }) {
-//   const bikePhotos = await getBikePhotos(5)
-
-//   console.log("TEST blabla")
-//   console.log("TEST blabla")
-//   console.log("TEST blabla")
-//   console.log("TEST blabla")
-//   console.log("TEST blabla")
-//   console.log("TEST blabla")
-
-//   return {
-//     props: {
-//       bikePhotos: bikePhotos.data
-//     }
-//   }
-// }

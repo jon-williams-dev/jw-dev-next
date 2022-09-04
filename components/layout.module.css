@@ -1,12 +1,12 @@
 .colorBar {
-	position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 999;
-    width: 100%;
-    /*height: 20px;*/
-    height: 1.5rem;
-    background: linear-gradient(to right, #EF476F, #FFD166, #00BF8E, #118AB2);    
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  width: 100%;
+  /*height: 20px;*/
+  height: 1.5rem;
+  background: linear-gradient(to right, #EF476F, #FFD166, #00BF8E, #118AB2);    
 }
 
 .footer a:link {

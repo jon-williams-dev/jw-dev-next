@@ -37,7 +37,7 @@ export default function Layout({ children, home }) {
 
       	<div className={styles.colorBar}></div>
   		  <main>{children}</main>
-
+        
     		<footer className="footer">
   				<div className="container">
             <div className={styles.footer}>

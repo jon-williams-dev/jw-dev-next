@@ -15,18 +15,37 @@ export default function Home() {
         
                 <div className="content is-large">
                   <div className="block">
-                    <Image
-                      priority
-                      src="/images/logo_white.png"
-                      height={240}
-                      width={600}
-                      alt="Jon Williams"
-                    />
+                    <a href="mailto:jon.williams@hey.com">
+                      <Image
+                        priority
+                        src="/images/logo_white.png"
+                        height={240}
+                        width={600}
+                        alt="Jon Williams"
+                      />
+                    </a>
                   </div>
                 </div>
               </div>
             </div>
           </section>
+
+          <footer className={gradientStyles.gradientFooter}>
+            <div className="container">
+              <div className="columns">
+                <div className="column">
+                  <div className={gradientStyles.gradientFooterP}>
+                    <h1 className="is-size-5">Web Development, Tübingen, Germany</h1>
+                  </div>
+                </div>
+                <div className="column">
+                  <div className={gradientStyles.gradientFooterP}>
+                    <p className="is-size-5 has-text-right">Reach out: <a href="mailto:jon.williams@hey.com">jon.williams@hey.com</a></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </footer>
              
     </div>
     </Layout>

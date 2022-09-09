@@ -21,3 +21,21 @@ $jw-grey: #fafafa;
 //.section-blue {
 //	background-color: #118AB2;
 //}
+
+.notification.is-pink {
+    background-color: $jw-pink;
+	color: #fff;
+}
+.notification.is-yellow {
+    background-color: $jw-yellow;
+    color: rgba(0, 0, 0, 0.7);
+	
+}
+.notification.is-green {
+    background-color: $jw-green;
+	color: #fff;
+}
+.notification.is-blue {
+    background-color: $jw-blue;
+	color: #fff;
+}

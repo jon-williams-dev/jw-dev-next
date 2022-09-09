@@ -14,7 +14,7 @@ export default function Bikes({bikes}) {
   return (
     <Layout bikes>
       <Head>
-        <title>JW Bikes</title>
+        <title>Jon Williams | Bikes</title>
       </Head>
       <NavBikes />
 

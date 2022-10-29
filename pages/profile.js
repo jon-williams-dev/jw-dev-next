@@ -95,7 +95,7 @@ export default function Profile() {
                       <p className={profileStyles.typingTextDummy}>When I'm not working, playing with my children or travelling in my van, I can be found in my garage making things.</p>
                     </div>
                   </div>
-                  <div className="block has-text-grey mt-5">
+                  <div className="block has-text-grey mt-5 ">
                     <FontAwesomeIcon icon={faLaptopCode} className="fa-lg mr-5" />
                     <FontAwesomeIcon icon={faBaby} className="fa-lg mr-5" />
                     <FontAwesomeIcon icon={faShuttleVan} className="fa-lg mr-5" />

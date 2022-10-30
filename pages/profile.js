@@ -29,11 +29,12 @@ export default function Profile() {
 
   const pageImages = [
     { src: "/images/cb750.jpg", height: 532, width: 924 },
-    { src: "/images/saab900.jpg", height: 800, width: 1022 }
+    { src: "/images/saab900.jpg", height: 800, width: 1022 },
+    { src: "/images/roof.jpg", height: 800, width: 800 }
   ]
 
-  const cb750_img = [{ src: "/images/cb750.jpg", height: 532, width: 924 }]
-  const saab900_img = [{ src: "/images/saab900.jpg", height: 800, width: 1022 }]
+  // const cb750_img = [{ src: "/images/cb750.jpg", height: 532, width: 924 }]
+  // const saab900_img = [{ src: "/images/saab900.jpg", height: 800, width: 1022 }]
 
   const openLightboxCustom = useCallback(
     (index) => (event) => {
@@ -251,7 +252,7 @@ export default function Profile() {
                       ) : null}
                     </ModalGateway>
 
-                    <p>At the end of 2020 we bought a house from the 50s which has become a large and ongoing renovation project. Although a lot of work, it's enjoyable work which we are doing in our own time and without (too much) stress. The advantage (and hope) being that we will one day have a nice family home which we can enjoy for many years, and the disadvantage (realism) is having to live on a constant building site.</p>
+                    <p>At the end of 2020 we bought a house from the 50s which has become a large and ongoing <a onClick={openLightboxCustom(2)}>renovation project</a>. Although a lot of work, it's enjoyable work which we are doing in our own time and without (too much) stress. The advantage (and hope) being that we will one day have a nice family home which we can enjoy for many years, and the disadvantage (realism) is having to live on a constant building site.</p>
                     <p>I love travelling, having visited many countries and continents. Since becoming a father, a camper van seemed like a good and fun way to travel. I did some research and bought an empty "builders-van" which I have since converted (still converting) into a "camper-van-lite". As a family, we have used the van for many successful and enjoyable trips in and around Europe and plan many more in the future.</p>
                     <p>To relax and take my mind off everyday life every I enjoy exploring (trips and walks) with the family, meeting up with friends for a bit of banter and a beer or simply kicking back, listening to music or watching a film.</p>
                   </div>             

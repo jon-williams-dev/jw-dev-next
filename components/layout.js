@@ -3,7 +3,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import styles from './layout.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faInstagram, faLaptopCode } from '@fortawesome/free-solid-svg-icons'
+import { faLaptopCode, faInstagram } from '@fortawesome/free-solid-svg-icons'
+
 
 
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -53,9 +54,7 @@ export default function Layout({ children, home }) {
                 <div class="column">
                   <FontAwesomeIcon icon={faLaptopCode} className="fa-lg mr-5" />
                   <FontAwesomeIcon icon={faInstagram} className="fa-lg mr-5" />
-                  <FontAwesomeIcon icon="fa-brands fa-instagram" className="fa-lg mr-5" />
-                  <FontAwesomeIcon icon="fab fa-instagram" className="fa-lg mr-5" />
-                  <FontAwesomeIcon icon="fab fa-instagram" className="fa-lg mr-5" />
+                  
 
                   asasa
                 </div>

@@ -29,9 +29,13 @@ export default function Profile() {
   const [viewerIsOpen, setViewerIsOpen] = useState(false);
 
   const pageImages = [
-    { src: "/images/cb750.jpg", height: 532, width: 924 },
-    { src: "/images/saab900.jpg", height: 800, width: 1022 },
-    { src: "/images/roof.jpg", height: 800, width: 800 }
+    { src: "/images/cb750.jpg", height: 518, width: 900 },
+    // { src: "/images/saab900.jpg", height: 704, width: 900 },
+    { src: "/images/saab9002.jpg", height: 900, width: 900 },
+    { src: "/images/roof.jpg", height: 900, width: 900 },
+    { src: "/images/baustelle.jpg", height: 900, width: 900 },
+    { src: "/images/sprinter1.jpg", height: 900, width: 900 },
+    { src: "/images/sprinter2.jpeg", height: 900, width: 900 }
   ]
 
   // const cb750_img = [{ src: "/images/cb750.jpg", height: 532, width: 924 }]
@@ -254,7 +258,7 @@ export default function Profile() {
                     </ModalGateway>
 
                     <p>At the end of 2020 we bought a house from the 50s which has become a large and ongoing <a onClick={openLightboxCustom(2)}>Renovation Project</a>. Although a lot of work, it's enjoyable work which we are doing in our own time and without (too much) stress. The advantage (and hope) being that we will one day have a nice family home which we can enjoy for many years, and the disadvantage (realism) is having to live on a constant building site.</p>
-                    <p>I love travelling, having visited many countries and continents. Since becoming a father, a camper van seemed like a good and fun way to travel. I did some research and bought an empty "builders-van" which I have since converted (still converting) into a "camper-van-lite". As a family, we have used the van for many successful and enjoyable trips in and around Europe and plan many more in the future.</p>
+                    <p>I love travelling, having visited many countries and continents. Since becoming a father, a camper van seemed like a good and fun way to travel. I did some research and bought an empty "builders-van" which I have since converted (still converting) into a "<a onClick={openLightboxCustom(4)}>Camper-Van-Lite</a>". As a family, we have used the van for many successful and enjoyable trips in and around Europe and plan many more in the future.</p>
                     <p>To relax and take my mind off everyday life every I enjoy exploring (trips and walks) with the family, meeting up with friends for a bit of banter and a beer or simply kicking back, listening to music or watching a film.</p>
                   </div>             
                 </div>

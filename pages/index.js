@@ -57,7 +57,7 @@ export default function Home() {
     </div>
 
 
-    <div>
+   {/* <div>
       
           <section className="section">
             <div className="container has-text-centered">
@@ -67,7 +67,7 @@ export default function Home() {
             </div>
           </section>
 
-          {/*<footer className={gradientStyles.gradientFooter}>
+          <footer className={gradientStyles.gradientFooter}>
             <div className="container">
               <div className="columns is-hidden-touch">
                 <div className="column">
@@ -89,9 +89,9 @@ export default function Home() {
                 </div>
               </div>
             </div>
-          </footer>*/}
+          </footer>
              
-    </div>
+    </div>*/}
     </Layout>
   )
 }

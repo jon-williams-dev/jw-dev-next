@@ -10,6 +10,7 @@ export default function Bikes({bikes}) {
 
   // console.log("bikes");
   // console.log(bikes);
+
   return (
     <Layout bikes>
       <Head>

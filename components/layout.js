@@ -4,7 +4,7 @@ import Link from 'next/link'
 import styles from './layout.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLaptopCode, faInstagram } from '@fortawesome/free-solid-svg-icons'
-
+import Pixel from '../components/pixel'
 
 
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'

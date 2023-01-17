@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from './layout.module.css'
-import MetaPixelCode from '../components/meta_pixel_code'
+import Pixel from '../components/Pixel'
 
 const name = 'Jon Williams'
 export const siteTitle = 'Jon Williams'
@@ -24,8 +24,7 @@ export default function Layout({ children, home }) {
       	<meta name="og:title" content={siteTitle} />
       	<meta name="twitter:card" content="summary_large_image" />
 
-        <MetaPixelCode />
-        
+        <Pixel name='FACEBOOK_PIXEL_1' />
       </Head>
 
   		<main>{children}</main>

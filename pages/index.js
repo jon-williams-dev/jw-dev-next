@@ -3,6 +3,7 @@ import Layout, { siteTitle } from '../components/layout_blank'
 // import Link from 'next/link'
 // import indexStyles from '../styles/index.module.scss'
 import gradientStyles from '../styles/gradientBg.module.scss'
+// import Pixel from '../components/Pixel'
 
 export default function Home() {
   return (

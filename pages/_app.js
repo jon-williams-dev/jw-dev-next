@@ -1,6 +1,7 @@
 // import '../styles/globals.css'
 // import here for global compponent
 import '../styles/global.scss'
+import Script from 'next/script'
 
 import { config } from '@fortawesome/fontawesome-svg-core'
 import '@fortawesome/fontawesome-svg-core/styles.css'

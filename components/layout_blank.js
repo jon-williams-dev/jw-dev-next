@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from './layout.module.css'
-import Pixel from '../components/Pixel'
+import Pixel from '../components/pixel'
 
 const name = 'Jon Williams'
 export const siteTitle = 'Jon Williams'

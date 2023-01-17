@@ -54,9 +54,6 @@ export default function Layout({ children, home }) {
                 <div class="column">
                   <FontAwesomeIcon icon={faLaptopCode} className="fa-lg mr-5" />
                   <FontAwesomeIcon icon={faInstagram} className="fa-lg mr-5" />
-                  
-
-                  asasa
                 </div>
               </div>
             </div>

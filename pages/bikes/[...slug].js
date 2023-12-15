@@ -73,7 +73,7 @@ export default function BikePage ({bike}) {
 					                        </tr>
 					                        <tr>
 					                          <td>Kilometers</td>
-					                          <td>{bike.mileage} KM</td>
+					                          <td>{bike.km} KM</td>
 					                        </tr>
 					                        <tr>
 					                          <td>Colour</td>
@@ -150,7 +150,7 @@ export async function getStaticProps({params}) {
           make
           model
           year
-          mileage
+          km
           price
           color
           color_hex {
@@ -168,11 +168,11 @@ export async function getStaticProps({params}) {
             width
             height
           }
-          gallery {
-      		src:url
-      		width
-      		height
-    	  }
+          gallery(first: 50) {
+      			src:url
+      			width
+      			height
+    	  	}
         }
       }
         

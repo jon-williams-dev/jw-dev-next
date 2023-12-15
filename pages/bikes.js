@@ -48,7 +48,6 @@ export default function Bikes({bikes}) {
                          <div class="card-content">
                            <div class="content">
                              <p class="title is-4">{bike.title}</p>
-                             {/*<p class="subtitle is-6">{bike.year}</p>*/}
                            </div>
                          </div>
                        </div>
@@ -66,26 +65,41 @@ export default function Bikes({bikes}) {
 
 export async function getStaticProps() {
 
+  // const {data} = await client.query({
+  //   query: gql`
+  //     query {
+  //       bikes(orderBy: order_ASC) {
+  //         title
+  //         slug
+  //         make
+  //         model
+  //         year
+  //         mileage
+  //         price
+  //         color
+  //         color_hex {
+  //           hex
+  //         }
+  //         header
+  //         quote
+  //         description {
+  //           markdown
+  //         }
+  //         image {
+  //           url
+  //         }
+  //       }
+  //     }
+  //   `
+  // })
+
   const {data} = await client.query({
     query: gql`
       query {
-        bikes(orderBy: order_ASC) {
+        bikes {
+          id
           title
           slug
-          make
-          model
-          year
-          mileage
-          price
-          color
-          color_hex {
-            hex
-          }
-          header
-          quote
-          description {
-            markdown
-          }
           image {
             url
           }
@@ -95,7 +109,7 @@ export async function getStaticProps() {
   })
 
   const {bikes} = data; 
-  // console.log(bikes);
+  console.log(bikes);
 
   return {
     props: {

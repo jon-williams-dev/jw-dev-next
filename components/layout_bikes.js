@@ -41,12 +41,16 @@ export default function Layout({ children, home }) {
   		  <main>{children}</main>
 
     		<footer className="footer">
-  				<div className="container">
-            <div className={styles.footer}>
-             <p className="is-size-5">Reach out: <strong><a href="mailto:jon.williams@hey.com">jon.williams@hey.com</a></strong></p>
-            </div>
-  				</div>
-  		  </footer>
+				<div className="container">
+					<div className={styles.footer}>
+						<div class="columns">
+							<div class="column is-size-5 has-text-right">
+								<strong><a href="mailto:jon.williams@hey.com">jon.williams@hey.com</a></strong>
+							</div>
+						</div>
+					</div>
+				</div>
+			</footer>
     	
     </div>
   )

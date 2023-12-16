@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import styles from './layout.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faLaptopCode, faInstagram } from '@fortawesome/free-solid-svg-icons'
+import { faLaptopCode } from '@fortawesome/free-solid-svg-icons'
 import Pixel from '../components/pixel'
 
 
@@ -40,25 +40,18 @@ export default function Layout({ children, home }) {
       	</Head>
 
       	<div className={styles.colorBar}></div>
-  		  <main>{children}</main>
-        
-    		<footer className="footer">
-  				<div className="container">
-            <div className={styles.footer}>
-  					 {/*<p className="is-size-5">Reach out: <FontAwesomeIcon icon={faEnvelope} className="" /> <strong><a href="mailto:jon.williams@hey.com">jon.williams@hey.com</a></strong></p>*/}
-             {/*<p className="is-size-5">Reach out: <strong><a href="mailto:jon.williams@hey.com">jon.williams@hey.com</a></strong></p>*/}
-              <div class="columns">
-                <div class="column is-size-5">
-                  Reach out: <strong><a href="mailto:jon.williams@hey.com">jon.williams@hey.com</a></strong>
-                </div>
-                <div class="column">
-                  <FontAwesomeIcon icon={faLaptopCode} className="fa-lg mr-5" />
-                  <FontAwesomeIcon icon={faInstagram} className="fa-lg mr-5" />
-                </div>
-              </div>
-            </div>
-  				</div>
-  		  </footer>
-    </div>
+  		  	<main>{children}</main>
+			<footer className="footer">
+				<div className="container">
+					<div className={styles.footer}>
+						<div class="columns">
+							<div class="column is-size-5 has-text-right">
+								<strong><a href="mailto:jon.williams@hey.com">jon.williams@hey.com</a></strong>
+							</div>
+						</div>
+					</div>
+				</div>
+			</footer>
+    	</div>
   )
 }

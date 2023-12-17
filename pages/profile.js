@@ -206,7 +206,7 @@ export default function Profile() {
                     <div className="block mb-6">
                       <h4>Previous Work</h4>
                       <p>Prior to my current position, I worked at Integral GmbH as a Software Engineer within a small yet advanced and experienced team developing complex software products and Internet Applications. I was mainly responsible for product based front end work (user interfaces and components) developed using the Adobe Flex/Flash (ActionScript 3, MXML) technology, later moving to Javascript Solutions (Angular) along with other supporting technologies (Java, JSP, GSP, JS, BlazeDS, MS/MySQL etc). Some of the products I worked on include: FusionReactor, FusionAnalytics and ShareDox.</p>
-                      <p>I worked at Intergral for approx. 7 years and have fond memories of the company and team. When I started I was less experienced than my peers and struggled at times, but in turn learned a great amount and gained a lot of valuable knowledge and experience from a team of great people which helped form me into the developer I am today.</p>
+                      <p>I worked at Intergral for approx. 8 years and have fond memories of the company and team. When I started I was less experienced than my peers and struggled at times, but in turn learned a great amount and gained a lot of valuable knowledge and experience from a team of great people which helped form me into the developer I am today.</p>
                       <p>Previous to Intergral, I worked at Hewlett Packard (HP) as a Data Retrieval Expert / Web / App Developer working on internal business process related projects and applications.</p>
                     </div>
 
@@ -215,6 +215,140 @@ export default function Profile() {
                       <p>I'm always interested in exciting side projects!</p>
                       <p>If you have an interesting project and/or would like to work with me, shoot me an <a href="mailto:jon.williams@hey.com">email</a>.</p>
                     </div>
+
+                    
+                    <div className="block mb-6">
+                      <h4>Professional Journey <small>(Work & Study)</small></h4>
+                      <div class="timeline">
+                        {/* today */}
+                        <header class="timeline-header">
+                          <span class="tag is-medium is-primary">Today</span>
+                        </header>
+                        <div class="timeline-item pb-0">
+                          <div class="timeline-marker is-icon">
+                            <i class="fa fa-flag"></i>
+                          </div>
+                          <div class="timeline-content">
+                            <p class="heading">2013 - Present</p>
+                            <p className='is-size-4 mb-2'>Max Planck Institute for Intelligent Systems <span className='is-size-6 mb-1'>(11 years)</span></p>
+                          </div>
+                        </div>
+                        <div class="timeline-item pb-0">
+                          <div class="timeline-marker">
+                            <i class="fa fa-flag"></i>
+                          </div>
+                          <div class="timeline-content">
+                            <p class="heading">2022 - Present</p>
+                            <p className='is-size-5 mb-1'>Web Lead <span className='is-size-6 mb-1'>(2 years)</span></p>
+                            <p className='is-size-6 is-italic'>Managing multiple projects and guiding a small web team to efficiently achieve project and development goals. In addition, I'm hands-on as a developer, actively contributing to several projects and applications simultaneously.</p>
+                          </div>
+                        </div>
+                        <div class="timeline-item">
+                          <div class="timeline-marker">
+                            <i class="fa fa-flag"></i>
+                          </div>
+                          <div class="timeline-content">
+                            <p class="heading">2013 - 2022</p>
+                            <p className='is-size-5 mb-1'>Full-stack Developer <span className='is-size-6 mb-1'>(9 years)</span></p>
+                            <p className='is-size-6 is-italic'>Developing internal and public website and application solutions, specializing in custom (in-house) CMS development. Seamlessly integrating front-end and back-end tech to meet organizational needs and user expectations.</p>
+                          </div>
+                        </div>
+                        {/* 2012 */}
+                        <header class="timeline-header">
+                          <span class="tag is-primary">2012</span>
+                        </header>
+                        <div class="timeline-item">
+                          <div class="timeline-marker is-icon">
+                            <i class="fa fa-flag"></i>
+                          </div>
+                          <div class="timeline-content">
+                            <p class="heading">2006 - 2012</p>
+                            <p className='is-size-4 mb-0'>Intergral Information Solutions <span className='is-size-6 mb-1'>(8 years)</span></p>
+                            <p className='is-size-5 mb-1'>Software Engineer</p>
+                            <p className='is-size-6 is-italic'>Software Engineer working within a small yet advanced and experienced team developing complex software products and Internet Applications.</p>
+                          </div>
+                        </div>
+                        {/* 2012 */}
+                        <header class="timeline-header">
+                          <span class="tag is-primary">2010</span>
+                        </header>
+                        <div class="timeline-item">
+                          <div class="timeline-marker is-icon">
+                            <i class="fa fa-flag"></i>
+                          </div>
+                          <div class="timeline-content">
+                            <p class="heading">2007 - 2010</p>
+                            <p className='is-size-4 mb-0'>Foxford Services <span className='is-size-6 mb-1'>(Freelance: ca 3 years)</span></p>
+                            <p className='is-size-5 mb-1'>Designer / Developer</p>
+                            <p className='is-size-6 is-italic'>Designining and implmenting diverse, small-scale websites tailored for local businesses.</p>
+                          </div>
+                        </div>
+                        {/* 2008 */}
+                        <header class="timeline-header">
+                          <span class="tag is-primary">2008</span>
+                        </header>
+                        <div class="timeline-item">
+                          <div class="timeline-marker is-icon">
+                            <i class="fa fa-flag"></i>
+                          </div>
+                          <div class="timeline-content">
+                            <p class="heading">2005 - 2008</p>
+                            <p className='is-size-4 mb-0'>Staffordshire University <span className='is-size-6 mb-1'>(3 years)</span></p>
+                            <p className='is-size-5 mb-1'>Master of Science - MSc, Computer Science</p>
+                            <p className='is-size-6'>Grade: 1st Class (Distinction)</p>
+                          </div>
+                        </div>
+                        {/* 2005 */}
+                        <header class="timeline-header">
+                          <span class="tag is-primary">2005</span>
+                        </header>
+                        <div class="timeline-item">
+                          <div class="timeline-marker is-icon">
+                            <i class="fa fa-flag"></i>
+                          </div>
+                          <div class="timeline-content">
+                            <p class="heading">2001 - 2005</p>
+                            <p className='is-size-4 mb-0'>Staffordshire University <span className='is-size-6 mb-1'>(4 years)</span></p>
+                            <p className='is-size-5 mb-1'>Bachelor of Science - BSc, Computer Science</p>
+                            <p className='is-size-6'>Grade: 1st Class</p>
+                          </div>
+                        </div>
+                        {/* 2004 */}
+                        <header class="timeline-header">
+                          <span class="tag is-primary">2004</span>
+                        </header>
+                        <div class="timeline-item">
+                          <div class="timeline-marker is-icon">
+                            <i class="fa fa-flag"></i>
+                          </div>
+                          <div class="timeline-content">
+                            <p class="heading">2003 - 2004</p>
+                            <p className='is-size-4 mb-0'>Hewlett Packard, Germany <span className='is-size-6 mb-1'>(Work experience: 1 year 4 months)</span></p>
+                            <p className='is-size-5 mb-1'>Data Retrieval Expert / Web / App Developer</p>
+                            <p className='is-size-6 is-italic'>Working on internal business process related projects and applications.</p>
+                          </div>
+                        </div>
+                        {/* 2003 */}
+                        <header class="timeline-header">
+                          <span class="tag is-primary">2003</span>
+                        </header>
+                        <div class="timeline-item">
+                          <div class="timeline-marker is-icon">
+                            <i class="fa fa-flag"></i>
+                          </div>
+                          <div class="timeline-content">
+                            <p class="heading">2000 - 2003</p>
+                            <p className='is-size-4 mb-0'>Promotional Marketing Solutions</p>
+                            <p className='is-size-5 mb-1'>Graphic Design / Web Developer</p>
+                          </div>
+                        </div>
+                        {/* 2000 */}
+                        <header class="timeline-header">
+                          <span class="tag is-primary">2000</span>
+                        </header>
+                      </div>
+                    </div>
+                    <p>For more information about my additional work experience and qualifications unrelated to development, please feel free to <a href="mailto:jon.williams@hey.com">contact me</a>.</p>
                   </div>
                 </div>
               </div>

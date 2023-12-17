@@ -218,6 +218,10 @@ export default function Profile() {
 
                     
                     <div className="block mb-6">
+
+                    {/* <div class="is-divider" data-content="Timeline"></div> */}
+                    <hr />
+
                       <h4>Professional Journey <small>(Work & Study)</small></h4>
                       <div class="timeline">
                         {/* today */}

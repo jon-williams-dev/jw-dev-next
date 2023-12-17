@@ -13,7 +13,6 @@ export default function Home() {
           <section className="hero is-fullheight">
             <div className="hero-body">
               <div className="container has-text-centered">
-        
                 <div className="content is-large">
                   <div className="block">
                     <a href="mailto:jon.williams@hey.com">
@@ -29,6 +28,14 @@ export default function Home() {
                 </div>
               </div>
             </div>
+
+            {/* <div className=''><a href='mailto:jon.williams@hey.com'>jon.williams@hey.com</a></div> */}
+            <div class="footer-fixed footer-trans footer-index">
+							<div class="is-size-5 has-text-right">
+								<strong><a href="mailto:jon.williams@hey.com">jon.williams@hey.com</a></strong>
+							</div>
+						</div>
+
           </section>
 
           {/*<footer className={gradientStyles.gradientFooter}>

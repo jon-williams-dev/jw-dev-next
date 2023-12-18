@@ -2,6 +2,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
 import styles from './layout.module.css'
+import ClarityMicrosoft from '../components/clarity_microsoft'
 
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 // import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
@@ -34,6 +35,7 @@ export default function Layout({ children, home }) {
         	<meta name="twitter:card" content="summary_large_image" />
 
           <Pixel name='FACEBOOK_PIXEL_1' />
+          <ClarityMicrosoft />
       	</Head>
 
       	<div className={styles.colorBar}></div>

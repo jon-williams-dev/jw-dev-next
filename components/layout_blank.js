@@ -2,6 +2,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from './layout.module.css'
 import Pixel from '../components/pixel'
+import ClarityMicrosoft from '../components/clarity_microsoft'
 
 const name = 'Jon Williams'
 export const siteTitle = 'Jon Williams'
@@ -25,6 +26,10 @@ export default function Layout({ children, home }) {
       	<meta name="twitter:card" content="summary_large_image" />
 
         <Pixel name='FACEBOOK_PIXEL_1' />
+
+        <ClarityMicrosoft />
+
+
       </Head>
 
   		<main>{children}</main>

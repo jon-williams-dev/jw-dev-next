@@ -5,6 +5,7 @@ import styles from './layout.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLaptopCode } from '@fortawesome/free-solid-svg-icons'
 import Pixel from '../components/pixel'
+import ClarityMicrosoft from '../components/clarity_microsoft'
 
 
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'

@@ -38,6 +38,9 @@ export default function Layout({ children, home }) {
         	<meta name="og:title" content={siteTitle} />
         	<meta name="twitter:card" content="summary_large_image" />
 
+          <Pixel name='FACEBOOK_PIXEL_1' />
+          <ClarityMicrosoft />
+
       	</Head>
 
       	<div className={styles.colorBar}></div>

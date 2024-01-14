@@ -54,6 +54,7 @@ export default function CarPage ({car}) {
 						                    />
 
 
+
                     					<h3>{car.header}</h3>
                     					{car.quote ? <blockquote className="has-text-grey"><i>{car.quote}</i></blockquote> : ''}
 

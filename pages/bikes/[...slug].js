@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import Carousel, { Modal, ModalGateway } from "react-images";
+// import Carousel, { Modal, ModalGateway } from "react-images";
 
 import {gql} from '@apollo/client'
 import client from '../../apolloClient'
@@ -12,112 +12,120 @@ import Date from '../../components/date'
 
 import indexStyles from '../../styles/index.module.scss'
 import { sha256, sha224 } from 'js-sha256';
-import Gallery from "react-photo-gallery";
+// import Gallery from "react-photo-gallery";
+
+import PhotoAlbum from "react-photo-album";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
+
+// import slides from "@/data/slides";
 
 
 
 export default function BikePage ({bike}) {
 
-	const [currentImage, setCurrentImage] = useState(0);
-  	const [viewerIsOpen, setViewerIsOpen] = useState(false);
+	// const [currentImage, setCurrentImage] = useState(0);
+  // const [viewerIsOpen, setViewerIsOpen] = useState(false);
 
-  	const openLightbox = useCallback((event, { photo, index }) => {
-    	setCurrentImage(index);
-    	setViewerIsOpen(true);
-  	}, []);
+	// const openLightbox = useCallback((event, { photo, index }) => {
+  // 	setCurrentImage(index);
+  // 	setViewerIsOpen(true);
+	// }, []);
 
-  	const closeLightbox = () => {
-    	setCurrentImage(0);
-    	setViewerIsOpen(false);
-  	};
+	// const closeLightbox = () => {
+  // 	setCurrentImage(0);
+  // 	setViewerIsOpen(false);
+	// };
+
+	const [index, setIndex] = React.useState(-1);
+	// const handleClick = (index: number, item: CustomImage) => setIndex(index);
 
 	return (
 		<Layout bikes>
-      		<Head>
-        		<title>Jon Williams | {bike.title}</title>
-      		</Head>
-      		<NavBikes />
-      		<section className="hero">
-        		<div className="hero-body pb-0">
-          			<div className="container">
-            			<div className="content is-medium">
-            				<div class="columns">
-              					<div class="column is-three-fifths is-offset-one-fifth">
-                					<div className="block">
-                  						<h1>{bike.title}</h1>
-						                   <Image
-						                      priority
-						                      src={bike.image.src}
-						                      height={800}
-						                      width={1067}
-						                      alt={bike.title}
-						                    />
+  		<Head>
+    		<title>Jon Williams | {bike.title}</title>
+  		</Head>
+  		<NavBikes />
+  		<section className="hero">
+    		<div className="hero-body pb-0">
+      		<div className="container">
+        		<div className="content is-medium">
+        			<div class="columns">
+          			<div class="column is-three-fifths is-offset-one-fifth">
+            			<div className="block">
+              			<h1>{bike.title}</h1>
+										<Image
+										  priority
+										  src={bike.image.src}
+										  height={800}
+										  width={1067}
+										  alt={bike.title}
+										/>
+                		<h3>{bike.header}</h3>
+                		{bike.quote ? <blockquote className="has-text-grey"><i>{bike.quote}</i></blockquote> : ''}
 
-                    					<h3>{bike.header}</h3>
-                    					{bike.quote ? <blockquote className="has-text-grey"><i>{bike.quote}</i></blockquote> : ''}
+          					<h4>Specs:</h4>
+                    <table class="table">
+                      <tbody>
+                        <tr>
+                          <td>Make</td>
+                          <td>{bike.make}</td>
+                        </tr>
+                         <tr>
+                          <td>Model</td>
+                          <td>{bike.model}</td>
+                        </tr>
+                         <tr>
+                          <td>Year</td>
+                          <td>{bike.year}</td>
+                        </tr>
+                        <tr>
+                          <td>Kilometers</td>
+                          <td>{bike.km} KM</td>
+                        </tr>
+                        <tr>
+                          <td>Colour</td>
+                          <td>{bike.color}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                					
+                		<h4>Description:</h4>
+                		<div dangerouslySetInnerHTML={{ __html: bike.description.html }}></div>
 
-                    					<h4>Specs:</h4>
-					                    <table class="table">
-					                      <tbody>
-					                        <tr>
-					                          <td>Make</td>
-					                          <td>{bike.make}</td>
-					                        </tr>
-					                         <tr>
-					                          <td>Model</td>
-					                          <td>{bike.model}</td>
-					                        </tr>
-					                         <tr>
-					                          <td>Year</td>
-					                          <td>{bike.year}</td>
-					                        </tr>
-					                        <tr>
-					                          <td>Kilometers</td>
-					                          <td>{bike.km} KM</td>
-					                        </tr>
-					                        <tr>
-					                          <td>Colour</td>
-					                          <td>{bike.color}</td>
-					                        </tr>
-					                      </tbody>
-					                    </table>
-                    					
-                    					<h4>Description:</h4>
-                    					<p><div dangerouslySetInnerHTML={{ __html: bike.description.html }} /></p>
-                					</div>
-              					</div>
-            				</div>
             			</div>
           			</div>
-        		</div>    
-      		</section>
+        			</div>
+        		</div>
+      		</div>
+    		</div>    
+  		</section>
 
-      		<section className="hero">
-        		<div className="hero-body">
-          			<div className="container">
-            			<div className="content">
-               				{/*<Gallery photos={bike.gallery} onClick={openLightbox} columns={4} direction={"column"} />*/}
-               				<Gallery photos={bike.gallery} onClick={openLightbox} direction={"row"} targetRowHeight={240} />
-               				
+  		<section className="hero">
+    		<div className="hero-body">
+      			<div className="container">
+        			<div className="content">
+        				{/*<Gallery photos={bike.gallery} onClick={openLightbox} direction={"row"} targetRowHeight={240} />*/}
 
-                			<ModalGateway>
-                  				{viewerIsOpen ? (
-                    				<Modal onClose={closeLightbox}>
-                      					<Carousel
-                        					currentIndex={currentImage}
-                        					views={bike.gallery.map(x => ({
-                          						...x,
-                          						srcset: x.url
-                        					}))}
-                      					/>
-                    				</Modal>
-                  				) : null}
-                			</ModalGateway>
-            			</div>
-          			</div>
-        		</div>            
-      		</section>
-    	</Layout>
+        				<PhotoAlbum
+        					layout="rows"
+        					photos={bike.gallery}
+        					onClick={({ index: current }) => setIndex(current)}
+      					/>
+
+      					 <Lightbox
+				          open={index >= 0}
+				          close={() => setIndex(-1)}
+				          slides={bike.gallery}
+				          // plugins={[Captions, Fullscreen, Slideshow, Thumbnails, Video, Zoom]}
+				          plugins={[Fullscreen, Slideshow, Zoom]}
+				        />
+
+        			</div>
+      			</div>
+    		</div>            
+  		</section>
+		</Layout>
 	)
 }
 

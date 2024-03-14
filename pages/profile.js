@@ -5,17 +5,27 @@ import Nav from '../components/nav'
 
 import Image from 'next/image'
 import React, { useState, useCallback } from "react";
-import Carousel, { Modal, ModalGateway } from "react-images";
-import Gallery from "react-photo-gallery";
+// import Carousel, { Modal, ModalGateway } from "react-images";
+// import Gallery from "react-photo-gallery";
 
 // import style from '../styles/profile.module.scss'
 import profileStyles from '../styles/profile.module.scss'
 import TypeAnimation from 'react-type-animation';
 
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
+
+import Captions from "yet-another-react-lightbox/plugins/captions";
+import Fullscreen from "yet-another-react-lightbox/plugins/fullscreen";
+import Slideshow from "yet-another-react-lightbox/plugins/slideshow";
+import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
+import Video from "yet-another-react-lightbox/plugins/video";
+import Zoom from "yet-another-react-lightbox/plugins/zoom";
+import "yet-another-react-lightbox/plugins/captions.css";
+import "yet-another-react-lightbox/plugins/thumbnails.css";
 
 // import '../styles.css'
 // import style from 'style.module.css'
-
 
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 // import { faTelescope, faLaptopCode, faBaby, faShuttleVan, faTools, faTree, faRunning, faMotorcycle, faExternalLink } from '@fortawesome/pro-duotone-svg-icons'
@@ -24,9 +34,6 @@ import { faTelescope, faLaptopCode, faBaby, faShuttleVan, faTools, faTree, faRun
 
 
 export default function Profile() {
-
-  const [currentImage, setCurrentImage] = useState(0);
-  const [viewerIsOpen, setViewerIsOpen] = useState(false);
 
   const pageImages = [
     { src: "/images/cb750.jpg", height: 518, width: 900 },
@@ -38,23 +45,8 @@ export default function Profile() {
     { src: "/images/sprinter2.jpeg", height: 900, width: 900 }
   ]
 
-  // const cb750_img = [{ src: "/images/cb750.jpg", height: 532, width: 924 }]
-  // const saab900_img = [{ src: "/images/saab900.jpg", height: 800, width: 1022 }]
-
-  const openLightboxCustom = useCallback(
-    (index) => (event) => {
-      setCurrentImage(index);
-      setViewerIsOpen(true);
-    },
-    []
-  );
-
-  const closeLightbox = () => {
-    setCurrentImage(0);
-    setViewerIsOpen(false);
-  };
-
-
+  const [advancedExampleOpen, setAdvancedExampleOpen] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   return (
     <Layout profile>
@@ -377,27 +369,46 @@ export default function Profile() {
                     <p>I love running. Im not the fastest or fittest, but have a few marathons under my belt of which I am quite proud. I love to run in the local forest , I find it clears my head and helps to keep me fit.</p>
                     <p>From a very young age I have had a fascination for motorcycles. I remember fixing up old broken motor bikes to the best of my abilities using whatever tools I could find in my parents garage. I was then able to ride them over local fields being too young to hold a license.</p>
                     <p>As I get older my passion for motorcycles has not diminished. I love learning about, riding and working on them. In recent years I have become particularly interested in  <Link href={`/bikes/`}>90s Sports Bikes</Link>, now modern classics (the bikes that I dreamt about when I was a lad) although I'm interested in anything on (two) wheels and always tend to have a few bikes in the garage. My current project being a 
-                      <a onClick={openLightboxCustom(0)}> Honda CB750 </a> cafe racer build. I of course, also like older cars with my daily driver being a 30 Year old <a onClick={openLightboxCustom(1)}> Saab 900</a>.</p>
-                     
-                    <ModalGateway>
-                      {viewerIsOpen ? (
-                        <Modal onClose={closeLightbox} allowFullscreen={false}>
-                          <Carousel
-                            currentIndex={currentImage}
-                            trackProps={{ viewsToMove: 1 }}
-                            hasNextView={false}
-                            views={pageImages.map(x => ({
-                              ...x,
-                              srcset: x.srcSet,
-                              caption: x.title
-                            }))}
-                          />
-                        </Modal>
-                      ) : null}
-                    </ModalGateway>
+                      
 
-                    <p>At the end of 2020 we bought a house from the 50s which has become a large and ongoing <a onClick={openLightboxCustom(2)}>Renovation Project</a>. Although a lot of work, it's enjoyable work which we are doing in our own time and without (too much) stress. The advantage (and hope) being that we will one day have a nice family home which we can enjoy for many years, and the disadvantage (realism) is having to live on a constant building site.</p>
-                    <p>I love travelling, having visited many countries and continents. Since becoming a father, a camper van seemed like a good and fun way to travel. I did some research and bought an empty "builders-van" which I have since converted (still converting) into a "<a onClick={openLightboxCustom(4)}>Camper-Van-Lite</a>". As a family, we have used the van for many successful and enjoyable trips in and around Europe and plan many more in the future.</p>
+                     <a href="#" onClick={(e) => {
+                        e.preventDefault(); // Prevent the default anchor link behavior
+                        setCurrentIndex(0);
+                        setAdvancedExampleOpen(true); // Open the Lightbox
+                      }}> Honda CB750 </a>
+
+                      cafe racer build. I of course, also like older cars with my daily driver being a 30 Year old 
+
+                       <a href="#" onClick={(e) => {
+                        e.preventDefault(); // Prevent the default anchor link behavior
+                        setCurrentIndex(1);
+                        setAdvancedExampleOpen(true); // Open the Lightbox
+                      }}> Saab 900</a>.
+
+
+                    </p>
+               
+                  
+                    <p>At the end of 2020 we bought a house from the 50s which has become a large and ongoing 
+
+                    
+                      <a href="#" onClick={(e) => {
+                        e.preventDefault(); // Prevent the default anchor link behavior
+                        setCurrentIndex(2);
+                        setAdvancedExampleOpen(true); // Open the Lightbox
+                      }}> Renovation Project</a>.
+
+                    Although a lot of work, it's enjoyable work which we are doing in our own time and without (too much) stress. The advantage (and hope) being that we will one day have a nice family home which we can enjoy for many years, and the disadvantage (realism) is having to live on a constant building site.</p>
+                    <p>I love travelling, having visited many countries and continents. Since becoming a father, a camper van seemed like a good and fun way to travel. I did some research and bought an empty "builders-van" which I have since converted (still converting) into a 
+
+                    "<a href="#" onClick={(e) => {
+                        e.preventDefault(); // Prevent the default anchor link behavior
+                        setCurrentIndex(3);
+                        setAdvancedExampleOpen(true); // Open the Lightbox
+                      }}>Camper-Van-Lite</a>".
+
+
+                    As a family, we have used the van for many successful and enjoyable trips in and around Europe and plan many more in the future.</p>
                     <p>To unwind, I enjoy family adventures, catching up with friends and having a beer, and simply relaxing with music or a good film.</p>
                   </div>             
                 </div>
@@ -406,6 +417,26 @@ export default function Profile() {
           </div>
         </section>
       </div>        
+
+
+      {/*  <Lightbox
+          open={advancedExampleOpen}
+          close={() => setAdvancedExampleOpen(false)}
+          slides={pageImages}
+          // plugins={[Captions, Fullscreen, Slideshow, Thumbnails, Video, Zoom]}
+          plugins={[Fullscreen, Slideshow, Zoom]}
+        />*/}
+
+
+      {advancedExampleOpen && (
+        <Lightbox
+          open={advancedExampleOpen}
+          close={() => setAdvancedExampleOpen(false)}
+          slides={pageImages}
+          index={currentIndex} // Use the current index state to open a specific slide
+          plugins={[Fullscreen, Slideshow, Zoom]}
+        />
+      )}
     </Layout>
   )
 }

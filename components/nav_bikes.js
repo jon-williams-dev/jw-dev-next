@@ -10,9 +10,10 @@ export default function NavBikes({ children, home }) {
                   priority
                   // src="/images/jwBikes.png"
                   src="/images/logo.png"
-                  height={160}
-                  // width={524}
-                  width={400}
+                  // height={160}
+                  height={80}
+                  // width={400}
+                  width={200}
                   alt="JW Bikes"
             />
           </a>

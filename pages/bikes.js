@@ -63,6 +63,7 @@ export default function Bikes({bikes}) {
   )
 }
 
+
 export async function getStaticProps() {
 
   const {data} = await client.query({

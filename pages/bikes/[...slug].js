@@ -79,31 +79,49 @@ export default function BikePage ({bike}) {
           					<h4>Specs:</h4>
                     <table class="table">
                       <tbody>
-                        <tr>
-                          <td>Make</td>
-                          <td>{bike.make}</td>
-                        </tr>
-                         <tr>
-                          <td>Model</td>
-                          <td>{bike.model}</td>
-                        </tr>
-                         <tr>
-                          <td>Year</td>
-                          <td>{bike.year}</td>
-                        </tr>
-                        <tr>
-                          <td>Kilometers</td>
-                          <td>{bike.km} KM</td>
-                        </tr>
-                        <tr>
-                          <td>Colour</td>
-                          <td>{bike.color}</td>
-                        </tr>
+                        {bike.make && (
+													  <tr>
+													    <td>Make</td>
+													    <td>{bike.make}</td>
+													  </tr>
+													)}
+                         {bike.model && (
+													  <tr>
+													    <td>Model</td>
+													    <td>{bike.model}</td>
+													  </tr>
+													)}
+                          {bike.year && (
+													  <tr>
+													    <td>Year</td>
+													    <td>{bike.year}</td>
+													  </tr>
+													)}
+													 {bike.km && (
+													  <tr>
+													    <td>Kilometers</td>
+													    <td>{bike.km} KM</td>
+													  </tr>
+													)}
+													 {bike.color && (
+													  <tr>
+													    <td>Colour</td>
+													    <td>{bike.color}</td>
+													  </tr>
+													)}
                       </tbody>
                     </table>
                 					
-                		<h4>Description:</h4>
-                		<div dangerouslySetInnerHTML={{ __html: bike.description.html }}></div>
+
+
+
+                		{bike.description && (
+										  <h4>Description:</h4>
+										)}
+                		{bike.description && (
+										  <div dangerouslySetInnerHTML={{ __html: bike.description.html }}></div>
+										)}
+
 
             			</div>
           			</div>

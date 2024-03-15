@@ -65,34 +65,6 @@ export default function Bikes({bikes}) {
 
 export async function getStaticProps() {
 
-  // const {data} = await client.query({
-  //   query: gql`
-  //     query {
-  //       bikes(orderBy: order_ASC) {
-  //         title
-  //         slug
-  //         make
-  //         model
-  //         year
-  //         mileage
-  //         price
-  //         color
-  //         color_hex {
-  //           hex
-  //         }
-  //         header
-  //         quote
-  //         description {
-  //           markdown
-  //         }
-  //         image {
-  //           url
-  //         }
-  //       }
-  //     }
-  //   `
-  // })
-
   const {data} = await client.query({
     query: gql`
       query {

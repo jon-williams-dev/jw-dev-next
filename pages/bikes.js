@@ -31,7 +31,7 @@ export default function Bikes({bikes}) {
                   If you're considering parting ways with something interesting, I'd love to <a href="mailto:jon.williams@hey.com">hear from you</a>.
                  </p>
                </div>
-               <div class="columns">
+               <div class="columns is-multiline is-mobile">
                 {bikes.map((bike, i) => (
                    <div class="column is-one-quarter cursor-hand">
                      <Link href={`/bikes/${bike.slug}`}>

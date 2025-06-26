@@ -1,0 +1,26 @@
+@font-face {
+    font-family: "Bebas Neue";
+    src: url("/fonts/BebasNeue/BebasNeue-Regular.ttf") format("truetype");
+    font-style: normal;
+    font-display: swap;
+}
+
+.ht {
+    font-family: "Bebas Neue", sans-serif;
+    font-weight: normal;
+}
+
+.navbar-transport {
+    top: 24px !important;
+}
+
+.equal-width-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.equal-width-table th,
+.equal-width-table td {
+    vertical-align: middle;
+    text-align: center;
+}

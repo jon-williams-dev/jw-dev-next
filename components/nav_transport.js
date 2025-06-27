@@ -37,11 +37,12 @@ export default function NavTransport({ children, home }) {
 
                 <div id="navbarBasicExample" className={`navbar-menu ${isActive ? 'is-active' : ''}`}>
                     <div className="navbar-start">
-                        <a className="navbar-item" href="#services">Services</a>
-                        <a className="navbar-item" href="#how-it-works">How It Works</a>
-                        <a className="navbar-item" href="#prices">Prices</a>
-                        <a className="navbar-item" href="#about">About</a>
-                        <a className="navbar-item" href="#faq">FAQ</a>
+                        <a className="navbar-item" href="#services" onClick={() => setIsActive(false)}>Services</a>
+                        <a className="navbar-item" href="#how-it-works" onClick={() => setIsActive(false)}>How It Works</a>
+                        <a className="navbar-item" href="#prices" onClick={() => setIsActive(false)}>Prices</a>
+                        <a className="navbar-item" href="#about" onClick={() => setIsActive(false)}>About</a>
+                        <a className="navbar-item" href="#faq" onClick={() => setIsActive(false)}>FAQ</a>
+
                     </div>
 
                     <div className="navbar-end">

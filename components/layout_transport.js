@@ -42,13 +42,10 @@ export default function Layout({ children, home }) {
 
             <div className={styles.colorBar}></div>
             <main>{children}</main>
-            <footer className="footer">
+            <footer className={transportStyles.transportFooter}>
                 <div className="container">
-                    <div className={styles.footer}>
-                        <div class="columns">
-                            <div class="column is-size-5 has-text-right">
-                                <strong><a href="mailto:jon.williams@hey.com">jon.williams@hey.com</a></strong>
-                            </div>
+                    <div class="columns">
+                        <div class="column is-size-5 has-text-right">
                         </div>
                     </div>
                 </div>

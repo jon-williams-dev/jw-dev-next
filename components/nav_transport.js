@@ -1,7 +1,10 @@
+import { useState } from 'react'
 import Image from 'next/image'
 import transportStyles from '../styles/transport.module.scss'
 
 export default function NavTransport({ children, home }) {
+    const [isActive, setIsActive] = useState(false)
+
     return (
         <>
             <nav className={`navbar is-black is-fixed-top ${transportStyles['navbar-transport']}`} role="navigation" aria-label="main navigation">
@@ -10,18 +13,21 @@ export default function NavTransport({ children, home }) {
                         <Image
                             priority
                             src="/images/transport_nav_logo.png"
-                            height={40}
-                            width={407}
                             alt="JW Motorcycle Transport"
+                            width={407}
+                            height={40}
+                            className={transportStyles['nav-logo']}
                         />
+
                     </a>
 
                     <a
                         role="button"
-                        className="navbar-burger"
+                        className={`navbar-burger ${isActive ? 'is-active' : ''}`}
                         aria-label="menu"
-                        aria-expanded="false"
+                        aria-expanded={isActive ? 'true' : 'false'}
                         data-target="navbarBasicExample"
+                        onClick={() => setIsActive(!isActive)}
                     >
                         <span aria-hidden="true"></span>
                         <span aria-hidden="true"></span>
@@ -29,23 +35,20 @@ export default function NavTransport({ children, home }) {
                     </a>
                 </div>
 
-                <div id="navbarBasicExample" className="navbar-menu">
+                <div id="navbarBasicExample" className={`navbar-menu ${isActive ? 'is-active' : ''}`}>
                     <div className="navbar-start">
-                        <a className="navbar-item">Services</a>
-                        <a className="navbar-item">How It Works</a>
-                        <a className="navbar-item">Prices</a>
-                        <a className="navbar-item">About</a>
-                        <a className="navbar-item">FAQ</a>
-                        <a className="navbar-item">Reviews</a>
+                        <a className="navbar-item" href="#services">Services</a>
+                        <a className="navbar-item" href="#how-it-works">How It Works</a>
+                        <a className="navbar-item" href="#prices">Prices</a>
+                        <a className="navbar-item" href="#about">About</a>
+                        <a className="navbar-item" href="#faq">FAQ</a>
                     </div>
 
                     <div className="navbar-end">
                         <div className="navbar-item">
                             <div className="buttons">
-                                <a className="button is-dark">
-                                    Contact
-                                </a>
-                                <a className="button is-dark">Get a Quote</a>
+                                <a className="button is-dark" href="#">Contact</a>
+                                <a className="button is-dark" href="#">Get a Quote</a>
                             </div>
                         </div>
                     </div>
@@ -54,6 +57,3 @@ export default function NavTransport({ children, home }) {
         </>
     );
 }
-
-
-

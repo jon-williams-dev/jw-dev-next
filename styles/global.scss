@@ -33,6 +33,39 @@ $table-background-color: whitesmoke;
     font-display: swap;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
+
+
+// Force white text inside the dark navbar for mobile
+.navbar.is-black .navbar-menu {
+    .navbar-item {
+        color: #fff !important;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff !important;
+        }
+    }
+}
+
+
+
+.navbar-menu {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 0.5rem;
+}
+
+.navbar-brand {
+    flex-shrink: 1;
+    min-width: 0; // allows content to shrink
+    overflow: hidden;
+}
+
+
+
 .navbar-item img {
     max-height: none !important;
 }

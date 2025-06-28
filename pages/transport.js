@@ -93,7 +93,7 @@ export default function Bikes({ bikes }) {
                                             <i className="fa fa-flag"></i>
                                         </div>
                                         <div className="timeline-content">
-                                            <p className="has-text-weight-bold mb-1">You Get in Touch</p>
+                                            <p className="has-text-weight-bold mb-1">Request a Quote</p>
                                             <p>Send us your transport details — pickup and drop-off locations, bike type, preferred dates, and anything special I should know.</p>
                                         </div>
                                     </div>
@@ -227,7 +227,10 @@ export default function Bikes({ bikes }) {
 
                                 <div className='has-text-centered'>
                                     <p className="mb-2"><small className='has-text-weight-bold'>Prices above 600 km or international are based on actual route and will be quoted individually.</small></p>
-                                    <p className="mt-0"><small className="has-text-weight-bold">For longer distances, I try to combine bookings where possible to keep pricing fair and trips efficient — if you're flexible with timing, this can often reduce your quote.</small></p>
+                                    <p className="mt-0"><small className="has-text-weight-bold">For longer distances, I try to combine bookings where possible to keep pricing fair, reduce emissions, and make trips more efficient — if you're flexible with timing, this can often lower your quote and help minimise environmental impact.</small></p>
+
+
+
                                     <p>All transports include secure loading with soft straps, enclosed van transport, and basic insurance. For bikes that don’t run or require special handling, or if you’re transporting accessories, I’m happy to discuss options.</p>
                                     <a className="button is-dark is-medium" href='#quote'>Request a Quote</a>
                                 </div>

@@ -24,7 +24,7 @@ export default async function handler(req, res) {
     const internalMail = {
         from: process.env.EMAIL_USER,
         to: process.env.EMAIL_USER, // send to yourself
-        subject: `🛵 New Quote Request: (${bikeInfo})`,
+        subject: `New Quote Request: (${bikeInfo})`,
         text: `You received a new transport request:
 
 Name: ${name}

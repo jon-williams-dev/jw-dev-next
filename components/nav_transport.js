@@ -42,7 +42,7 @@ export default function NavTransport({ children, home }) {
                         <a className="navbar-item" href="#prices" onClick={() => setIsActive(false)}>Prices</a>
                         <a className="navbar-item" href="#about" onClick={() => setIsActive(false)}>About</a>
                         <a className="navbar-item" href="#faq" onClick={() => setIsActive(false)}>FAQ</a>
-
+                        <a className="navbar-item" href="#quote" onClick={() => setIsActive(false)}>Quote</a>
                     </div>
 
                     <div className="navbar-end">

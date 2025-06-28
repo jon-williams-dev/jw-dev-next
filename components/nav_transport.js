@@ -49,7 +49,7 @@ export default function NavTransport({ children, home }) {
                         <div className="navbar-item">
                             <div className="buttons">
                                 <a className="button is-dark" href="#">Contact</a>
-                                <a className="button is-dark" href="#">Get a Quote</a>
+                                <a className="button is-dark" href="#quote">Request a Quote</a>
                             </div>
                         </div>
                     </div>

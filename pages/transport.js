@@ -4,6 +4,7 @@ import client from '../apolloClient'
 import Layout, { siteTitle } from '../components/layout_transport'
 import NavTransport from '../components/nav_transport'
 import transportStyles from '../styles/transport.module.scss'
+import QuoteForm from '../components/transport_quote_form'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -37,16 +38,14 @@ export default function Bikes({ bikes }) {
                     <div className="container">
                         <div className="content is-medium has-text-centered">
                             <h1 className={`${transportStyles['ht']}`}><span className='has-text-grey'>JW</span> Motorcycle Transport You Can Trust</h1>
-                            <p>Looking for a safe, reliable way to transport your motorcycle within Germany or across Europe? You've come to the right place. We offer professional motorbike transport services for private and business customers, whether you're buying or selling a bike, moving house, or heading to an event. Your motorcycle is handled with care, loaded professionally, and delivered door-to-door in a fully enclosed van.</p>
-                            <p>We understand how much your bike means to you — that’s why we treat every vehicle like it’s our own. No matter where you are in Germany, we’ll get your motorcycle to its destination safely, securely, and on time.</p>
+                            <p>Looking for a safe, reliable way to transport your motorcycle within Germany or across Europe? You've come to the right place. I offer professional motorbike transport services for private and business customers, whether you're buying or selling a bike, moving house, or heading to an event. Your motorcycle is handled with care, loaded professionally, and delivered door-to-door in a fully enclosed van.</p>
+                            <p>I understand how much your bike means to you — that’s why I treat every vehicle like it’s my own. No matter where you are in Germany, i’ll get your motorcycle to its destination safely, securely, and on time.</p>
                             <p>
                                 Based near Tübingen, operating throughout Germany and neighboring countries.<br />
                                 Request a free quote today – fast replies, no obligation.
                             </p>
 
-                            <a className="button is-dark is-medium">
-                                Get a Quote
-                            </a>
+                            <a className="button is-dark is-medium" href="#quote">Request a Quote</a>
 
                         </div>
                     </div>
@@ -59,16 +58,16 @@ export default function Bikes({ bikes }) {
                     <div className="container">
                         <div className="content is-medium">
                             <div className="block mb-6 mt-6">
-                                <h2 className={`${transportStyles['ht']}`}>Services <small className='has-text-grey'>(What We Offer)</small></h2>
-                                <p>We specialize in <strong>motorbike transportation services</strong> across Germany and neighboring regions. Our van is fully equipped for motorcycle transport, including ramps, wheel chocks, and soft straps to ensure a smooth and secure journey for your bike.</p>
-                                <p>Whether you’re a private rider, a workshop, or a dealer, we’ve got you covered:</p>
+                                <h2 className={`${transportStyles['ht']}`}>Services <small className='has-text-grey'>(What I Offer)</small></h2>
+                                <p>I specialize in <strong>motorbike transportation services</strong> across Germany and neighboring regions. My van is fully equipped for motorcycle transport, including ramps, wheel chocks, and soft straps to ensure a smooth and secure journey for your bike.</p>
+                                <p>Whether you’re a private rider, a workshop, or a dealer, i’ve got you covered:</p>
                                 <strong>Our core services include:</strong>
                                 <ul>
                                     <li><strong>Private Motorcycle Transport</strong> – Bought or sold a bike? Let us handle pickup and delivery.</li>
-                                    <li><strong>Event & Race Transport</strong> – Need your motorcycle at a track day, rally, or show? We’ll get it there, ready to ride.</li>
-                                    <li><strong>Relocation Assistance</strong> – Moving house? We’ll move your bike with care.</li>
-                                    <li><strong>Workshop Transfers</strong> – Bike needs work? We’ll transport it to your trusted mechanic or garage.</li>
-                                    <li><strong>Anything Related to Moving Motorbikes</strong> – Need something else? If it involves a motorcycle, we’re happy to help. Just ask.</li>
+                                    <li><strong>Event & Race Transport</strong> – Need your motorcycle at a track day, rally, or show? I’ll get it there, ready to ride.</li>
+                                    <li><strong>Relocation Assistance</strong> – Moving house? I’ll move your bike with care.</li>
+                                    <li><strong>Workshop Transfers</strong> – Bike needs work? I’ll transport it to your trusted mechanic or garage.</li>
+                                    <li><strong>Anything Related to Moving Motorbikes</strong> – Need something else? If it involves a motorcycle, im happy to help. Just ask.</li>
                                 </ul>
                             </div>
                         </div>
@@ -95,7 +94,7 @@ export default function Bikes({ bikes }) {
                                         </div>
                                         <div className="timeline-content">
                                             <p className="has-text-weight-bold mb-1">You Get in Touch</p>
-                                            <p>Send us your transport details — pickup and drop-off locations, bike type, preferred dates, and anything special we should know.</p>
+                                            <p>Send us your transport details — pickup and drop-off locations, bike type, preferred dates, and anything special I should know.</p>
                                         </div>
                                     </div>
 
@@ -104,7 +103,7 @@ export default function Bikes({ bikes }) {
                                             <i className="fa fa-flag"></i>
                                         </div>
                                         <div className="timeline-content">
-                                            <p className="has-text-weight-bold mb-1">We Confirm the Plan</p>
+                                            <p className="has-text-weight-bold mb-1">I Confirm the Plan</p>
                                             <p>You’ll receive a clear quote and we’ll agree on a date and time. Once confirmed, we’re locked in.</p>
                                         </div>
                                     </div>
@@ -123,8 +122,8 @@ export default function Bikes({ bikes }) {
                                             <i className="fa fa-flag"></i>
                                         </div>
                                         <div className="timeline-content">
-                                            <p className="has-text-weight-bold mb-1">We Collect Your Bike</p>
-                                            <p>We arrive on time, load your motorcycle using a ramp and soft straps, and secure it carefully for transport in our van.</p>
+                                            <p className="has-text-weight-bold mb-1">I Collect Your Bike</p>
+                                            <p>I arrive on time, load your motorcycle using a ramp and soft straps, and secure it carefully for transport in my van.</p>
                                         </div>
                                     </div>
 
@@ -142,8 +141,8 @@ export default function Bikes({ bikes }) {
                                             <i className="fa fa-flag"></i>
                                         </div>
                                         <div className="timeline-content">
-                                            <p className="has-text-weight-bold mb-1">We Deliver Your Bike</p>
-                                            <p>At the other end, we unload your bike and hand it over safely. We’ll keep in touch during the journey and confirm delivery.</p>
+                                            <p className="has-text-weight-bold mb-1">I Deliver Your Bike</p>
+                                            <p>At the other end, I unload your bike and hand it over safely. I’ll keep in touch during the journey and confirm delivery.</p>
                                         </div>
                                     </div>
 
@@ -165,10 +164,10 @@ export default function Bikes({ bikes }) {
                         <div className="content is-medium">
                             <div className="block mb-6 mt-6">
                                 <h2 className={`${transportStyles['ht']}`}>Prices <small className='has-text-grey'>(Fair & Transparent Motorcycle Transport Rates)</small></h2>
-                                <p>We believe in clear and honest pricing. The cost of transporting your motorcycle depends on the distance, vehicle type, and any special requirements — but we always aim to offer excellent value.</p>
+                                <p>I believe in clear and honest pricing. The cost of transporting your motorcycle depends on the distance, vehicle type, and any special requirements — but I always aim to offer excellent value.</p>
                                 <p><strong>Example Pricing:</strong></p>
                                 <p>Our pricing depends on both distance and motorcycle size. The table below gives a general idea, but final costs may vary depending on your bike's condition (e.g. non-running), added accessories, or specific timing needs. Pricing is based on flexible scheduling and shared route planning — if you need fixed-time or express delivery, just let me know and I’ll provide a custom quote.</p>
-                                <p>Motorcycle size categories are also a guide; classification is based on make, model, and weight, which we’ll confirm when you request a quote.</p>
+                                <p>Motorcycle size categories are also a guide; classification is based on make, model, and weight, which i’ll confirm when you request a quote.</p>
 
                                 <div>
                                     <div className="columns is-multiline mb-2">
@@ -227,9 +226,10 @@ export default function Bikes({ bikes }) {
 
 
                                 <div className='has-text-centered'>
-                                    <p><small className='has-text-weight-bold'>600+ km or international: A custom quote will be calculated automatically based on distance, destination, and motorcycle type when you request a quote.</small></p>
+                                    <p className="mb-2"><small className='has-text-weight-bold'>Prices above 600 km or international are based on actual route and will be quoted individually.</small></p>
+                                    <p className="mt-0"><small className="has-text-weight-bold">For longer distances, I try to combine bookings where possible to keep pricing fair and trips efficient — if you're flexible with timing, this can often reduce your quote.</small></p>
                                     <p>All transports include secure loading with soft straps, enclosed van transport, and basic insurance. For bikes that don’t run or require special handling, or if you’re transporting accessories, I’m happy to discuss options.</p>
-                                    <a className="button is-dark is-medium">Get a Quote</a>
+                                    <a className="button is-dark is-medium" href='#quote'>Request a Quote</a>
                                 </div>
                             </div>
                         </div>
@@ -304,9 +304,13 @@ export default function Bikes({ bikes }) {
             </section>
 
 
-            <section className="section has-text-centered">
-                <p className="is-size-4 mb-3">Ready to book your bike transport?</p>
-                <a className="button is-dark is-medium">Request a Free Quote</a>
+            <section id="quote" className="section">
+                <div className="container">
+                    <div className="content is-medium">
+                        <h2 className={`${transportStyles['ht']}`}>Request a Quote</h2>
+                        <QuoteForm />
+                    </div>
+                </div>
             </section>
 
         </Layout >

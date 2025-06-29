@@ -8,7 +8,7 @@ import QuoteForm from '../components/transport_quote_form'
 import Link from 'next/link'
 import Image from 'next/image'
 
-export default function Bikes({ bikes }) {
+export default function Transport({ transportData }) {
 
     return (
         <Layout transport>
@@ -164,13 +164,16 @@ export default function Bikes({ bikes }) {
                         <div className="content is-medium">
                             <div className="block mb-6 mt-6">
                                 <h2 className={`${transportStyles['ht']}`}>Prices <small className='has-text-grey'>(Fair & Transparent Motorcycle Transport Rates)</small></h2>
-                                <p>I believe in clear and honest pricing. The cost of transporting your motorcycle depends on the distance, vehicle type, and any special requirements — but I always aim to offer excellent value.</p>
+                                <p>I believe in clear and honest pricing. The cost of transporting your motorcycle depends on distance, bike size, and any special requirements — but I always aim to offer excellent value.</p>
                                 <p><strong>Example Pricing:</strong></p>
-                                <p>Our pricing depends on both distance and motorcycle size. The table below gives a general idea, but final costs may vary depending on your bike's condition (e.g. non-running), added accessories, or specific timing needs. Pricing is based on flexible scheduling and shared route planning — if you need fixed-time or express delivery, just let me know and I’ll provide a custom quote.</p>
-                                <p>Motorcycle size categories are also a guide; classification is based on make, model, and weight, which i’ll confirm when you request a quote.</p>
+
+                                <p>The table below provides a general guide based on distance and motorcycle size. Final costs may vary depending on your bike's condition (e.g. non-running), accessories, or delivery preferences. If you need urgent or fixed-time transport, I’m happy to provide a custom quote.</p>
+                                <p>Bike size categories are a general reference — I’ll confirm this based on make, model, and weight when you request a quote.</p>
+                                <p>Prices below are for flexible, planned routes. If you need urgent delivery, I’m happy to provide a custom quote.</p>
+
 
                                 <div>
-                                    <div className="columns is-multiline mb-2">
+                                    <div className="columns is-multiline mb-4 mt-4">
                                         {/* Small */}
                                         <div className="column is-one-third">
                                             <div className={`card has-text-centered ${transportStyles['pricing-card']} ${transportStyles['pricing-small']}`}>
@@ -178,10 +181,10 @@ export default function Bikes({ bikes }) {
                                                     <p className="title is-5">Small</p>
                                                     <small className='subtitle heading has-text-weight-light has-text-grey pt-2'>Scooters / 50cc–125cc</small>
                                                     <ul className='is-size-6'>
-                                                        <li>Up to 50 km – €79</li>
-                                                        <li>50–150 km – €129</li>
-                                                        <li>150–300 km – €199</li>
-                                                        <li>300–600 km – €299</li>
+                                                        <li>Up to 50 km – €139</li>
+                                                        <li>50–150 km – €199</li>
+                                                        <li>150–300 km – €279</li>
+                                                        <li>300–600 km – €379</li>
                                                         <li className="has-text-grey-light">600+ km – Custom quote</li>
                                                     </ul>
                                                 </div>
@@ -195,10 +198,10 @@ export default function Bikes({ bikes }) {
                                                     <p className="title is-5">Medium</p>
                                                     <small className='subtitle heading has-text-weight-light has-text-grey pt-2'>Standard / Naked / Touring</small>
                                                     <ul className='is-size-6'>
-                                                        <li>Up to 50 km – €89</li>
-                                                        <li>50–150 km – €149</li>
-                                                        <li>150–300 km – €229</li>
-                                                        <li>300–600 km – €329</li>
+                                                        <li>Up to 50 km – €159</li>
+                                                        <li>50–150 km – €229</li>
+                                                        <li>150–300 km – €309</li>
+                                                        <li>300–600 km – €409</li>
                                                         <li className="has-text-grey-light">600+ km – Custom quote</li>
                                                     </ul>
                                                 </div>
@@ -212,27 +215,36 @@ export default function Bikes({ bikes }) {
                                                     <p className="title is-5">Large</p>
                                                     <small className='subtitle heading has-text-weight-light has-text-grey pt-2'>Adventure / Cruiser / Heavy</small>
                                                     <ul className='is-size-6'>
-                                                        <li>Up to 50 km – €99</li>
-                                                        <li>50–150 km – €169</li>
-                                                        <li>150–300 km – €249</li>
-                                                        <li>300–600 km – €359</li>
+                                                        <li>Up to 50 km – €169</li>
+                                                        <li>50–150 km – €249</li>
+                                                        <li>150–300 km – €339</li>
+                                                        <li>300–600 km – €439</li>
                                                         <li className="has-text-grey-light">600+ km – Custom quote</li>
                                                     </ul>
                                                 </div>
                                             </div>
                                         </div>
+
                                     </div>
                                 </div>
 
-
                                 <div className='has-text-centered'>
-                                    <p className="mb-2"><small className='has-text-weight-bold'>Prices above 600 km or international are based on actual route and will be quoted individually.</small></p>
-                                    <p className="mt-0"><small className="has-text-weight-bold">For longer distances, I try to combine bookings where possible to keep pricing fair, reduce emissions, and make trips more efficient — if you're flexible with timing, this can often lower your quote and help minimise environmental impact.</small></p>
 
+                                    <p className="mt-4">
+                                        <span className="has-text-weight-bold">Please note</span>: Prices listed are based on flexible, planned delivery routes, where multiple bikes can be grouped efficiently. This helps keep costs fair and reduces environmental impact — but delivery may take a little longer as I wait to bundle compatible bookings.
+                                    </p>
+                                    <p className="mt-4">
+                                        To support this, I also offer secure motorcycle storage, so your bike can be safely held until delivery. If your transport is time-sensitive or needs a fixed window, I can still help — but pricing will be calculated individually to reflect the added effort. In such cases, please request a custom quote.
+                                    </p>
+                                    <p className="mt-4">
+                                        <span className="has-text-weight-bold">For distances over 600 km or international deliveries</span>, prices depend on the actual route and will always be quoted individually.
+                                    </p>
+                                    <p className="mt-4">
+                                        All transports include secure loading with soft straps, enclosed van transport, and basic insurance. If your bike doesn’t run, needs special handling, or you’re transporting extra parts, I’ll be happy to discuss the best options.
+                                    </p>
 
+                                    <a className="button is-dark is-medium" href="#quote">Request a Quote</a>
 
-                                    <p>All transports include secure loading with soft straps, enclosed van transport, and basic insurance. For bikes that don’t run or require special handling, or if you’re transporting accessories, I’m happy to discuss options.</p>
-                                    <a className="button is-dark is-medium" href='#quote'>Request a Quote</a>
                                 </div>
                             </div>
                         </div>

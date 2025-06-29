@@ -114,7 +114,7 @@ export default function QuoteForm() {
                 <div className="control">
                     <textarea className="textarea" name="notes" value={formData.notes} onChange={handleChange}></textarea>
                 </div>
-                <p className="help">Add any extra details or questions – for example, if the bike doesn’t run, has accessories, specific timing needs, or anything else you'd like to mention.</p>
+                <p className="help">Add any extra details or questions – for example, if the bike doesn’t run, has accessories, requires special handling, or if the delivery is urgent or needs to happen by a specific date. Feel free to include anything else you think might be helpful.</p>
             </div>
 
             <div className="field is-grouped is-align-items-center is-justify-content-space-between">

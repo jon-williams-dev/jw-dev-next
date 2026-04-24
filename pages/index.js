@@ -53,7 +53,7 @@ export default function Home() {
               <p className="is-size-5">Always open to interesting side projects and collaborations. <a href="mailto:jon.williams@hey.com">Get in touch.</a></p>
             </div>
 
-            <p className="mt-5" style={{fontSize: '0.85rem'}}>
+            <p className="mt-5">
               <Link href="/profile" className="has-text-grey-light">More about me →</Link>
             </p>
 

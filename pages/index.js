@@ -48,6 +48,11 @@ export default function Home() {
               <p className="is-size-5">Web Lead at the <a href="https://is.mpg.de" target="_blank" rel="noreferrer">Max Planck Institute for Intelligent Systems</a> — leading architecture decisions, driving technical direction and shipping across a portfolio of projects. Comfortable moving between high-level planning and low-level implementation, from system design and API integration to performance optimisation and deployment pipelines.</p>
             </div>
 
+            <div className="block mb-6" style={{borderLeft: '3px solid #00BF8E', paddingLeft: '1.25rem'}}>
+              <p className="is-size-6 has-text-weight-bold has-text-grey-light mb-1" style={{letterSpacing: '0.1em', textTransform: 'uppercase'}}>Side Projects</p>
+              <p className="is-size-5"><a href="https://moto90.net" target="_blank" rel="noreferrer">Moto90</a> — a marketplace for late 80s, 90s and early 2000s motorcycles. Built with Ruby on Rails.</p>
+            </div>
+
             <div className="block" style={{borderLeft: '3px solid #EF476F', paddingLeft: '1.25rem'}}>
               <p className="is-size-6 has-text-weight-bold has-text-grey-light mb-1" style={{letterSpacing: '0.1em', textTransform: 'uppercase'}}>Work Together</p>
               <p className="is-size-5">Always open to interesting side projects and collaborations. <a href="mailto:jon.williams@hey.com">Get in touch.</a></p>

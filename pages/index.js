@@ -1,3 +1,4 @@
+import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
 import Layout from '../components/layout_blank'
@@ -6,6 +7,26 @@ import gradientStyles from '../styles/gradientBg.module.scss'
 export default function Home() {
   return (
     <Layout blank>
+      <Head>
+        <title>Jon Williams | Full Stack Web Developer | Tübingen, Germany</title>
+        <meta name="description" content="Jon Williams — Full Stack Web Developer based in Tübingen, Baden-Württemberg, Germany. Specialising in Ruby on Rails, React and Next.js. Available for freelance projects and collaborations." />
+        <meta name="keywords" content="web developer tübingen, web developer tuebingen, web developer baden-württemberg, web developer germany, full stack developer tübingen, rails developer germany, ruby on rails tübingen, freelance web developer germany, Jon Williams developer" />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Person",
+          "name": "Jon Williams",
+          "jobTitle": "Full Stack Web Developer",
+          "url": "https://jonwilliams.dev",
+          "email": "jon.williams@hey.com",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Tübingen",
+            "addressRegion": "Baden-Württemberg",
+            "addressCountry": "DE"
+          },
+          "knowsAbout": ["Ruby on Rails", "React", "Next.js", "Full Stack Development", "Web Development"]
+        })}} />
+      </Head>
       <div className={gradientStyles.gradientContainer}>
         <section className="hero is-fullheight" style={{position: 'relative'}}>
           <div className="hero-body">
@@ -38,7 +59,7 @@ export default function Home() {
         <div className="container">
           <div className="content">
 
-            <p className="is-size-6 has-text-weight-semibold has-text-grey" style={{letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '0.5rem'}}>Jon Williams</p>
+            <p className="is-size-6 has-text-weight-semibold has-text-grey" style={{letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '0.5rem'}}>Jon Williams &mdash; Tübingen, Germany</p>
             <p className="is-size-1 has-text-weight-bold" style={{lineHeight: 1.1, marginBottom: '1.5rem'}}>Full Stack Developer</p>
 
             <p className="is-size-5" style={{maxWidth: '640px', marginBottom: '3rem'}}>20+ years of experience designing, building and shipping web applications — from early-stage concepts through to production. Strong instinct for both design and engineering, with a focus on building things that are fast, maintainable and actually useful.</p>

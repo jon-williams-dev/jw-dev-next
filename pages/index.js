@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import Layout from '../components/layout_blank'
 import gradientStyles from '../styles/gradientBg.module.scss'
 
@@ -51,6 +52,10 @@ export default function Home() {
               <p className="is-size-6 has-text-weight-bold has-text-grey-light mb-1" style={{letterSpacing: '0.1em', textTransform: 'uppercase'}}>Work Together</p>
               <p className="is-size-5">Always open to interesting side projects and collaborations. <a href="mailto:jon.williams@hey.com">Get in touch.</a></p>
             </div>
+
+            <p className="mt-5" style={{fontSize: '0.85rem'}}>
+              <Link href="/profile" className="has-text-grey-light">More about me →</Link>
+            </p>
 
           </div>
         </div>

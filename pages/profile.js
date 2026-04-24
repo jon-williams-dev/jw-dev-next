@@ -1,52 +1,14 @@
 import Head from 'next/head'
-import Link from 'next/link'
 import Layout from '../components/layout'
-import Nav from '../components/nav'
-
 import Image from 'next/image'
-import React, { useState, useCallback } from "react";
-// import Carousel, { Modal, ModalGateway } from "react-images";
-// import Gallery from "react-photo-gallery";
-
-// import style from '../styles/profile.module.scss'
 import profileStyles from '../styles/profile.module.scss'
-import TypeAnimation from 'react-type-animation';
-
-import Lightbox from "yet-another-react-lightbox";
-import "yet-another-react-lightbox/styles.css";
-
-import Captions from "yet-another-react-lightbox/plugins/captions";
-import Fullscreen from "yet-another-react-lightbox/plugins/fullscreen";
-import Slideshow from "yet-another-react-lightbox/plugins/slideshow";
-import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
-import Video from "yet-another-react-lightbox/plugins/video";
-import Zoom from "yet-another-react-lightbox/plugins/zoom";
-import "yet-another-react-lightbox/plugins/captions.css";
-import "yet-another-react-lightbox/plugins/thumbnails.css";
-
-// import '../styles.css'
-// import style from 'style.module.css'
-
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-// import { faTelescope, faLaptopCode, faBaby, faShuttleVan, faTools, faTree, faRunning, faMotorcycle, faExternalLink } from '@fortawesome/pro-duotone-svg-icons'
+import TypeAnimation from 'react-type-animation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTelescope, faLaptopCode, faBaby, faShuttleVan, faTools, faTree, faRunning, faMotorcycle, faExternalLink } from '@fortawesome/free-solid-svg-icons'
+import { faLaptopCode, faBaby, faShuttleVan, faTools, faTree, faRunning, faMotorcycle } from '@fortawesome/free-solid-svg-icons'
 
 
 export default function Profile() {
 
-  const pageImages = [
-    { src: "/images/cb750.jpg", height: 518, width: 900 },
-    // { src: "/images/saab900.jpg", height: 704, width: 900 },
-    { src: "/images/saab9002.jpg", height: 900, width: 900 },
-    { src: "/images/roof.jpg", height: 900, width: 900 },
-    { src: "/images/baustelle.jpg", height: 900, width: 900 },
-    { src: "/images/sprinter1.jpg", height: 900, width: 900 },
-    { src: "/images/sprinter2.jpeg", height: 900, width: 900 }
-  ]
-
-  const [advancedExampleOpen, setAdvancedExampleOpen] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
 
   return (
     <Layout profile>
@@ -56,7 +18,7 @@ export default function Profile() {
         </Head>
 
         <div className="container">
-          <section className="hero is-fullheight">
+          <section className="hero is-fullheight" style={{position: 'relative'}}>
             <div className="hero-body">
               <div className="content is-large">
                 <div className="block">
@@ -69,9 +31,8 @@ export default function Profile() {
                   />
                 </div>
                 <div className="block">
-                  {/* <p className="title">Hi, my name is Jon.</p> */}
                   <p className="title">Jon Williams</p>
-                  <p>I'm a Full Stack Developer working at the <a href="https://is.mpg.de" target="_blank">Max Planck Institute for Intelligent Systems</a>.</p>
+                  <p>I'm a Full Stack Developer working at the <a href="https://is.mpg.de" target="_blank" rel="noreferrer">Max Planck Institute for Intelligent Systems</a>.</p>
                   <div>
                     <div className={profileStyles.typingTextContainer}>
                       <p className={profileStyles.typingText}>
@@ -90,11 +51,10 @@ export default function Profile() {
                           repeat={Infinity}
                         />
                       </p>
-                      {/* hack: choose the longest string renderd ... will set max size and prevert new line jumps */}
                       <p className={profileStyles.typingTextDummy}>When I'm not working, playing with my children or travelling in my van, I can be found in my garage making things.</p>
                     </div>
                   </div>
-                  <div className="block has-text-grey mt-5 ">
+                  <div className="block has-text-grey mt-5">
                     <FontAwesomeIcon icon={faLaptopCode} className="fa-lg mr-5" />
                     <FontAwesomeIcon icon={faBaby} className="fa-lg mr-5" />
                     <FontAwesomeIcon icon={faShuttleVan} className="fa-lg mr-5" />
@@ -106,10 +66,16 @@ export default function Profile() {
                 </div>
               </div>
             </div>
+
+            <div style={{position: 'absolute', bottom: '2rem', left: '50%', transform: 'translateX(-50%)', cursor: 'pointer'}} onClick={() => document.getElementById('profile-content').scrollIntoView({ behavior: 'smooth' })}>
+              <svg width="32" height="20" viewBox="0 0 32 20" fill="rgba(0,0,0,0.2)">
+                <polygon points="0,0 32,0 16,20" />
+              </svg>
+            </div>
           </section>
         </div>
 
-        <section className="hero is-blue">
+        <section id="profile-content" className="hero is-blue">
           <div className="hero-body">
             <div className="content">
               <p className="is-size-3 has-text-centered">Full Stack Developer   with many years of experience</p>
@@ -142,71 +108,86 @@ export default function Profile() {
 
                     <div className="block mb-6 mt-6">
                       <h3>Professional Profile</h3>
-                      <p>I am a reliable, motivated and enthusiastic developer with many years experience. I provide high attention to detail and have an instinct for good design.</p>
-                      <p>My professional career began as a <em>Front End Developer</em>, however, I have always been interested in the overlap between design and development and soon moved into the world of <em>Full Stack Development</em>.</p>
-                      <p>I strive to create attractive, usable and functional applications. I design, build, test and deploy applications covering all phases of the application development life cycle, from start to finish.</p>
+                      <p>A full stack developer with a strong background in both front-end and back-end engineering. Detail-oriented with an instinct for good design, I focus on building applications that are clean, performant, and maintainable.</p>
+                      <p>My career began in front-end development before expanding into full stack work, driven by an interest in the overlap between design and engineering.</p>
+                      <p>I design, build, test and deploy across the full application lifecycle — from architecture through to production.</p>
                     </div>
 
                     <div className="block mb-6">
                       <h4>Current Work</h4>
-                      <p>I am currently employed as Web Lead at the Max Planck Institute for Intelligent Systems. Here I am responsible for multiple projects and oversee a small web team to effectively achieve project and development goals. Im also an active (Rails) developer having developed many websites and applications.</p>
-                      <p>My daily toolbox consists of, but not limited to: 
-                        <span className="tag is-info mr-2 ml-2">Ruby on Rails</span>
-                        <span className="tag is-info mr-2">RailsAPI</span>
-                        <span className="tag is-info mr-2">ActiveRecord</span>
-                        <span className="tag is-info mr-2">RSpec</span>
-                        <span className="tag is-info mr-2">Phusion Passenger</span>
-                        <span className="tag is-info mr-2">Docker</span>
-                        <span className="tag is-info mr-2">Capistrano</span>
-                        <span className="tag is-info mr-2">TurboLinks</span>
-                        <span className="tag is-info mr-2">ElasticSearch</span>
-                        <span className="tag is-info mr-2">MySQL</span>
-                        <span className="tag is-info mr-2">OAuth</span>
-                        <span className="tag is-info mr-2">HTML & CSS</span>
-                        <span className="tag is-info mr-2">JavaScript <small>ES6</small></span>
-                        <span className="tag is-info mr-2">BootStrap</span>
-                        <span className="tag is-info mr-2">Bulman</span>
-                        <span className="tag is-info mr-2">React</span> 
-                        <span className="tag is-info mr-2">NextJS</span>
-                        <span className="tag is-info mr-2">GraphQL</span>
-                        <span className="tag is-info mr-2">Git</span>
-                        <span className="tag is-info mr-2">Jira</span>
-                        <span className="tag is-info mr-2">Bamboo</span>
-                        <span className="tag is-info mr-2">NGINX</span>
-                        <span className="tag is-info mr-2">Apache</span>
-                        <span className="tag is-info mr-2">Adobe Suite (PhotoShop)</span>
-                        <span className="tag is-light mr-2">PHP</span>
-                        <span className="tag is-light mr-2">Laravel</span>
-                        and other varying tools, libraries and technologies related to and required by each.
-                      </p>
-                      <p>
-                        Im always interested (and willing) to learn new skills, tools and technologies, some of which currently on the hitlist include: 
-                        <span className="tag is-primary mr-2 ml-2">Hotwire</span>
-                        <span className="tag is-primary mr-2">Stimulus JS</span>
-                        <span className="tag is-primary mr-2">TailwindCSS</span>
-                        <span className="tag is-primary mr-2">Gatsby</span>
-                        <span className="tag is-primary mr-2">MongoDB</span>
-                        <span className="tag is-primary mr-2">Firestore</span>
-                        <span className="tag is-primary mr-2">WebSockets</span>
-                        <span className="tag is-primary mr-2">Redis</span>
-                        <span className="tag is-primary mr-2">Sidekiq</span>
-                        <span className="tag is-primary mr-2">Actioncable</span>
-                        to name but a few.
-                      </p>
-                      <p>My most recent (ongoing) project is the "Scientific Web Engine", a Custom Content Management System (CMS) which I have developed to support Institute websites for groups, projects, collaborations and general scientific and research requirements. The CMS is under continuous development already running many websites, some of which including Cyber Valley, European Laboratory for Learning and Intelligent Systems (ELLIS), International Max Planck Research School for Intelligent Systems (IMPRS-IS) and Center for Learning Systems (CLS).</p>
+                      <p>Currently serving as Web Lead at the Max Planck Institute for Intelligent Systems, responsible for multiple projects and a small web team. I remain hands-on as a developer, actively contributing to several applications alongside my leadership responsibilities.</p>
+                      <div className={profileStyles.tagGroups}>
+                        <div className={profileStyles.tagGroup}>
+                          <p className={profileStyles.tagGroupLabel}>Back End</p>
+                          <div className="tags">
+                            <span className="tag is-info">Ruby on Rails</span>
+                            <span className="tag is-info">Rails API</span>
+                            <span className="tag is-info">RSpec</span>
+                            <span className="tag is-info">MySQL</span>
+                            <span className="tag is-info">PostgreSQL</span>
+                            <span className="tag is-info">MongoDB</span>
+                            <span className="tag is-info">ElasticSearch</span>
+                            <span className="tag is-info">OAuth</span>
+                            <span className="tag is-info">Redis</span>
+                            <span className="tag is-info">Sidekiq</span>
+                            <span className="tag is-info">GraphQL</span>
+                            <span className="tag is-info">ActionMailer</span>
+                            <span className="tag is-light">PHP</span>
+                            <span className="tag is-light">Laravel</span>
+                          </div>
+                        </div>
+                        <div className={profileStyles.tagGroup}>
+                          <p className={profileStyles.tagGroupLabel}>Front End</p>
+                          <div className="tags">
+                            <span className="tag is-info">React</span>
+                            <span className="tag is-info">Next.js</span>
+                            <span className="tag is-info">GraphQL</span>
+                            <span className="tag is-info">JavaScript ES6</span>
+                            <span className="tag is-info">HTML & CSS</span>
+                            <span className="tag is-info">Sass</span>
+                            <span className="tag is-info">TailwindCSS</span>
+                            <span className="tag is-info">Hotwire</span>
+                            <span className="tag is-info">Stimulus JS</span>
+                            <span className="tag is-info">TypeScript</span>
+                            <span className="tag is-info">Bulma</span>
+                            <span className="tag is-info">Bootstrap</span>
+                          </div>
+                        </div>
+                        <div className={profileStyles.tagGroup}>
+                          <p className={profileStyles.tagGroupLabel}>DevOps & Tools</p>
+                          <div className="tags">
+                            <span className="tag is-info">Docker</span>
+                            <span className="tag is-info">Capistrano</span>
+                            <span className="tag is-info">NGINX</span>
+                            <span className="tag is-info">Apache</span>
+                            <span className="tag is-info">Phusion Passenger</span>
+                            <span className="tag is-info">Kamal</span>
+                            <span className="tag is-info">Git</span>
+                            <span className="tag is-info">GitHub Actions</span>
+                            <span className="tag is-info">Heroku</span>
+                            <span className="tag is-info">Linux</span>
+                            <span className="tag is-info">LLMs</span>
+                            <span className="tag is-info">Prompt Engineering</span>
+                            <span className="tag is-info">Jira</span>
+                            <span className="tag is-info">Bamboo</span>
+                          </div>
+                        </div>
+                      </div>
+                      <p>My most recent (ongoing) project is the "Scientific Web Engine", a Custom Content Management System (CMS) which I have developed to support Institute websites for groups, projects, collaborations and general scientific and research requirements. The CMS is under continuous development already running many websites, including Cyber Valley, European Laboratory for Learning and Intelligent Systems <small>(ELLIS)</small>, International Max Planck Research School for Intelligent Systems <small>(IMPRS-IS)</small>, Center for Learning Systems <small>(CLS)</small>, AI Incubator, The Max Planck Artificial Intelligence Network <small>(MP-AIX)</small>, The Robotics Institute Germany <small>(RIGI)</small>, and Science & Innovation Days <small>(sidays)</small>.</p>
                     </div>
 
                     <div className="block mb-6">
                       <h4>Previous Work</h4>
-                      <p>Prior to my current position, I worked at Integral GmbH as a Software Engineer within a small yet advanced and experienced team developing complex software products and Internet Applications. I was mainly responsible for product based front end work (user interfaces and components) developed using the Adobe Flex/Flash (ActionScript 3, MXML) technology, later moving to Javascript Solutions (Angular) along with other supporting technologies (Java, JSP, GSP, JS, BlazeDS, MS/MySQL etc). Some of the products I worked on include: FusionReactor, FusionAnalytics and ShareDox.</p>
-                      <p>I worked at Intergral for approx. 8 years and have fond memories of the company and team. When I started I was less experienced than my peers and struggled at times, but in turn learned a great amount and gained a lot of valuable knowledge and experience from a team of great people which helped form me into the developer I am today.</p>
-                      <p>Previous to Intergral, I worked at Hewlett Packard (HP) as a Data Retrieval Expert / Web / App Developer working on internal business process related projects and applications.</p>
+                      <p>Between 2024 and 2025 I worked as a freelance Rails developer at <a href="https://kickdown.com" target="_blank" rel="noreferrer">Kickdown</a>, a marketplace for classic and vintage cars — a one year engagement alongside my main role. It was a startup environment with a small, committed and enthusiastic team. Working on a topic I genuinely love made it a particularly enjoyable experience. I learned a great deal during this time, especially around Hotwire, Turbo Streams and modern Rails patterns, knowledge I have since carried into my own projects.</p>
+                      <p>Prior to my current position, I worked at <a href="https://www.intergral.com/" target="_blank" rel="noreferrer">Intergral GmbH</a> as a Software Engineer within a small yet advanced and experienced team developing complex software products and Internet Applications. I was mainly responsible for product based front end work (user interfaces and components) developed using the Adobe Flex/Flash (ActionScript 3, MXML) technology, later moving to Javascript Solutions (Angular) along with other supporting technologies (Java, JSP, GSP, JS, BlazeDS, MS/MySQL etc). Some of the products I worked on include: FusionReactor, FusionAnalytics and ShareDox.</p>
+                      <p>Eight years at Intergral provided a strong foundation in software engineering. Working within a talented and experienced team, I grew considerably as a developer — gaining broad technical knowledge and a solid understanding of what it takes to build and ship complex software products.</p>
+                      <p>Previous to Intergral, I worked at <a href="https://www.hp.com" target="_blank" rel="noreferrer">Hewlett Packard</a> as a Data Retrieval Expert / Web / App Developer working on internal business process related projects and applications.</p>
                     </div>
 
                     <div className="block mb-6">
                       <h4>Side Projects</h4>
-                      <p>I'm always interested in exciting side projects!</p>
-                      <p>If you have an interesting project and/or would like to work with me, shoot me an <a href="mailto:jon.williams@hey.com">email</a>.</p>
+                      <p><a href="https://Moto90" target="_blank" rel="noreferrer">Moto90</a> — a marketplace for late 80s, 90s and early 2000s motorcycles. Built out of a personal interest in the era, it's a Rails project I work on in my own time alongside my day job.</p>
+                      <p>Always open to interesting side projects and collaborations — feel free to <a href="mailto:jon.williams@hey.com">get in touch</a>.</p>
                     </div>
 
                     
@@ -227,7 +208,7 @@ export default function Profile() {
                           </div>
                           <div class="timeline-content">
                             <p class="heading">2013 - Present</p>
-                            <p className='is-size-4 mb-2'>Max Planck Institute for Intelligent Systems <span className='is-size-6 mb-1'>(11 years)</span></p>
+                            <p className='is-size-4 mb-2'><a href="https://is.mpg.de" target="_blank" rel="noreferrer">Max Planck Institute for Intelligent Systems</a> <span className='is-size-6 mb-1'>(11 years)</span></p>
                           </div>
                         </div>
                         <div class="timeline-item pb-0">
@@ -250,6 +231,35 @@ export default function Profile() {
                             <p className='is-size-6 is-italic'>Developing internal and public website and application solutions, specializing in custom (in-house) CMS development. Seamlessly integrating front-end and back-end tech to meet organizational needs and user expectations.</p>
                           </div>
                         </div>
+                        {/* 2026 */}
+                        <header class="timeline-header">
+                          <span class="tag is-primary">2026</span>
+                        </header>
+                        <div class="timeline-item">
+                          <div class="timeline-marker is-icon">
+                            <i class="fa fa-flag"></i>
+                          </div>
+                          <div class="timeline-content">
+                            <p class="heading">2026 - Present</p>
+                            <p className='is-size-4 mb-0'><a href="https://Moto90" target="_blank" rel="noreferrer">Moto90</a> <span className='is-size-6 mb-1'>(Founder)</span></p>
+                            <p className='is-size-6 is-italic'>A marketplace for late 80s, 90s and early 2000s motorcycles — a personal project built with Ruby on Rails.</p>
+                          </div>
+                        </div>
+                        {/* 2024 */}
+                        <header class="timeline-header">
+                          <span class="tag is-primary">2024</span>
+                        </header>
+                        <div class="timeline-item">
+                          <div class="timeline-marker is-icon">
+                            <i class="fa fa-flag"></i>
+                          </div>
+                          <div class="timeline-content">
+                            <p class="heading">2024 - 2025</p>
+                            <p className='is-size-4 mb-0'><a href="https://kickdown.com" target="_blank" rel="noreferrer">Kickdown</a> <span className='is-size-6 mb-1'>(1 year)</span></p>
+                            <p className='is-size-5 mb-1'>Rails Developer</p>
+                            <p className='is-size-6 is-italic'>Rails developer within a small, enthusiastic team building a marketplace for classic and vintage cars. A startup environment with a lot of energy — I learned a great deal, particularly around Hotwire, Turbo and modern Rails patterns.</p>
+                          </div>
+                        </div>
                         {/* 2012 */}
                         <header class="timeline-header">
                           <span class="tag is-primary">2012</span>
@@ -260,7 +270,7 @@ export default function Profile() {
                           </div>
                           <div class="timeline-content">
                             <p class="heading">2006 - 2012</p>
-                            <p className='is-size-4 mb-0'>Intergral Information Solutions <span className='is-size-6 mb-1'>(8 years)</span></p>
+                            <p className='is-size-4 mb-0'><a href="https://www.intergral.com/" target="_blank" rel="noreferrer">Intergral Information Solutions</a> <span className='is-size-6 mb-1'>(8 years)</span></p>
                             <p className='is-size-5 mb-1'>Software Engineer</p>
                             <p className='is-size-6 is-italic'>Software Engineer working within a small yet advanced and experienced team developing complex software products and Internet Applications.</p>
                           </div>
@@ -290,7 +300,7 @@ export default function Profile() {
                           </div>
                           <div class="timeline-content">
                             <p class="heading">2005 - 2008</p>
-                            <p className='is-size-4 mb-0'>Staffordshire University <span className='is-size-6 mb-1'>(3 years)</span></p>
+                            <p className='is-size-4 mb-0'><a href="https://www.staffs.ac.uk/" target="_blank" rel="noreferrer">Staffordshire University</a> <span className='is-size-6 mb-1'>(3 years)</span></p>
                             <p className='is-size-5 mb-1'>Master of Science - MSc, Computer Science</p>
                             <p className='is-size-6'>Grade: 1st Class (Distinction)</p>
                           </div>
@@ -305,7 +315,7 @@ export default function Profile() {
                           </div>
                           <div class="timeline-content">
                             <p class="heading">2001 - 2005</p>
-                            <p className='is-size-4 mb-0'>Staffordshire University <span className='is-size-6 mb-1'>(4 years)</span></p>
+                            <p className='is-size-4 mb-0'><a href="https://www.staffs.ac.uk/" target="_blank" rel="noreferrer">Staffordshire University</a> <span className='is-size-6 mb-1'>(4 years)</span></p>
                             <p className='is-size-5 mb-1'>Bachelor of Science - BSc, Computer Science</p>
                             <p className='is-size-6'>Grade: 1st Class</p>
                           </div>
@@ -320,7 +330,7 @@ export default function Profile() {
                           </div>
                           <div class="timeline-content">
                             <p class="heading">2003 - 2004</p>
-                            <p className='is-size-4 mb-0'>Hewlett Packard, Germany <span className='is-size-6 mb-1'>(Work experience: 1 year 4 months)</span></p>
+                            <p className='is-size-4 mb-0'><a href="https://www.hp.com" target="_blank" rel="noreferrer">Hewlett Packard</a>, Germany <span className='is-size-6 mb-1'>(Work experience: 1 year 4 months)</span></p>
                             <p className='is-size-5 mb-1'>Data Retrieval Expert / Web / App Developer</p>
                             <p className='is-size-6 is-italic'>Working on internal business process related projects and applications.</p>
                           </div>
@@ -366,49 +376,11 @@ export default function Profile() {
                     <p>I am British being born in Liverpool and spending my childhood growing up in the English countryside. I am currently located in South East Germany.</p>  
                     <p>From a young age I developed an interest in tech with a focus on the Web. I decided to explore more deeply which continued onto higher education where I confirmed my calling for Web development. </p>
                     <p>I have many other interests, hobbies and activities. Much of my leisure time is taken up raising three children together with my partner.</p>
-                    <p>I love running. Im not the fastest or fittest, but have a few marathons under my belt of which I am quite proud. I love to run in the local forest , I find it clears my head and helps to keep me fit.</p>
+                    <p>I love running. I'm not the fastest or fittest, but have a few marathons under my belt of which I am quite proud. I love to run in the local forest — it clears my head and helps to keep me fit.</p>
                     <p>From a very young age I have had a fascination for motorcycles. I remember fixing up old broken motor bikes to the best of my abilities using whatever tools I could find in my parents garage. I was then able to ride them over local fields being too young to hold a license.</p>
-                    <p>As I get older my passion for motorcycles has not diminished. I love learning about, riding and working on them. In recent years I have become particularly interested in  <Link href={`/bikes/`}>90s Sports Bikes</Link>, now modern classics (the bikes that I dreamt about when I was a lad) although I'm interested in anything on (two) wheels and always tend to have a few bikes in the garage. My current project being a 
-                      
-
-                     <a href="#" onClick={(e) => {
-                        e.preventDefault(); // Prevent the default anchor link behavior
-                        setCurrentIndex(0);
-                        setAdvancedExampleOpen(true); // Open the Lightbox
-                      }}> Honda CB750 </a>
-
-                      cafe racer build. I of course, also like older cars with my daily driver being a 30 Year old 
-
-                       <a href="#" onClick={(e) => {
-                        e.preventDefault(); // Prevent the default anchor link behavior
-                        setCurrentIndex(1);
-                        setAdvancedExampleOpen(true); // Open the Lightbox
-                      }}> Saab 900</a>.
-
-
-                    </p>
-               
-                  
-                    <p>At the end of 2020 we bought a house from the 50s which has become a large and ongoing 
-
-                    
-                      <a href="#" onClick={(e) => {
-                        e.preventDefault(); // Prevent the default anchor link behavior
-                        setCurrentIndex(2);
-                        setAdvancedExampleOpen(true); // Open the Lightbox
-                      }}> Renovation Project</a>.
-
-                    Although a lot of work, it's enjoyable work which we are doing in our own time and without (too much) stress. The advantage (and hope) being that we will one day have a nice family home which we can enjoy for many years, and the disadvantage (realism) is having to live on a constant building site.</p>
-                    <p>I love travelling, having visited many countries and continents. Since becoming a father, a camper van seemed like a good and fun way to travel. I did some research and bought an empty "builders-van" which I have since converted (still converting) into a 
-
-                    "<a href="#" onClick={(e) => {
-                        e.preventDefault(); // Prevent the default anchor link behavior
-                        setCurrentIndex(3);
-                        setAdvancedExampleOpen(true); // Open the Lightbox
-                      }}>Camper-Van-Lite</a>".
-
-
-                    As a family, we have used the van for many successful and enjoyable trips in and around Europe and plan many more in the future.</p>
+                    <p>As I get older my passion for motorcycles has not diminished. I love learning about, riding and working on them. In recent years I have become particularly interested in <a href="https://moto90.net" target="_blank" rel="noreferrer">90s motorbikes</a>, now modern classics (the bikes that I dreamt about when I was a lad) although I'm interested in anything on (two) wheels and always tend to have a few bikes in the garage. My current project is a Honda CB750 cafe racer build. I of course, also like older cars with my daily driver being a 30 year old Saab 900.</p>
+                    <p>At the end of 2020 we bought a house from the 50s which has become a large and ongoing renovation project. Although a lot of work, it's enjoyable work which we are doing in our own time and without (too much) stress. The advantage (and hope) being that we will one day have a nice family home which we can enjoy for many years, and the disadvantage (realism) is having to live on a constant building site.</p>
+                    <p>I love travelling, having visited many countries and continents. Since becoming a father, a camper van seemed like a good and fun way to travel. I did some research and bought an empty builders van which I have since converted (still converting) into a camper. As a family, we have used the van for many successful and enjoyable trips in and around Europe and plan many more in the future.</p>
                     <p>To unwind, I enjoy family adventures, catching up with friends and having a beer, and simply relaxing with music or a good film.</p>
                   </div>             
                 </div>
@@ -419,24 +391,6 @@ export default function Profile() {
       </div>        
 
 
-      {/*  <Lightbox
-          open={advancedExampleOpen}
-          close={() => setAdvancedExampleOpen(false)}
-          slides={pageImages}
-          // plugins={[Captions, Fullscreen, Slideshow, Thumbnails, Video, Zoom]}
-          plugins={[Fullscreen, Slideshow, Zoom]}
-        />*/}
-
-
-      {advancedExampleOpen && (
-        <Lightbox
-          open={advancedExampleOpen}
-          close={() => setAdvancedExampleOpen(false)}
-          slides={pageImages}
-          index={currentIndex} // Use the current index state to open a specific slide
-          plugins={[Fullscreen, Slideshow, Zoom]}
-        />
-      )}
     </Layout>
   )
 }
@@ -444,18 +398,6 @@ export default function Profile() {
 
 
 
-// Full stack software engineer with experience in Ruby on Rails,
-// Hotwire/Turbolinks, Stimulus JS, and TailwindCSS. I also possess the
-// necessary talent to learn new technologies quickly, solve problems, and
-// collaborate with my team. I have strong communication and interpersonal
-// skills and thrive in a distributed work environment.
-
-// skills
-// Front-end development
-// Back-end development
-// Test-driven development
-// Project management
-// UX/UI Design
 
 // Ruby on Rails
 // React

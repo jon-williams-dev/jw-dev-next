@@ -50,7 +50,7 @@ export default function Home() {
 
             <div className="block mb-6" style={{borderLeft: '3px solid #00BF8E', paddingLeft: '1.25rem'}}>
               <p className="is-size-6 has-text-weight-bold has-text-grey-light mb-1" style={{letterSpacing: '0.1em', textTransform: 'uppercase'}}>Side Projects</p>
-              <p className="is-size-5"><a href="https://moto90.net" target="_blank" rel="noreferrer">Moto90</a> — a marketplace for late 80s, 90s and early 2000s motorcycles. Built with Ruby on Rails.</p>
+              <p className="is-size-5"><a href="https://moto90.net" target="_blank" rel="noreferrer">Moto90</a> — a marketplace for 90s motorcycles.</p>
             </div>
 
             <div className="block" style={{borderLeft: '3px solid #EF476F', paddingLeft: '1.25rem'}}>

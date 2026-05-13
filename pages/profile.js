@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import Link from 'next/link'
 import Layout from '../components/layout'
 import Image from 'next/image'
 import profileStyles from '../styles/profile.module.scss'
@@ -382,7 +383,10 @@ export default function Profile() {
                     <p>At the end of 2020 we bought a house from the 50s which has become a large and ongoing renovation project. Although a lot of work, it's enjoyable work which we are doing in our own time and without (too much) stress. The advantage (and hope) being that we will one day have a nice family home which we can enjoy for many years, and the disadvantage (realism) is having to live on a constant building site.</p>
                     <p>I love travelling, having visited many countries and continents. Since becoming a father, a camper van seemed like a good and fun way to travel. I did some research and bought an empty builders van which I have since converted (still converting) into a camper. As a family, we have used the van for many successful and enjoyable trips in and around Europe and plan many more in the future.</p>
                     <p>To unwind, I enjoy family adventures, catching up with friends and having a beer, and simply relaxing with music or a good film.</p>
-                  </div>             
+                  </div>
+
+                  <hr />
+                  <p className="has-text-grey"><Link href="/sco_presentation">View my SCO presentation →</Link></p>             
                 </div>
               </div>
             </div>

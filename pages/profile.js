@@ -385,8 +385,7 @@ export default function Profile() {
                     <p>To unwind, I enjoy family adventures, catching up with friends and having a beer, and simply relaxing with music or a good film.</p>
                   </div>
 
-                  <hr />
-                  <p className="has-text-grey"><Link href="/sco_presentation">View my SCO presentation →</Link></p>             
+             
                 </div>
               </div>
             </div>

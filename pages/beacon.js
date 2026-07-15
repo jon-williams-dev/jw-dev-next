@@ -375,6 +375,7 @@ export default function Beacon() {
   const [email, setEmail]         = useState('')
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading]     = useState(false)
+  const [submitError, setSubmitError] = useState(false)
   const [days, setDays]           = useState(0)
   const counterRef                = useRef(null)
 
@@ -417,15 +418,21 @@ export default function Beacon() {
     e.preventDefault()
     if (!email || loading) return
     setLoading(true)
+    setSubmitError(false)
     try {
       const res = await fetch('/api/waitlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       })
-      if (res.ok) setSubmitted(true)
+      if (res.ok) {
+        setSubmitted(true)
+      } else {
+        setSubmitError(true)
+      }
     } catch (err) {
       console.error(err)
+      setSubmitError(true)
     } finally {
       setLoading(false)
     }
@@ -593,7 +600,8 @@ export default function Beacon() {
         </div>
       </section>
 
-      {/* ── Testimonials ── */}
+      {/* ── Testimonials (hidden until real data — re-enable by removing the null &&) ── */}
+      {null && (
       <section id="stories">
         <div className={styles.secWrap}>
           <div className={styles.secHeader} data-reveal>
@@ -617,6 +625,7 @@ export default function Beacon() {
           </div>
         </div>
       </section>
+      )}
 
       {/* ── CTA / Waitlist ── */}
       <section id="waitlist">
@@ -645,6 +654,9 @@ export default function Beacon() {
                   {loading ? 'Sending…' : 'Join the waitlist'}
                 </button>
               </form>
+            )}
+            {submitError && (
+              <p className={styles.submitErrorMsg}>Something went wrong — please try again or email us directly.</p>
             )}
             <p className={styles.ctaNote}>No spam · No account required · iOS &amp; Android</p>
           </div>

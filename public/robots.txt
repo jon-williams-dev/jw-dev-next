@@ -1,5 +1,7 @@
 User-agent: *
-Allow: /beacon
-Allow: /beacon-story
+Disallow: /test
+Disallow: /event-mutation
+Disallow: /profit_calculator
+Disallow: /sco_presentation
 
 Sitemap: https://jon-williams.dev/api/sitemap

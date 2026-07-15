@@ -1,8 +1,12 @@
 const BASE = 'https://jon-williams.dev'
 
 const PAGES = [
+  { path: '/',             priority: '1.0', changefreq: 'weekly'  },
   { path: '/beacon',       priority: '1.0', changefreq: 'weekly'  },
   { path: '/beacon-story', priority: '0.8', changefreq: 'monthly' },
+  { path: '/bikes',        priority: '0.7', changefreq: 'weekly'  },
+  { path: '/transport',    priority: '0.7', changefreq: 'monthly' },
+  { path: '/profile',      priority: '0.5', changefreq: 'monthly' },
 ]
 
 export default function handler(req, res) {

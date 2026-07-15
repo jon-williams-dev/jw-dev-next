@@ -67,6 +67,7 @@ export default function BeaconStory() {
         <meta name="description" content="The personal story behind Beacon: how one developer's struggle with drinking habits led to building a private, judgment-free sobriety app for people who want to stop drinking or cut back." />
         <meta name="keywords" content="why I stopped drinking, alcohol habit story, cut back on alcohol, sobriety journey, drinking problem, alcohol coping mechanism, sober app story, quit drinking motivation" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/images/beacon-logo.png" type="image/png" />
         <link rel="canonical" href="https://jon-williams.dev/beacon-story" />
 
         {/* Open Graph */}

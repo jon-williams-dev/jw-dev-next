@@ -445,6 +445,7 @@ export default function Beacon() {
         <meta name="description" content="Beacon is a free sobriety companion app for people who want to stop drinking, cut back on alcohol, or simply understand their habits. Track your streak, log triggers, celebrate milestones — fully private, all on your device." />
         <meta name="keywords" content="sobriety app, alcohol tracker, stop drinking app, quit alcohol, sober streak, cut back on drinking, alcohol habit tracker, sobriety counter, drink less app, alcohol free, sober living, alcohol addiction help" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/images/beacon-logo.png" type="image/png" />
         <link rel="canonical" href="https://jon-williams.dev/beacon" />
 
         {/* Open Graph */}

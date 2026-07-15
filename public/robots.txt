@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /beacon
+Allow: /beacon-story
+
+Sitemap: https://jwdev.co.uk/api/sitemap

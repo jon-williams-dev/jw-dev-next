@@ -450,9 +450,10 @@ export default function Beacon() {
             <span className={styles.logoText}>Beacon</span>
           </div>
           <div className={styles.navLinks}>
-            <a href="#features" className={styles.navLink}>Features</a>
-            <a href="#screens"  className={styles.navLink}>App</a>
-            <a href="#how"      className={styles.navLink}>How it works</a>
+            <a href="#features"      className={styles.navLink}>Features</a>
+            <a href="#screens"       className={styles.navLink}>App</a>
+            <a href="#how"           className={styles.navLink}>How it works</a>
+            <a href="/beacon-story"  className={styles.navLink}>My Story</a>
           </div>
           <a href="#waitlist" className={styles.btnNav}>Get early access →</a>
         </div>

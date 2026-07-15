@@ -1,4 +1,4 @@
-const BASE = 'https://jwdev.co.uk'
+const BASE = 'https://jon-williams.dev'
 
 const PAGES = [
   { path: '/beacon',       priority: '1.0', changefreq: 'weekly'  },

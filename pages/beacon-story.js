@@ -67,20 +67,20 @@ export default function BeaconStory() {
         <meta name="description" content="The personal story behind Beacon: how one developer's struggle with drinking habits led to building a private, judgment-free sobriety app for people who want to stop drinking or cut back." />
         <meta name="keywords" content="why I stopped drinking, alcohol habit story, cut back on alcohol, sobriety journey, drinking problem, alcohol coping mechanism, sober app story, quit drinking motivation" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="canonical" href="https://jwdev.co.uk/beacon-story" />
+        <link rel="canonical" href="https://jon-williams.dev/beacon-story" />
 
         {/* Open Graph */}
         <meta property="og:type"        content="article" />
-        <meta property="og:url"         content="https://jwdev.co.uk/beacon-story" />
+        <meta property="og:url"         content="https://jon-williams.dev/beacon-story" />
         <meta property="og:title"       content="Why I Built Beacon — My Story" />
         <meta property="og:description" content="I built Beacon because I needed it too. A personal story about drinking habits, the decision to change, and why I built a sobriety app." />
-        <meta property="og:image"       content="https://jwdev.co.uk/images/beacon-og.png" />
+        <meta property="og:image"       content="https://jon-williams.dev/images/beacon-og.png" />
 
         {/* Twitter / X */}
         <meta name="twitter:card"        content="summary_large_image" />
         <meta name="twitter:title"       content="Why I Built Beacon — My Story" />
         <meta name="twitter:description" content="I built Beacon because I needed it too. A personal story about drinking habits and why I built a sobriety app." />
-        <meta name="twitter:image"       content="https://jwdev.co.uk/images/beacon-og.png" />
+        <meta name="twitter:image"       content="https://jon-williams.dev/images/beacon-og.png" />
       </Head>
 
       <div className={styles.bgGlow} aria-hidden="true" />

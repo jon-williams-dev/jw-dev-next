@@ -445,20 +445,20 @@ export default function Beacon() {
         <meta name="description" content="Beacon is a free sobriety companion app for people who want to stop drinking, cut back on alcohol, or simply understand their habits. Track your streak, log triggers, celebrate milestones — fully private, all on your device." />
         <meta name="keywords" content="sobriety app, alcohol tracker, stop drinking app, quit alcohol, sober streak, cut back on drinking, alcohol habit tracker, sobriety counter, drink less app, alcohol free, sober living, alcohol addiction help" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="canonical" href="https://jwdev.co.uk/beacon" />
+        <link rel="canonical" href="https://jon-williams.dev/beacon" />
 
         {/* Open Graph */}
         <meta property="og:type"        content="website" />
-        <meta property="og:url"         content="https://jwdev.co.uk/beacon" />
+        <meta property="og:url"         content="https://jon-williams.dev/beacon" />
         <meta property="og:title"       content="Beacon — Sobriety App & Alcohol Tracker" />
         <meta property="og:description" content="Track your sobriety streak, understand your drinking triggers, and watch your health recover — one day at a time. Private, judgment-free, and built for real life." />
-        <meta property="og:image"       content="https://jwdev.co.uk/images/beacon-og.png" />
+        <meta property="og:image"       content="https://jon-williams.dev/images/beacon-og.png" />
 
         {/* Twitter / X */}
         <meta name="twitter:card"        content="summary_large_image" />
         <meta name="twitter:title"       content="Beacon — Sobriety App & Alcohol Tracker" />
         <meta name="twitter:description" content="Track your sobriety streak, understand your drinking triggers, and watch your health recover — one day at a time." />
-        <meta name="twitter:image"       content="https://jwdev.co.uk/images/beacon-og.png" />
+        <meta name="twitter:image"       content="https://jon-williams.dev/images/beacon-og.png" />
 
         {/* JSON-LD structured data */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
@@ -469,7 +469,7 @@ export default function Beacon() {
           "operatingSystem": "iOS, Android",
           "description": "Beacon is a sobriety companion app that helps people stop drinking, cut back on alcohol, or understand their habits. Features include streak tracking, trigger logging, health milestones, and a savings tracker.",
           "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
-          "url": "https://jwdev.co.uk/beacon",
+          "url": "https://jon-williams.dev/beacon",
           "keywords": "sobriety app, alcohol tracker, stop drinking, quit alcohol, sober streak, cut back on drinking",
           "author": { "@type": "Person", "name": "Jon Williams" }
         })}} />

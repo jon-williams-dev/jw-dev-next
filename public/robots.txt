@@ -2,4 +2,4 @@ User-agent: *
 Allow: /beacon
 Allow: /beacon-story
 
-Sitemap: https://jwdev.co.uk/api/sitemap
+Sitemap: https://jon-williams.dev/api/sitemap

@@ -2,7 +2,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Poppins, Inter } from 'next/font/google'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import styles from '../styles/beacon-story.module.scss'
 
 const poppins = Poppins({
@@ -44,6 +44,8 @@ const ChevronDown = () => (
 )
 
 export default function BeaconStory() {
+  const [menuOpen, setMenuOpen] = useState(false)
+
   useEffect(() => {
     const els = document.querySelectorAll('[data-reveal]')
     const obs = new IntersectionObserver(
@@ -100,7 +102,26 @@ export default function BeaconStory() {
             <span className={styles.navLinkActive}>My Story</span>
           </div>
           <Link href="/beacon#waitlist" className={styles.btnNav}>Get early access →</Link>
+          <button
+            className={styles.hamburger}
+            onClick={() => setMenuOpen(o => !o)}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+          >
+            <span className={`${styles.hamburgerBar} ${menuOpen ? styles.hamburgerBarTop : ''}`} />
+            <span className={`${styles.hamburgerBar} ${menuOpen ? styles.hamburgerBarMid : ''}`} />
+            <span className={`${styles.hamburgerBar} ${menuOpen ? styles.hamburgerBarBot : ''}`} />
+          </button>
         </div>
+        {menuOpen && (
+          <div className={styles.mobileMenu}>
+            <Link href="/beacon#features" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Features</Link>
+            <Link href="/beacon#screens"  className={styles.mobileLink} onClick={() => setMenuOpen(false)}>App</Link>
+            <Link href="/beacon#how"      className={styles.mobileLink} onClick={() => setMenuOpen(false)}>How it works</Link>
+            <span className={styles.mobileLink}>My Story</span>
+            <Link href="/beacon#waitlist" className={styles.mobileCta}  onClick={() => setMenuOpen(false)}>Get early access →</Link>
+          </div>
+        )}
       </nav>
 
       {/* ── Hero ── */}

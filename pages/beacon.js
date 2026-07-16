@@ -83,7 +83,7 @@ const IcoAndroid = () => (
 // ── Data ──────────────────────────────────────────────────────────────────────
 
 const STATS = [
-  { icon: <IcoLock />,    num: '100%', label: 'Private — data stays on device', color: '#14B8A6' },
+  { icon: <IcoLock />,    num: '100%', label: 'Private — your data is never sold', color: '#14B8A6' },
   { icon: <IcoPhone />,   num: 'iOS & Android', label: 'Coming soon',           color: '#fff'    },
   { icon: <IcoZap />,     num: '<60s',  label: 'To log your day',               color: '#F59E0B' },
   { icon: <IcoSparkle />, num: '6',     label: 'Core features',                 color: '#fff'    },
@@ -443,7 +443,7 @@ export default function Beacon() {
     <div className={`${poppins.variable} ${inter.variable} ${styles.root}`}>
       <Head>
         <title>Beacon — Sobriety App & Alcohol Tracker | Stop Drinking, Cut Back, Stay Sober</title>
-        <meta name="description" content="Beacon is a free sobriety companion app for people who want to stop drinking, cut back on alcohol, or simply understand their habits. Track your streak, log triggers, celebrate milestones — fully private, all on your device." />
+        <meta name="description" content="Beacon is a sobriety companion app for people who want to stop drinking, cut back on alcohol, or simply understand their habits. Track your streak, log triggers, celebrate milestones — private, secure, and built for real life." />
         <meta name="keywords" content="sobriety app, alcohol tracker, stop drinking app, quit alcohol, sober streak, cut back on drinking, alcohol habit tracker, sobriety counter, drink less app, alcohol free, sober living, alcohol addiction help" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/images/beacon-logo.png" type="image/png" />
@@ -721,9 +721,11 @@ export default function Beacon() {
             <span className={styles.footerWordmark}>Beacon</span>
           </div>
           <div className={styles.footerLinks}>
-            <a href="#features" className={styles.footerLink}>Features</a>
-            <a href="#screens"  className={styles.footerLink}>App</a>
-            <a href="#waitlist" className={styles.footerLink}>Join waitlist</a>
+            <a href="#features"           className={styles.footerLink}>Features</a>
+            <a href="#screens"            className={styles.footerLink}>App</a>
+            <a href="#waitlist"           className={styles.footerLink}>Join waitlist</a>
+            <a href="/beacon-story"       className={styles.footerLink}>My Story</a>
+            <a href="/beacon-privacy"     className={styles.footerLink}>Privacy</a>
           </div>
           <p className={styles.footerNote}>© {new Date().getFullYear()} Beacon. All rights reserved.</p>
         </div>

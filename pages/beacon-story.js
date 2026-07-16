@@ -336,6 +336,7 @@ export default function BeaconStory() {
             <Link href="/beacon#screens"  className={styles.footerLink}>App</Link>
             <Link href="/beacon#waitlist" className={styles.footerLink}>Join waitlist</Link>
             <Link href="/beacon-story"    className={styles.footerLink}>My Story</Link>
+            <Link href="/beacon-privacy"  className={styles.footerLink}>Privacy</Link>
           </div>
           <p className={styles.footerNote}>© {new Date().getFullYear()} Beacon. All rights reserved.</p>
         </div>

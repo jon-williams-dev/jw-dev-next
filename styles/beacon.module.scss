@@ -1141,13 +1141,11 @@
 }
 
 @media (max-width: 720px) {
-  .navLinks { display: none; }
-  .btnNav   { display: none; }
+  .navLinks  { display: none; }
+  .btnNav    { display: none; }
+  .hamburger { display: flex; }
 }
 
-@media (min-width: 721px) {
-  .hamburger { display: none; }
-}
 
 @media (max-width: 600px) {
   .hero      { padding: 120px 20px 80px; }
@@ -1159,7 +1157,7 @@
 // ── Hamburger button ──────────────────────────────────────────────────────────
 
 .hamburger {
-  display:          flex;
+  display:          none;
   flex-direction:   column;
   justify-content:  center;
   gap:              5px;

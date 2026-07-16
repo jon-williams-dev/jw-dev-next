@@ -12,16 +12,19 @@ export function middleware(request: NextRequest) {
 
   const url = request.nextUrl.clone();
 
-  if (!url.pathname.startsWith('/beacon')) {
-    url.pathname =
-      url.pathname === '/'
-        ? '/beacon'
-        : `/beacon${url.pathname}`;
-
-    return NextResponse.rewrite(url);
+  // If the path already starts with /beacon, redirect to strip it
+  // e.g. beacontrack.app/beacon/story → beacontrack.app/story
+  if (url.pathname.startsWith('/beacon')) {
+    const stripped = url.pathname === '/beacon'
+      ? '/'
+      : url.pathname.slice('/beacon'.length);
+    url.pathname = stripped || '/';
+    return NextResponse.redirect(url);
   }
 
-  return NextResponse.next();
+  // Rewrite clean paths to the /beacon equivalents
+  url.pathname = url.pathname === '/' ? '/beacon' : `/beacon${url.pathname}`;
+  return NextResponse.rewrite(url);
 }
 
 export const config = {

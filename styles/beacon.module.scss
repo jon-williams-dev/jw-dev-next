@@ -63,13 +63,14 @@
 }
 
 .navInner {
-  max-width:   1160px;
-  margin:      0 auto;
-  padding:     0 28px;
-  height:      64px;
-  display:     flex;
-  align-items: center;
-  gap:         32px;
+  max-width:       1160px;
+  margin:          0 auto;
+  padding:         0 28px;
+  height:          64px;
+  display:         flex;
+  align-items:     center;
+  gap:             32px;
+  justify-content: space-between;
 }
 
 .logo { display: flex; align-items: center; gap: 9px; flex-shrink: 0; }
@@ -84,7 +85,7 @@
   letter-spacing: -0.02em;
 }
 
-.navLinks { display: flex; gap: 28px; margin-left: auto; }
+.navLinks { display: flex; gap: 28px; }
 
 .navLink {
   font-size:        14px;
@@ -1168,7 +1169,6 @@
   border:           none;
   cursor:           pointer;
   flex-shrink:      0;
-  margin-left:      auto;
 }
 
 .hamburgerBar {

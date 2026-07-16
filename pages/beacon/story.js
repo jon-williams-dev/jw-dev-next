@@ -187,6 +187,9 @@ export default function BeaconStory() {
             <p className={styles.storyP}>
               Once I had opened the first one, I rarely wanted to stop. I could force myself to, but I did not want to. Stress and habit had become much bigger drivers than enjoyment.
             </p>
+            <p className={styles.storyP}>
+              I was, by most definitions, a functioning alcoholic. I held down a job, looked after my family, kept things together on the outside. Nobody would have looked at me and seen a problem. But I knew. The amount I was drinking was not normal, and the hold it had over my evenings was not something I could keep ignoring.
+            </p>
           </div>
 
           <div className={styles.storyDivider} data-reveal />
@@ -264,6 +267,12 @@ export default function BeaconStory() {
             </p>
             <p className={`${styles.storyP} ${styles.storyEmphasis}`}>
               That is who I built Beacon for.
+            </p>
+          </div>
+
+          <div data-reveal>
+            <p className={styles.storyP}>
+              I should be honest about one more thing. I wrote most of this having had a few beers. I am not sure whether that makes it more authentic or simply ironic. Probably both. But I think it is worth saying, because that is exactly the point — I am not writing this from the other side of a transformation. I am writing it from the middle of one.
             </p>
           </div>
 

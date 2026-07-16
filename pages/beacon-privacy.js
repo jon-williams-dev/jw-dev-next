@@ -78,7 +78,7 @@ export default function BeaconPrivacy() {
       <nav className={styles.nav}>
         <div className={styles.navInner}>
           <Link href="/beacon" className={styles.logo}>
-            <Image src="/images/beacon-logo.png" alt="" width={44} height={44} className={styles.logoImg} aria-hidden="true" />
+            <Image src="/images/beacon-logo.png" alt="" width={44} height={44} unoptimized className={styles.logoImg} aria-hidden="true" />
             <span className={styles.logoText}>Beacon</span>
           </Link>
           <div className={styles.navLinks}>
@@ -146,7 +146,7 @@ export default function BeaconPrivacy() {
       <footer className={styles.footer}>
         <div className={styles.footerInner}>
           <div className={styles.footerBrand}>
-            <Image src="/images/beacon-logo.png" alt="" width={40} height={40} className={styles.footerLogoImg} aria-hidden="true" />
+            <Image src="/images/beacon-logo.png" alt="" width={40} height={40} unoptimized className={styles.footerLogoImg} aria-hidden="true" />
             <span className={styles.footerWordmark}>Beacon</span>
           </div>
           <div className={styles.footerLinks}>

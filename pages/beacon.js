@@ -708,7 +708,7 @@ export default function Beacon() {
             {submitError && (
               <p className={styles.submitErrorMsg}>Something went wrong — please try again or email us directly.</p>
             )}
-            <p className={styles.ctaNote}>No spam · No account required · iOS &amp; Android</p>
+            <p className={styles.ctaNote}>No spam · Waitlist only · iOS &amp; Android</p>
           </div>
         </div>
       </section>

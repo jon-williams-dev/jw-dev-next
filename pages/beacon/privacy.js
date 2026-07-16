@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Poppins, Inter } from 'next/font/google'
 import { useState } from 'react'
-import styles from '../styles/beacon-story.module.scss'
+import styles from '../../styles/beacon-story.module.scss'
 
 const poppins = Poppins({
   weight: ['400', '600', '700'],
@@ -68,7 +68,7 @@ export default function BeaconPrivacy() {
         <meta name="description" content="Beacon's privacy policy — what data we collect, how it is stored using Firebase, and your rights under GDPR." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/images/beacon-logo.png" type="image/png" />
-        <link rel="canonical" href="https://jon-williams.dev/beacon-privacy" />
+        <link rel="canonical" href="https://jon-williams.dev/beacon/privacy" />
         <meta name="robots" content="noindex" />
       </Head>
 
@@ -85,7 +85,7 @@ export default function BeaconPrivacy() {
             <Link href="/beacon#features" className={styles.navLink}>Features</Link>
             <Link href="/beacon#screens"  className={styles.navLink}>App</Link>
             <Link href="/beacon#how"      className={styles.navLink}>How it works</Link>
-            <Link href="/beacon-story"    className={styles.navLink}>My Story</Link>
+            <Link href="/beacon/story"    className={styles.navLink}>My Story</Link>
           </div>
           <Link href="/beacon#waitlist" className={styles.btnNav}>Get early access →</Link>
           <button
@@ -104,7 +104,7 @@ export default function BeaconPrivacy() {
             <Link href="/beacon#features" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Features</Link>
             <Link href="/beacon#screens"  className={styles.mobileLink} onClick={() => setMenuOpen(false)}>App</Link>
             <Link href="/beacon#how"      className={styles.mobileLink} onClick={() => setMenuOpen(false)}>How it works</Link>
-            <Link href="/beacon-story"    className={styles.mobileLink} onClick={() => setMenuOpen(false)}>My Story</Link>
+            <Link href="/beacon/story"    className={styles.mobileLink} onClick={() => setMenuOpen(false)}>My Story</Link>
             <Link href="/beacon#waitlist" className={styles.mobileCta}  onClick={() => setMenuOpen(false)}>Get early access →</Link>
           </div>
         )}
@@ -152,8 +152,8 @@ export default function BeaconPrivacy() {
           <div className={styles.footerLinks}>
             <Link href="/beacon#features"  className={styles.footerLink}>Features</Link>
             <Link href="/beacon#waitlist"  className={styles.footerLink}>Join waitlist</Link>
-            <Link href="/beacon-story"     className={styles.footerLink}>My Story</Link>
-            <Link href="/beacon-privacy"   className={styles.footerLink}>Privacy</Link>
+            <Link href="/beacon/story"     className={styles.footerLink}>My Story</Link>
+            <Link href="/beacon/privacy"   className={styles.footerLink}>Privacy</Link>
           </div>
           <p className={styles.footerNote}>© {new Date().getFullYear()} Beacon. All rights reserved.</p>
         </div>

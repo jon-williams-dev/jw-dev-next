@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Poppins, Inter } from 'next/font/google'
 import { useEffect, useState } from 'react'
-import styles from '../styles/beacon-story.module.scss'
+import styles from '../../styles/beacon-story.module.scss'
 
 const poppins = Poppins({
   weight: ['400', '600', '700'],
@@ -70,11 +70,11 @@ export default function BeaconStory() {
         <meta name="keywords" content="why I stopped drinking, alcohol habit story, cut back on alcohol, sobriety journey, drinking problem, alcohol coping mechanism, sober app story, quit drinking motivation" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/images/beacon-logo.png" type="image/png" />
-        <link rel="canonical" href="https://jon-williams.dev/beacon-story" />
+        <link rel="canonical" href="https://jon-williams.dev/beacon/story" />
 
         {/* Open Graph */}
         <meta property="og:type"        content="article" />
-        <meta property="og:url"         content="https://jon-williams.dev/beacon-story" />
+        <meta property="og:url"         content="https://jon-williams.dev/beacon/story" />
         <meta property="og:title"       content="Why I Built Beacon — My Story" />
         <meta property="og:description" content="I built Beacon because I needed it too. A personal story about drinking habits, the decision to change, and why I built a sobriety app." />
         <meta property="og:image"       content="https://jon-williams.dev/images/beacon-og.png" />
@@ -335,8 +335,8 @@ export default function BeaconStory() {
             <Link href="/beacon#features" className={styles.footerLink}>Features</Link>
             <Link href="/beacon#screens"  className={styles.footerLink}>App</Link>
             <Link href="/beacon#waitlist" className={styles.footerLink}>Join waitlist</Link>
-            <Link href="/beacon-story"    className={styles.footerLink}>My Story</Link>
-            <Link href="/beacon-privacy"  className={styles.footerLink}>Privacy</Link>
+            <Link href="/beacon/story"    className={styles.footerLink}>My Story</Link>
+            <Link href="/beacon/privacy"  className={styles.footerLink}>Privacy</Link>
           </div>
           <p className={styles.footerNote}>© {new Date().getFullYear()} Beacon. All rights reserved.</p>
         </div>

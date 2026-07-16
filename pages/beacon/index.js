@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Poppins, Inter } from 'next/font/google'
 import { useState, useEffect, useRef } from 'react'
-import styles from '../styles/beacon.module.scss'
+import styles from '../../styles/beacon.module.scss'
 
 const poppins = Poppins({
   weight: ['400', '600', '700'],
@@ -492,7 +492,7 @@ export default function Beacon() {
             <a href="#features"      className={styles.navLink}>Features</a>
             <a href="#screens"       className={styles.navLink}>App</a>
             <a href="#how"           className={styles.navLink}>How it works</a>
-            <a href="/beacon-story"  className={styles.navLink}>My Story</a>
+            <a href="/beacon/story"  className={styles.navLink}>My Story</a>
           </div>
           <a href="#waitlist" className={styles.btnNav}>Get early access →</a>
           <button
@@ -511,7 +511,7 @@ export default function Beacon() {
             <a href="#features"     className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Features</a>
             <a href="#screens"      className={styles.mobileLink} onClick={() => setMenuOpen(false)}>App</a>
             <a href="#how"          className={styles.mobileLink} onClick={() => setMenuOpen(false)}>How it works</a>
-            <a href="/beacon-story" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>My Story</a>
+            <a href="/beacon/story" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>My Story</a>
             <a href="#waitlist"     className={styles.mobileCta}  onClick={() => setMenuOpen(false)}>Get early access →</a>
           </div>
         )}
@@ -725,8 +725,8 @@ export default function Beacon() {
             <a href="#features"           className={styles.footerLink}>Features</a>
             <a href="#screens"            className={styles.footerLink}>App</a>
             <a href="#waitlist"           className={styles.footerLink}>Join waitlist</a>
-            <a href="/beacon-story"       className={styles.footerLink}>My Story</a>
-            <a href="/beacon-privacy"     className={styles.footerLink}>Privacy</a>
+            <a href="/beacon/story"       className={styles.footerLink}>My Story</a>
+            <a href="/beacon/privacy"     className={styles.footerLink}>Privacy</a>
           </div>
           <p className={styles.footerNote}>© {new Date().getFullYear()} Beacon. All rights reserved.</p>
         </div>

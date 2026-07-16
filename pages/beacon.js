@@ -376,6 +376,7 @@ export default function Beacon() {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading]     = useState(false)
   const [submitError, setSubmitError] = useState(false)
+  const [menuOpen, setMenuOpen]   = useState(false)
   const [days, setDays]           = useState(0)
   const counterRef                = useRef(null)
 
@@ -493,7 +494,26 @@ export default function Beacon() {
             <a href="/beacon-story"  className={styles.navLink}>My Story</a>
           </div>
           <a href="#waitlist" className={styles.btnNav}>Get early access →</a>
+          <button
+            className={styles.hamburger}
+            onClick={() => setMenuOpen(o => !o)}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+          >
+            <span className={`${styles.hamburgerBar} ${menuOpen ? styles.hamburgerBarTop : ''}`} />
+            <span className={`${styles.hamburgerBar} ${menuOpen ? styles.hamburgerBarMid : ''}`} />
+            <span className={`${styles.hamburgerBar} ${menuOpen ? styles.hamburgerBarBot : ''}`} />
+          </button>
         </div>
+        {menuOpen && (
+          <div className={styles.mobileMenu}>
+            <a href="#features"     className={styles.mobileLink} onClick={() => setMenuOpen(false)}>Features</a>
+            <a href="#screens"      className={styles.mobileLink} onClick={() => setMenuOpen(false)}>App</a>
+            <a href="#how"          className={styles.mobileLink} onClick={() => setMenuOpen(false)}>How it works</a>
+            <a href="/beacon-story" className={styles.mobileLink} onClick={() => setMenuOpen(false)}>My Story</a>
+            <a href="#waitlist"     className={styles.mobileCta}  onClick={() => setMenuOpen(false)}>Get early access →</a>
+          </div>
+        )}
       </nav>
 
       {/* ── Hero ── */}

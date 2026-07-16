@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import Image from 'next/image'
+import Link from 'next/link'
 import { Poppins, Inter } from 'next/font/google'
 import { useState, useEffect, useRef } from 'react'
 import styles from '../styles/beacon.module.scss'
@@ -483,10 +484,10 @@ export default function Beacon() {
       {/* ── Nav ── */}
       <nav className={styles.nav}>
         <div className={styles.navInner}>
-          <div className={styles.logo}>
+          <Link href="/" className={styles.logo}>
             <Image src="/images/beacon-logo.png" alt="" width={44} height={44} className={styles.logoImg} aria-hidden="true" />
             <span className={styles.logoText}>Beacon</span>
-          </div>
+          </Link>
           <div className={styles.navLinks}>
             <a href="#features"      className={styles.navLink}>Features</a>
             <a href="#screens"       className={styles.navLink}>App</a>

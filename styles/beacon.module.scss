@@ -1141,20 +1141,6 @@
   .submitBtn { height: 48px; }
 }
 
-@media (max-width: 720px) {
-  .navLinks  { display: none; }
-  .btnNav    { display: none; }
-  .hamburger { display: flex; }
-}
-
-
-@media (max-width: 600px) {
-  .hero      { padding: 120px 20px 80px; }
-  .secWrap   { padding: 72px 20px; }
-  .secWrapSm { padding: 72px 20px; }
-  .navInner  { padding: 0 20px; }
-}
-
 // ── Hamburger button ──────────────────────────────────────────────────────────
 
 .hamburger {
@@ -1184,6 +1170,19 @@
 .hamburgerBarTop { transform: translateY(7px) rotate(45deg); }
 .hamburgerBarMid { opacity: 0; }
 .hamburgerBarBot { transform: translateY(-7px) rotate(-45deg); }
+
+@media (max-width: 720px) {
+  .navLinks  { display: none; }
+  .btnNav    { display: none; }
+  .hamburger { display: flex; }
+}
+
+@media (max-width: 600px) {
+  .hero      { padding: 120px 20px 80px; }
+  .secWrap   { padding: 72px 20px; }
+  .secWrapSm { padding: 72px 20px; }
+  .navInner  { padding: 0 20px; }
+}
 
 // ── Mobile menu drawer ────────────────────────────────────────────────────────
 

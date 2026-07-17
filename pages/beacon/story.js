@@ -270,12 +270,6 @@ export default function BeaconStory() {
             </p>
           </div>
 
-          <div data-reveal>
-            <p className={styles.storyP}>
-              I should be honest about one more thing. I wrote most of this having had a few beers. I am not sure whether that makes it more authentic or simply ironic. Probably both. But I think it is worth saying, because that is exactly the point — I am not writing this from the other side of a transformation. I am writing it from the middle of one.
-            </p>
-          </div>
-
           <div className={styles.closingStanza} data-reveal>
             <span className={styles.stanzaLine}>Because lasting change does not always happen through one big decision.</span>
             <span className={styles.stanzaLine}>It happens one choice at a time.</span>

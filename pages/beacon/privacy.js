@@ -22,7 +22,7 @@ const inter = Inter({
 const SECTIONS = [
   {
     title: 'Who we are',
-    body: `Beacon is a sobriety companion app built and operated by Jon Williams, an independent developer based in the United Kingdom. If you have any questions about this policy, you can contact us at jon.williams@hey.com.`,
+    body: `Beacon is a sobriety companion app built and operated by Jon Williams, an independent developer based in Germany. If you have any questions about this policy, you can contact us at jon.williams@hey.com.`,
   },
   {
     title: 'What data Beacon collects',
@@ -34,15 +34,15 @@ const SECTIONS = [
   },
   {
     title: 'Why we collect your data',
-    body: `Your data is used solely to power the Beacon app — to save your progress, sync across your devices, and show you your history and insights. We do not use your data for advertising. We do not sell your data. We do not share your data with any third party except Google Firebase, which processes it on our behalf under their own privacy and security standards.`,
+    body: `Your data is used solely to power the Beacon app - to save your progress, sync across your devices, and show you your history and insights. We do not use your data for advertising. We do not sell your data. We do not share your data with any third party except Google Firebase, which processes it on our behalf under their own privacy and security standards.`,
   },
   {
     title: 'How long we keep your data',
-    body: `Your data is kept for as long as your account is active. If you delete your account within the app, all of your personal data — including your logs, streak history, and account details — is permanently deleted immediately. If you would prefer to request deletion by email, contact us at jon.williams@hey.com and we will action it within 30 days.`,
+    body: `Your data is kept for as long as your account is active. If you delete your account within the app, all of your personal data - including your logs, streak history, and account details - is permanently deleted immediately. If you would prefer to request deletion by email, contact us at jon.williams@hey.com and we will action it within 30 days.`,
   },
   {
     title: 'Your rights under GDPR',
-    body: `If you are based in the UK or European Union, you have the following rights regarding your personal data:\n\n• The right to access the data we hold about you\n• The right to correct inaccurate data\n• The right to request deletion of your data\n• The right to restrict or object to how we process your data\n• The right to data portability (receive your data in a usable format)\n\nTo exercise any of these rights, contact us at jon.williams@hey.com. We will respond within 30 days.`,
+    body: `If you are based in the European Union, you have the following rights regarding your personal data:\n\n• The right to access the data we hold about you\n• The right to correct inaccurate data\n• The right to request deletion of your data\n• The right to restrict or object to how we process your data\n• The right to data portability (receive your data in a usable format)\n\nTo exercise any of these rights, contact us at jon.williams@hey.com. We will respond within 30 days.`,
   },
   {
     title: 'Cookies and tracking',
@@ -65,7 +65,7 @@ export default function BeaconPrivacy() {
     <div className={`${poppins.variable} ${inter.variable} ${styles.root}`}>
       <Head>
         <title>Privacy Policy | Beacon</title>
-        <meta name="description" content="Beacon's privacy policy — what data we collect, how it is stored using Firebase, and your rights under GDPR." />
+        <meta name="description" content="Beacon's privacy policy - what data we collect, how it is stored using Firebase, and your rights under GDPR." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/images/beacon-logo.png" type="image/png" />
         <link rel="canonical" href="https://jon-williams.dev/beacon/privacy" />

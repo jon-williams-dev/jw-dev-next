@@ -38,7 +38,7 @@ const SECTIONS = [
   },
   {
     title: 'How long we keep your data',
-    body: `Your data is kept for as long as your account is active. If you delete your account, all of your personal data — including your logs, streak history, and account details — is permanently deleted within 30 days. You can request deletion at any time by contacting us at jon.williams@hey.com.`,
+    body: `Your data is kept for as long as your account is active. If you delete your account within the app, all of your personal data — including your logs, streak history, and account details — is permanently deleted immediately. If you would prefer to request deletion by email, contact us at jon.williams@hey.com and we will action it within 30 days.`,
   },
   {
     title: 'Your rights under GDPR',

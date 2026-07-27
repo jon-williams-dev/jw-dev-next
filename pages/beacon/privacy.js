@@ -135,6 +135,11 @@ export default function BeaconPrivacy() {
           <p className={styles.storyP} style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.85rem' }}>
             Last updated: July 2026
           </p>
+          <p className={styles.storyP} style={{ marginTop: 24 }}>
+            <a href="/beacon-privacy-full.html" style={{ color: '#14B8A6', textDecoration: 'none' }}>
+              Read our full legal privacy policy →
+            </a>
+          </p>
         </div>
       </section>
 

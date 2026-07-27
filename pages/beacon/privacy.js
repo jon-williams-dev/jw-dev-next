@@ -22,7 +22,7 @@ const inter = Inter({
 const SECTIONS = [
   {
     title: 'Who we are',
-    body: `Beacon is a sobriety companion app built and operated by Jon Williams, an independent developer based in the United Kingdom. If you have any questions about this policy, you can contact us at beacon@jon-williams.dev.`,
+    body: `Beacon is a sobriety companion app built and operated by Jon Williams, an independent developer based in the United Kingdom. If you have any questions about this policy, you can contact us at jon.williams@hey.com.`,
   },
   {
     title: 'What data Beacon collects',
@@ -38,11 +38,11 @@ const SECTIONS = [
   },
   {
     title: 'How long we keep your data',
-    body: `Your data is kept for as long as your account is active. If you delete your account, all of your personal data — including your logs, streak history, and account details — is permanently deleted within 30 days. You can request deletion at any time by contacting us at beacon@jon-williams.dev.`,
+    body: `Your data is kept for as long as your account is active. If you delete your account, all of your personal data — including your logs, streak history, and account details — is permanently deleted within 30 days. You can request deletion at any time by contacting us at jon.williams@hey.com.`,
   },
   {
     title: 'Your rights under GDPR',
-    body: `If you are based in the UK or European Union, you have the following rights regarding your personal data:\n\n• The right to access the data we hold about you\n• The right to correct inaccurate data\n• The right to request deletion of your data\n• The right to restrict or object to how we process your data\n• The right to data portability (receive your data in a usable format)\n\nTo exercise any of these rights, contact us at beacon@jon-williams.dev. We will respond within 30 days.`,
+    body: `If you are based in the UK or European Union, you have the following rights regarding your personal data:\n\n• The right to access the data we hold about you\n• The right to correct inaccurate data\n• The right to request deletion of your data\n• The right to restrict or object to how we process your data\n• The right to data portability (receive your data in a usable format)\n\nTo exercise any of these rights, contact us at jon.williams@hey.com. We will respond within 30 days.`,
   },
   {
     title: 'Cookies and tracking',

@@ -113,10 +113,6 @@ export default function BeaconPrivacy() {
       {/* ── Hero ── */}
       <section className={styles.hero}>
         <div className={styles.heroInner}>
-          <div className={styles.eyebrowTag}>
-            <div className={styles.eyebrowDot} />
-            <span className={styles.eyebrowText}>Beacon · Privacy</span>
-          </div>
           <h1 className={styles.heroH1}>Privacy Policy</h1>
           <p className={styles.heroSub}>
             Plain English. No legal jargon. This is exactly what we collect, why we collect it, and what your rights are.

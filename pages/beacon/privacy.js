@@ -30,7 +30,7 @@ const SECTIONS = [
   },
   {
     title: 'How your data is stored',
-    body: `Beacon uses Google Firebase to store your data securely in the cloud. Firebase is a Google service that encrypts data in transit and at rest. Your data is stored in Google's European data centres and is accessible only to your account. We do not have access to your individual records unless you explicitly share them with us for support purposes.`,
+    body: `Beacon uses Google Firebase to store your data securely in the cloud. Firebase is a Google service that encrypts data in transit and at rest. Your data is stored in Google's secure cloud infrastructure and is accessible only to your account. We do not have access to your individual records unless you explicitly share them with us for support purposes.`,
   },
   {
     title: 'Why we collect your data',

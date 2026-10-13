@@ -44,8 +44,12 @@ export default function Layout({ children, home }) {
             <main>{children}</main>
             <footer className={transportStyles.transportFooter}>
                 <div className="container">
-                    <div class="columns">
-                        <div class="column is-size-5 has-text-right">
+                    <div className="columns">
+                        <div className="column is-size-6">
+                            © {new Date().getFullYear()} JW Motorcycle Transport
+                        </div>
+                        <div className="column is-size-6 has-text-right">
+                            <a className="has-text-white" href="mailto:jon.williams@hey.com">jon.williams@hey.com</a>
                         </div>
                     </div>
                 </div>

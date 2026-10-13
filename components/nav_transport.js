@@ -48,7 +48,7 @@ export default function NavTransport({ children, home }) {
                     <div className="navbar-end">
                         <div className="navbar-item">
                             <div className="buttons">
-                                <a className="button is-dark" href="#">Contact</a>
+                                <a className="button is-dark" href="mailto:jon.williams@hey.com">Contact</a>
                                 <a className="button is-dark" href="#quote">Request a Quote</a>
                             </div>
                         </div>

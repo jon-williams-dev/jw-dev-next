@@ -5,10 +5,18 @@ export default async function handler(req, res) {
         return res.status(405).json({ message: 'Method not allowed' });
     }
 
-    const { name, email, bikeType, bikeInfo, pickup, dropoff, notes } = req.body;
+    const { name, email, bikeType, bikeInfo, pickup, dropoff, notes, website } = req.body || {};
 
-    if (!name || !email || !bikeInfo || !pickup || !dropoff) {
-        return res.status(400).json({ message: 'Missing required fields' });
+    // Honeypot filled in: pretend success so bots don't retry.
+    if (website) {
+        return res.status(200).json({ message: 'Quote request sent successfully.' });
+    }
+
+    const required = { name, email, bikeType, bikeInfo, pickup, dropoff };
+    const tooLong = (v, max) => typeof v !== 'string' || v.length > max;
+    if (Object.values(required).some((v) => !v || tooLong(v, 300)) || (notes && tooLong(notes, 3000))
+        || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return res.status(400).json({ message: 'Missing or invalid fields' });
     }
 
     const transporter = nodemailer.createTransport({
@@ -24,6 +32,7 @@ export default async function handler(req, res) {
     const internalMail = {
         from: process.env.EMAIL_USER,
         to: process.env.EMAIL_USER, // send to yourself
+        replyTo: email,
         subject: `New Quote Request: (${bikeInfo})`,
         text: `You received a new transport request:
 
@@ -40,7 +49,7 @@ Please follow up with the customer.`,
 
     // Confirmation email to user
     const confirmationMail = {
-        from: 'no-reply@yourdomain.com',
+        from: { name: 'JW Motorcycle Transport', address: process.env.EMAIL_USER },
         to: email,
         subject: 'Your transport request has been received',
         text: `Hi ${name},

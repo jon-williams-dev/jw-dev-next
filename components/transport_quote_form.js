@@ -23,13 +23,18 @@ export default function QuoteForm() {
     const handleSubmit = async (e) => {
         e.preventDefault()
         setStatus('loading')
-        const res = await fetch('/api/quote', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData),
-        })
+        let res
+        try {
+            res = await fetch('/api/quote', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...formData, website: e.target.website.value }),
+            })
+        } catch {
+            setStatus('error')
+            return
+        }
 
-        const result = await res.json()
         if (res.ok) {
             setStatus('success')
             setFormData({
@@ -49,6 +54,10 @@ export default function QuoteForm() {
     return (
         <form onSubmit={handleSubmit} className={`card ${transportStyles['pricing-card']} ${transportStyles['quote-card']} p-4 `}>
 
+            {/* Honeypot: hidden from people, filled in by spam bots */}
+            <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true"
+                style={{ position: 'absolute', left: '-9999px' }} />
+
             <div className="field">
                 <label className="label">Your Name <span className='has-text-weight-bold is-danger'>*</span></label>
                 <div className="control">
@@ -64,7 +73,7 @@ export default function QuoteForm() {
             </div>
 
             <div className="field">
-                <label className="label">Bike Type</label>
+                <label className="label">Bike Type <span className='has-text-weight-bold is-danger'>*</span></label>
                 <div className="control">
                     <div className="select is-fullwidth">
                         <select name="bikeType" value={formData.bikeType} onChange={handleChange} required>

@@ -72,6 +72,7 @@ export default function Home() {
             <div className="block mb-6" style={{borderLeft: '3px solid #00BF8E', paddingLeft: '1.25rem'}}>
               <p className="is-size-6 has-text-weight-bold has-text-grey-light mb-1" style={{letterSpacing: '0.1em', textTransform: 'uppercase'}}>Side Projects</p>
               <p className="is-size-5"><a href="https://moto90.net" target="_blank" rel="noreferrer">Moto90</a> — a marketplace for 90s motorcycles.</p>
+              <p className="is-size-5 mt-3"><a href="https://jw-motorrad-transport.de/en" target="_blank" rel="noreferrer">JW Motorcycle Transport</a> — door-to-door motorcycle transport across Germany and Europe.</p>
               <p className="is-size-5 mt-3"><a href="/beacon">Beacon</a> — a sobriety companion app for people who want to stop drinking, cut back, or simply understand their habits.</p>
             </div>
 

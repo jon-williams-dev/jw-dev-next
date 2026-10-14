@@ -5,7 +5,7 @@ export default async function handler(req, res) {
         return res.status(405).json({ message: 'Method not allowed' });
     }
 
-    const { name, email, bikeType, bikeInfo, pickup, dropoff, notes, website } = req.body || {};
+    const { name, email, bikeType, bikeInfo, pickup, dropoff, notes, lang, website } = req.body || {};
 
     // Honeypot filled in: pretend success so bots don't retry.
     if (website) {
@@ -43,16 +43,16 @@ Motorcycle details: ${bikeInfo}
 Pickup location: ${pickup}
 Drop-off location: ${dropoff}
 Notes: ${notes || 'N/A'}
+Language: ${lang === 'de' ? 'German' : 'English'}
 
 Please follow up with the customer.`,
     };
 
-    // Confirmation email to user
-    const confirmationMail = {
-        from: { name: 'JW Motorcycle Transport', address: process.env.EMAIL_USER },
-        to: email,
-        subject: 'Your transport request has been received',
-        text: `Hi ${name},
+    const confirmation = {
+        en: {
+            from: 'JW Motorcycle Transport',
+            subject: 'Your transport request has been received',
+            text: `Hi ${name},
 
 Thanks for getting in touch! Your motorcycle transport request has been received.
 
@@ -65,8 +65,35 @@ Here’s a summary of what you submitted:
 
 I’ll review the details and get back to you soon with a quote.
 
-Best regards,  
+Best regards,
 Jon (JW Motorcycle Transport)`,
+        },
+        de: {
+            from: 'JW Motorradtransport',
+            subject: 'Ihre Transportanfrage ist eingegangen',
+            text: `Guten Tag ${name},
+
+vielen Dank für Ihre Anfrage! Ihre Anfrage für einen Motorradtransport ist bei mir eingegangen.
+
+Hier eine Zusammenfassung Ihrer Angaben:
+- Motorradtyp: ${{ Small: 'Klein', Medium: 'Mittel', Large: 'Groß' }[bikeType] || bikeType}
+- Angaben zum Motorrad: ${bikeInfo}
+- Abholort: ${pickup}
+- Lieferort: ${dropoff}
+- Anmerkungen: ${notes || '-'}
+
+Ich prüfe Ihre Angaben und melde mich in Kürze mit einem Angebot bei Ihnen.
+
+Mit freundlichen Grüßen
+Jon (JW Motorradtransport)`,
+        },
+    }[lang === 'de' ? 'de' : 'en'];
+
+    const confirmationMail = {
+        from: { name: confirmation.from, address: process.env.EMAIL_USER },
+        to: email,
+        subject: confirmation.subject,
+        text: confirmation.text,
     };
 
     try {

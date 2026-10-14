@@ -4,13 +4,33 @@ const MAX_BIKES = 8
 const USER_AGENT = 'JW Motorcycle Transport route planner'
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
-async function geocode(query) {
-    const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(query)}`
+const COUNTRY_SUFFIX = /,\s*(germany|deutschland|de|austria|österreich|switzerland|schweiz)\s*$/i
+const POSTCODE = /\b\d{4,5}\b\s*/
+
+// Nominatim is strict: e.g. "72108 Kiebingen, Germany" fails but "72108 Kiebingen" works.
+const queryVariants = (query) => {
+    const noCountry = query.replace(COUNTRY_SUFFIX, '').trim()
+    return [...new Set([query.trim(), noCountry, noCountry.replace(POSTCODE, '').trim()])].filter(Boolean)
+}
+
+// Nominatim usage policy: max 1 request per second.
+let lastRequest = 0
+async function nominatim(q) {
+    const wait = lastRequest + 1100 - Date.now()
+    if (wait > 0) await sleep(wait)
+    lastRequest = Date.now()
+    const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(q)}`
     const res = await fetch(url, { headers: { 'User-Agent': USER_AGENT } })
     if (!res.ok) throw new Error(`Geocoding failed (${res.status})`)
-    const [hit] = await res.json()
-    if (!hit) throw new Error(`Address not found: "${query}"`)
-    return { lat: Number(hit.lat), lon: Number(hit.lon), name: hit.display_name }
+    return (await res.json())[0]
+}
+
+async function geocode(query) {
+    for (const q of queryVariants(query)) {
+        const hit = await nominatim(q)
+        if (hit) return { lat: Number(hit.lat), lon: Number(hit.lon), name: hit.display_name }
+    }
+    throw new Error(`Address not found: "${query}"`)
 }
 
 export default async function handler(req, res) {
@@ -29,15 +49,11 @@ export default async function handler(req, res) {
     const addresses = [home, ...bikes.map((b) => b.pickup), ...bikes.map((b) => b.dropoff)]
 
     try {
-        // Nominatim usage policy: max 1 request per second.
         const cache = new Map()
         const points = []
         for (const address of addresses) {
             const key = address.trim().toLowerCase()
-            if (!cache.has(key)) {
-                if (cache.size) await sleep(1100)
-                cache.set(key, await geocode(address))
-            }
+            if (!cache.has(key)) cache.set(key, await geocode(address))
             points.push(cache.get(key))
         }
 

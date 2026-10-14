@@ -1,8 +1,10 @@
 import transportStyles from '../styles/transport.module.scss'
 
 import { useState } from 'react'
+import { CONTENT } from './transport_content'
 
-export default function QuoteForm() {
+export default function QuoteForm({ lang = 'en' }) {
+    const t = CONTENT[lang].quote.form
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -28,7 +30,7 @@ export default function QuoteForm() {
             res = await fetch('/api/quote', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...formData, website: e.target.website.value }),
+                body: JSON.stringify({ ...formData, lang, website: e.target.website.value }),
             })
         } catch {
             setStatus('error')
@@ -59,35 +61,35 @@ export default function QuoteForm() {
                 style={{ position: 'absolute', left: '-9999px' }} />
 
             <div className="field">
-                <label className="label">Your Name <span className='has-text-weight-bold is-danger'>*</span></label>
+                <label className="label">{t.name} <span className='has-text-weight-bold is-danger'>*</span></label>
                 <div className="control">
                     <input className="input" type="text" name="name" value={formData.name} onChange={handleChange} required />
                 </div>
             </div>
 
             <div className="field">
-                <label className="label">Email Address <span className='has-text-weight-bold is-danger'>*</span></label>
+                <label className="label">{t.email} <span className='has-text-weight-bold is-danger'>*</span></label>
                 <div className="control">
                     <input className="input" type="email" name="email" value={formData.email} onChange={handleChange} required />
                 </div>
             </div>
 
             <div className="field">
-                <label className="label">Bike Type <span className='has-text-weight-bold is-danger'>*</span></label>
+                <label className="label">{t.bikeType} <span className='has-text-weight-bold is-danger'>*</span></label>
                 <div className="control">
                     <div className="select is-fullwidth">
                         <select name="bikeType" value={formData.bikeType} onChange={handleChange} required>
-                            <option value="">Select bike type</option>
-                            <option value="Small">Small (50cc–125cc)</option>
-                            <option value="Medium">Medium (Standard/Naked/Touring)</option>
-                            <option value="Large">Large (Adventure/Cruiser/Heavy)</option>
+                            <option value="">{t.bikeTypePlaceholder}</option>
+                            {Object.entries(t.bikeTypes).map(([value, label]) => (
+                                <option key={value} value={value}>{label}</option>
+                            ))}
                         </select>
                     </div>
                 </div>
             </div>
 
             <div className="field">
-                <label className="label">Bike information <span className='has-text-weight-bold is-danger'>*</span></label>
+                <label className="label">{t.bikeInfo} <span className='has-text-weight-bold is-danger'>*</span></label>
                 <div className="control">
                     <input
                         className="input"
@@ -98,40 +100,40 @@ export default function QuoteForm() {
                         required
                     />
                 </div>
-                <p className="help">Please enter the year, make, and model of the motorcycle, e.g. “2021 Yamaha MT-07”.</p>
+                <p className="help">{t.bikeInfoHelp}</p>
             </div>
 
 
             <div className="field">
-                <label className="label">Pickup Location <span className='has-text-weight-bold is-danger'>*</span></label>
+                <label className="label">{t.pickup} <span className='has-text-weight-bold is-danger'>*</span></label>
                 <div className="control">
                     <input className="input" type="text" name="pickup" value={formData.pickup} onChange={handleChange} required />
                 </div>
-                <p className="help">Enter the full address or at least the city and postcode where the bike should be picked up.</p>
+                <p className="help">{t.pickupHelp}</p>
             </div>
 
             <div className="field">
-                <label className="label">Drop-off Location <span className='has-text-weight-bold is-danger'>*</span></label>
+                <label className="label">{t.dropoff} <span className='has-text-weight-bold is-danger'>*</span></label>
                 <div className="control">
                     <input className="input" type="text" name="dropoff" value={formData.dropoff} onChange={handleChange} required />
                 </div>
-                <p className="help">Enter the full address or city/postcode where the bike should be delivered.</p>
+                <p className="help">{t.dropoffHelp}</p>
             </div>
 
             <div className="field">
-                <label className="label">Notes (Optional)</label>
+                <label className="label">{t.notes}</label>
                 <div className="control">
                     <textarea className="textarea" name="notes" value={formData.notes} onChange={handleChange}></textarea>
                 </div>
-                <p className="help">Add any extra details or questions – for example, if the bike doesn’t run, has accessories, requires special handling, or if the delivery is urgent or needs to happen by a specific date. Feel free to include anything else you think might be helpful.</p>
+                <p className="help">{t.notesHelp}</p>
             </div>
 
             <div className="field is-grouped is-align-items-center is-justify-content-space-between">
                 {/* Left-aligned status message */}
                 <div className="control">
-                    {status === 'loading' && <p className="has-text-weight-bold has-text-grey">Sending your request...</p>}
-                    {status === 'success' && <p className="has-text-weight-bold has-text-success">Thank you! Your request has been sent.</p>}
-                    {status === 'error' && <p className="has-text-weight-bold has-text-danger">Something went wrong. Please try again.</p>}
+                    {status === 'loading' && <p className="has-text-weight-bold has-text-grey">{t.sending}</p>}
+                    {status === 'success' && <p className="has-text-weight-bold has-text-success">{t.success}</p>}
+                    {status === 'error' && <p className="has-text-weight-bold has-text-danger">{t.error}</p>}
                 </div>
 
                 {/* Right-aligned button */}
@@ -141,7 +143,7 @@ export default function QuoteForm() {
                         type="submit"
                         disabled={status === 'loading'}
                     >
-                        {status === 'loading' ? 'Sending...' : 'Send Request'}
+                        {status === 'loading' ? t.submitting : t.submit}
                     </button>
                 </div>
             </div>

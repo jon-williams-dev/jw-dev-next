@@ -168,6 +168,7 @@ export default function CostCalculator() {
                                     {stopLabel(leg.from)} → <strong>{stopLabel(leg.to)}</strong>
                                     {leg.to !== 0 && <span className="has-text-grey"> ({route.points[leg.to].address})</span>}
                                     {' '}– {Math.round(leg.km)} km
+                                    {leg.to !== 0 && <><br /><small className="has-text-grey-light">Matched: {route.points[leg.to].name}</small></>}
                                 </li>
                             ))}
                         </ol>

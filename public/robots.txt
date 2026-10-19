@@ -3,5 +3,6 @@ Disallow: /test
 Disallow: /event-mutation
 Disallow: /profit_calculator
 Disallow: /sco_presentation
+Disallow: /stauperle13
 
 Sitemap: https://jon-williams.dev/api/sitemap

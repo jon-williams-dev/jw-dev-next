@@ -10,6 +10,18 @@ export function CalendarIcon(props) {
   )
 }
 
+export function SchoolIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M8 6V4.5A2.5 2.5 0 0 1 10.5 2h3A2.5 2.5 0 0 1 16 4.5V6" />
+      <rect x="4" y="6" width="16" height="15.5" rx="3.5" />
+      <path d="M4 12.5h16" />
+      <rect x="9.5" y="11" width="5" height="3.5" rx="1" />
+      <path d="M7.5 21.5v-3M16.5 21.5v-3" />
+    </svg>
+  )
+}
+
 export function SunbankIcon(props) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>

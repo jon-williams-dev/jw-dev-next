@@ -4,6 +4,8 @@ import transportStyles from '../styles/transport.module.scss'
 import { CONTENT, LANGS } from './transport_content'
 import { TRANSPORT_HOST } from '../lib/transport_domains'
 
+const EMAIL = 'jon.williams@hey.com'
+
 export default function NavTransport({ lang = 'en' }) {
     const [isActive, setIsActive] = useState(false)
     const t = CONTENT[lang].nav
@@ -14,7 +16,31 @@ export default function NavTransport({ lang = 'en' }) {
     useEffect(() => setOnTransportDomain(window.location.hostname === TRANSPORT_HOST), [])
     const href = (code) => (onTransportDomain ? LANGS[code].publicPath : LANGS[code].path)
 
+    const [contactOpen, setContactOpen] = useState(false)
+    const [copied, setCopied] = useState(false)
+    const openContact = (e) => {
+        e.preventDefault()
+        setIsActive(false)
+        setCopied(false)
+        setContactOpen(true)
+    }
+    const copyEmail = async () => {
+        try {
+            await navigator.clipboard.writeText(EMAIL)
+            setCopied(true)
+        } catch {
+            setCopied(false)
+        }
+    }
+    useEffect(() => {
+        if (!contactOpen) return
+        const onKey = (e) => e.key === 'Escape' && setContactOpen(false)
+        window.addEventListener('keydown', onKey)
+        return () => window.removeEventListener('keydown', onKey)
+    }, [contactOpen])
+
     return (
+        <>
         <nav className={`navbar is-black is-fixed-top ${transportStyles['navbar-transport']}`} role="navigation" aria-label="main navigation">
             <div className="navbar-brand">
                 <a className="navbar-item" href={href(lang)}>
@@ -72,12 +98,33 @@ export default function NavTransport({ lang = 'en' }) {
                     </div>
                     <div className="navbar-item">
                         <div className="buttons">
-                            <a className="button is-dark" href="mailto:jon.williams@hey.com">{t.contact}</a>
+                            <a className="button is-dark" href={`mailto:${EMAIL}`} onClick={openContact}>{t.contact}</a>
                             <a className="button is-dark" href="#quote">{t.requestQuote}</a>
                         </div>
                     </div>
                 </div>
             </div>
         </nav>
+
+        <div className={`modal ${contactOpen ? 'is-active' : ''}`} role="dialog" aria-modal="true" aria-labelledby="contact-title">
+            <div className="modal-background" onClick={() => setContactOpen(false)}></div>
+            <div className="modal-content">
+                <div className="box has-text-centered p-6">
+                    <h2 id="contact-title" className={`title is-3 ${transportStyles['ht']}`}>{t.contact}</h2>
+                    <p className="mb-4">{t.contactText}</p>
+                    <p className="is-size-4 has-text-weight-bold mb-5" style={{ wordBreak: 'break-all' }}>
+                        <a href={`mailto:${EMAIL}`} className="has-text-dark">{EMAIL}</a>
+                    </p>
+                    <div className="buttons is-centered">
+                        <button type="button" className={`button ${copied ? 'is-success' : 'is-light'}`} onClick={copyEmail}>
+                            {copied ? t.copied : t.copy}
+                        </button>
+                        <a className="button is-dark" href={`mailto:${EMAIL}`}>{t.openMail}</a>
+                    </div>
+                </div>
+            </div>
+            <button type="button" className="modal-close is-large" aria-label={t.close} onClick={() => setContactOpen(false)}></button>
+        </div>
+        </>
     )
 }

@@ -25,6 +25,11 @@ const en = {
         quote: 'Quote',
         contact: 'Contact',
         requestQuote: 'Request a Quote',
+        contactText: 'Questions or special requests? Send me an email and I’ll get back to you quickly.',
+        copy: 'Copy',
+        copied: 'Copied!',
+        openMail: 'Open email app',
+        close: 'Close',
     },
     hero: {
         title: <><span className='has-text-grey'>JW</span> Motorcycle Transport in Germany & Europe</>,
@@ -157,6 +162,11 @@ const de = {
         quote: 'Angebot',
         contact: 'Kontakt',
         requestQuote: 'Angebot anfordern',
+        contactText: 'Fragen oder besondere Wünsche? Schreiben Sie mir eine E-Mail, ich melde mich schnell bei Ihnen.',
+        copy: 'Kopieren',
+        copied: 'Kopiert!',
+        openMail: 'E-Mail-Programm öffnen',
+        close: 'Schließen',
     },
     hero: {
         title: <><span className='has-text-grey'>JW</span> Motorradtransport in Deutschland & Europa</>,

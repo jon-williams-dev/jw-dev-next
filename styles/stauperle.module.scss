@@ -600,6 +600,180 @@ $gap: clamp(0.75rem, 3vw, 1.75rem);
   }
 }
 
+// Sunbank: live power flow on the left, battery and grid stacked on the right.
+
+$battery: #3ddc97;
+$grid: $calendar;
+
+.sunbank {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: $gap;
+  transition: opacity 0.4s, filter 0.4s;
+
+  // Colours for the shared power-flow diagram (components/energy_flow.js).
+  --solar: #{$sun};
+  --grid: #{$grid};
+  --battery: #{$battery};
+  --home: #a99bff;
+  --line: #2b3b4e;
+  --text: #{$text};
+  --muted: #{$muted};
+  --faint: #5f7389;
+  --card: #{$surface};
+  --pf-label: 13px;
+  --pf-value: 22px;
+  --pf-sub: 13px;
+}
+
+.sunStale {
+  opacity: 0.55;
+  filter: saturate(0.4);
+}
+
+.sunFlow,
+.sunPanel {
+  min-height: 0;
+  border-radius: 28px;
+  background: $surface;
+  padding: clamp(1rem, 3.5vh, 2rem) clamp(1rem, 3vw, 2rem);
+}
+
+.sunFlow {
+  display: flex;
+  flex-direction: column;
+
+  :global(.pflow) {
+    flex: 1;
+    min-height: 0;
+    max-width: none;
+    height: 100%;
+  }
+}
+
+.sunFlowHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+
+  :global(.pill) {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.8rem;
+    border-radius: 999px;
+    background: $bg;
+    color: $muted;
+    font-size: clamp(0.8rem, 2.4vh, 1rem);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  :global(.pill-dot) {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: $muted;
+  }
+
+  :global(.pill.live) { color: $battery; }
+  :global(.pill.live .pill-dot) { background: $battery; }
+  :global(.pill.delayed) { color: $sun; }
+  :global(.pill.delayed .pill-dot) { background: $sun; }
+  :global(.pill.stale) { color: #ff6b6b; }
+  :global(.pill.stale .pill-dot) { background: #ff6b6b; }
+}
+
+.sunHeadline {
+  font-size: clamp(1.15rem, 4.2vh, 1.9rem);
+  font-weight: 500;
+  line-height: 1.25;
+
+  b { font-weight: 600; white-space: nowrap; }
+}
+
+.tone_battery b { color: $battery; }
+.tone_grid b { color: $grid; }
+.tone_solar b { color: $sun; }
+
+.sunSide {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: 1.35fr 1fr;
+  gap: $gap;
+}
+
+.sunPanel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(0.3rem, 1.5vh, 0.75rem);
+}
+
+.sunPanelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: $muted;
+  font-size: clamp(0.95rem, 3vh, 1.3rem);
+}
+
+.sunChip {
+  padding: 0.2rem 0.75rem;
+  border-radius: 999px;
+  background: $bg;
+  color: $text;
+  font-size: clamp(0.8rem, 2.4vh, 1rem);
+}
+
+.sunBig {
+  font-size: clamp(2.5rem, 12vh, 5.5rem);
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+
+  small {
+    font-size: 0.45em;
+    font-weight: 500;
+    color: $muted;
+    margin-left: 0.15em;
+  }
+}
+
+.sunBar {
+  height: clamp(10px, 2.4vh, 16px);
+  border-radius: 999px;
+  background: $bg;
+  overflow: hidden;
+
+  div {
+    height: 100%;
+    border-radius: inherit;
+    background: $battery;
+    transition: width 0.8s ease;
+  }
+}
+
+.sunFacts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.25rem;
+  color: $muted;
+  font-size: clamp(0.9rem, 2.8vh, 1.2rem);
+
+  b {
+    color: $text;
+    font-weight: 600;
+  }
+}
+
+.grid_import .sunBig { color: $grid; }
+.grid_export .sunBig { color: $battery; }
+
 // Desktop / phone browsers: stack panels in narrow windows and let the page scroll.
 
 @media (max-width: 720px) {
@@ -618,7 +792,8 @@ $gap: clamp(0.75rem, 3vw, 1.75rem);
   }
 
   .home,
-  .agenda {
+  .agenda,
+  .sunbank {
     flex: none;
     grid-template-columns: minmax(0, 1fr);
   }

@@ -669,6 +669,11 @@ $gap: clamp(0.75rem, 3vw, 1.75rem);
     background: $school;
     color: $bg;
   }
+
+  // Lernbüro sits apart from the children's tabs.
+  .lbTab {
+    margin-left: auto;
+  }
 }
 
 .timetable {
@@ -806,4 +811,58 @@ $gap: clamp(0.75rem, 3vw, 1.75rem);
 .ttNow {
   outline: 2px solid $text;
   outline-offset: -2px;
+}
+
+// Lernbüro rota
+
+.lbDay {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.35rem, 1.5vh, 0.75rem);
+  min-width: 0;
+
+  &:not(.ttFocus) {
+    opacity: 0.6;
+  }
+}
+
+.lbRoom {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: clamp(0.4rem, 1.5vh, 0.8rem) clamp(0.4rem, 1vw, 0.8rem);
+  border-left: 4px solid var(--subject);
+  border-radius: 4px 10px 10px 4px;
+  background: color-mix(in srgb, var(--subject) 15%, transparent);
+  font-size: clamp(0.7rem, 2.4vh, 1.05rem);
+  line-height: 1.2;
+
+  strong {
+    color: $text; // Bulma colours <strong> dark grey globally
+    font-weight: 600;
+  }
+
+  span {
+    color: $muted;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.lbRoomNo {
+  font-size: 1.15em;
+  font-weight: 600;
+  color: $text !important;
+}
+
+.lbTime {
+  align-self: start;
+  padding-top: 0.5rem;
+}
+
+.lbNone {
+  padding: 0.5rem;
+  color: $muted;
+  text-align: center;
 }

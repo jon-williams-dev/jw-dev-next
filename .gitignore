@@ -37,3 +37,6 @@ package-lock.json
 
 # Varta dashboard history (local only)
 /data/varta/
+
+# /spr local SQLite database (production uses Turso)
+/.data/

@@ -24,10 +24,12 @@ async function geocode(q) {
     const wait = lastRequest + 1100 - Date.now()
     if (wait > 0) await sleep(wait)
     lastRequest = Date.now()
-    const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(q)}`
+    const url = `https://nominatim.openstreetmap.org/search?format=json&limit=5&addressdetails=1&q=${encodeURIComponent(q)}`
     const res = await fetch(url, { headers: { 'User-Agent': USER_AGENT } })
     if (!res.ok) throw new Error(`Location search failed (${res.status})`)
-    const hit = (await res.json())[0]
+    // Prices only exist for Germany, so prefer a German match (e.g. postcode 71126 also exists in Lithuania).
+    const hits = await res.json()
+    const hit = hits.find((h) => h.address?.country_code === 'de') || hits[0]
     if (!hit) throw new Error(`Location not found: "${q}"`)
     return { lat: Number(hit.lat), lng: Number(hit.lon), name: hit.display_name }
 }

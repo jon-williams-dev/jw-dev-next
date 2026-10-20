@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
 import Layout from '../components/layout'
+import FuelSearch from '../components/fuel_search'
 
 const FuelMap = dynamic(() => import('../components/fuel_map'), { ssr: false })
 
@@ -56,7 +57,6 @@ export default function Tanken() {
     const [filtersOpen, setFiltersOpen] = useState(false)
     const [ready, setReady] = useState(false)
     const panesRef = useRef(null)
-    const inputRef = useRef(null)
 
     // Shared URL params win over the filters remembered on this device.
     useEffect(() => {
@@ -105,13 +105,6 @@ export default function Tanken() {
         } finally {
             setLoading(null)
         }
-    }
-
-    function submit(e) {
-        e.preventDefault()
-        if (!query.trim()) return
-        inputRef.current?.blur() // close the mobile keyboard
-        search({ q: query.trim() }, rad, true, 'search')
     }
 
     function locate() {
@@ -180,26 +173,14 @@ export default function Tanken() {
                     <p>Live petrol and diesel prices – find the cheapest Tankstelle near you.</p>
                 </header>
 
-                <button type="button" className={`button is-link near-me ${loading === 'location' ? 'is-loading' : ''}`} onClick={locate} disabled={!!loading}>
-                    📍 Stations near me
-                </button>
-
-                <form className="search-row" onSubmit={submit} role="search">
-                    <input
-                        ref={inputRef}
-                        className="input"
-                        type="search"
-                        enterKeyHint="search"
-                        autoComplete="postal-code"
-                        placeholder="…or town / postcode"
-                        aria-label="Town or postcode"
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                    />
-                    <button className={`button is-link is-light ${loading === 'search' ? 'is-loading' : ''}`} type="submit" disabled={!query.trim() || !!loading}>
-                        Search
-                    </button>
-                </form>
+                <FuelSearch
+                    value={query}
+                    onChange={setQuery}
+                    onSearch={(q) => search({ q }, rad, true, 'search')}
+                    onLocate={locate}
+                    loading={loading === 'search' || loading === 'location'}
+                    disabled={!!loading}
+                />
 
                 {error && <div className="notification is-danger is-light mt-3 mb-0">{error}</div>}
 
@@ -371,10 +352,6 @@ export default function Tanken() {
                 .intro h1 { font-size: 1.6rem; font-weight: 700; line-height: 1.2; color: #363636; }
                 .intro p { color: #7a7a7a; font-size: 0.95rem; margin: 0.25rem 0 1rem; }
 
-                .near-me { width: 100%; height: 3.25rem; font-size: 1.1rem; font-weight: 600; border-radius: 10px; }
-                .search-row { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
-                .search-row .input { flex: 1; height: 3rem; font-size: 16px; border-radius: 10px; }
-                .search-row .button { height: 3rem; border-radius: 10px; }
 
                 .sticky {
                     position: sticky;

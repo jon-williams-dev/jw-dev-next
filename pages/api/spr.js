@@ -13,20 +13,17 @@
 // can see a person's link again. All data belongs to one person and nobody sees anyone
 // else's, except waves the owner marks official.
 //
-// Official waves are how plans reach people: everyone else starts a wave by copying an
-// official one, and can change its name and dates but not its plan. The owner can also keep
-// draft waves to write plans in.
-//
-// A wave is a block of days (90 by default) with its own weekly plan. Days, runs and drinks are
-// stored by date and belong to whichever of the person's waves covers that date; a person's
-// waves never overlap. The daily checklist (meals, water, coffee, abs or challenge, notes)
-// can only be saved inside an official wave: one marked official, or a copy of one. Runs and
-// drinks can be logged on any date; outside a wave they're just history.
+// A wave is a block of days (90 by default) with its own weekly plan of abs workouts and
+// challenges, which its person can edit. A new wave starts blank or as a copy of an official
+// wave's plan: official only decides what can be copied. Days, runs and drinks are stored by
+// date and belong to whichever of the person's waves covers that date; a person's waves never
+// overlap. The daily checklist (meals, water, coffee, abs or challenge, notes) can only be
+// saved inside one of their waves. Runs and drinks can be logged on any date; outside a wave
+// they're just history.
 //
 //   GET                                          everything for the signed-in person
 //   POST   { type: run|drink|wave|person, ... }  log a run or drinks, start a wave (copyFrom:
-//                                                an official wave, or for the owner any of
-//                                                theirs), or add a person (owner only)
+//                                                an official wave), or add a person (owner only)
 //   PUT    { type: day|plan|wave|me|person, ... } save a day or a week's plan, change a wave,
 //                                                your name, or a person (owner: name, and a
 //                                                new code: newKey for a random one, or key)
@@ -291,10 +288,8 @@ async function waveFields(userId, body, waveId = null) {
   return { name, start, length }
 }
 
-// Whether a date is inside one of the person's official waves (marked official, or a copy of one).
-const inOfficialWave = async (userId, date) => (await query({
-  sql: `SELECT 1 FROM waves WHERE user_id = ? AND (official = 1 OR based_on IS NOT NULL)
-    AND start <= ? AND date(start, '+' || num_days || ' days') > ?`,
+const inOwnWave = async (userId, date) => (await query({
+  sql: "SELECT 1 FROM waves WHERE user_id = ? AND start <= ? AND date(start, '+' || num_days || ' days') > ?",
   args: [userId, date, date],
 })).length > 0
 
@@ -457,15 +452,12 @@ export default async function handler(req, res) {
         return res.status(200).json({ wave: toWave(wave) })
       }
 
-      // Everyone but the owner starts from an official wave; the owner can also start blank
-      // or from one of their drafts.
+      // A new wave starts blank or with an official wave's plan; nothing else can be copied.
       const copyFrom = id(body.copyFrom)
-      if (!copyFrom && !me.owner) return res.status(400).json({ error: 'Pick an official wave to start from' })
-      const [source] = copyFrom
-        ? await query({ sql: 'SELECT * FROM waves WHERE id = ? AND (official = 1 OR user_id = ?)', args: [copyFrom, me.owner ? me.id : -1] })
-        : []
-      if (copyFrom && !source) return res.status(404).json({ error: "That wave's plan can't be copied" })
-      const basedOn = source?.official ? source.id : null
+      if (copyFrom && !(await query({ sql: 'SELECT 1 FROM waves WHERE id = ? AND official = 1', args: [copyFrom] })).length) {
+        return res.status(404).json({ error: 'Only official waves can be copied' })
+      }
+      const basedOn = copyFrom || null
       const tx = await database().transaction('write')
       try {
         const { lastInsertRowid } = await tx.execute({
@@ -488,7 +480,6 @@ export default async function handler(req, res) {
     }
 
     if (type === 'plan' && req.method === 'PUT') {
-      if (!me.owner) return res.status(403).json({ error: 'Plans come from official waves and can only be changed by the owner' })
       const waveId = id(body.wave_id)
       const week = number(body.week, 1, 53)
       if (!Number.isInteger(week)) return res.status(400).json({ error: 'A valid week is required' })
@@ -510,8 +501,8 @@ export default async function handler(req, res) {
       if (!TABLES[type] || (req.method === 'POST') !== loggable) return res.status(400).json({ error: 'Unknown type' })
       const statement = statementFor(me.id, type, body)
       if (typeof statement === 'string') return res.status(400).json({ error: statement })
-      if (type === 'day' && !(await inOfficialWave(me.id, body.date))) {
-        return res.status(400).json({ error: "That date isn't in one of your official waves" })
+      if (type === 'day' && !(await inOwnWave(me.id, body.date))) {
+        return res.status(400).json({ error: "That date isn't in one of your waves" })
       }
       const [sql, args] = statement
       // Write, then read the stored row back (new runs and drinks get their id here).

@@ -1016,22 +1016,4 @@ select.input { appearance: none; background-image: linear-gradient(45deg, transp
 }
 
 
-.waveTags { display: flex; gap: 6px; flex-shrink: 0; }
 .hint { margin: -4px 0 16px; }
-
-.readOnlyWeek {
-  display: grid;
-  gap: 14px;
-
-  p { white-space: pre-wrap; line-height: 1.5; }
-}
-
-.readOnlyLabel {
-  display: block;
-  margin-bottom: 4px;
-  color: $muted;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}

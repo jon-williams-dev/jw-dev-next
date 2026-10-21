@@ -983,6 +983,28 @@ select.input { appearance: none; background-image: linear-gradient(45deg, transp
 
 // ---- Outside a wave ----
 
+.noWave {
+  margin: -4px 0 14px;
+  color: $muted;
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.noWaveTag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  color: $muted;
+  font-size: 0.6rem;
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  vertical-align: 2px;
+}
+
 .lockedText { margin-bottom: 16px; color: $muted; line-height: 1.5; }
 
 .lockedButtons {
@@ -993,11 +1015,23 @@ select.input { appearance: none; background-image: linear-gradient(45deg, transp
   .button { flex: 1 1 auto; }
 }
 
-.outside {
-  margin: -4px 0 14px;
-  padding: 12px 14px;
-  border-radius: 14px;
-  background: rgba($pink, 0.12);
-  font-size: 0.85rem;
-  line-height: 1.45;
+
+.waveTags { display: flex; gap: 6px; flex-shrink: 0; }
+.hint { margin: -4px 0 16px; }
+
+.readOnlyWeek {
+  display: grid;
+  gap: 14px;
+
+  p { white-space: pre-wrap; line-height: 1.5; }
+}
+
+.readOnlyLabel {
+  display: block;
+  margin-bottom: 4px;
+  color: $muted;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }

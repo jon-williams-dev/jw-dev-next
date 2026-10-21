@@ -66,6 +66,10 @@ const store = (name, value) => {
 // Waves never overlap, so a date is in at most one.
 const waveEnd = (wave) => addDays(wave.start, wave.length) // the day after the last
 const waveFor = (waves, date) => waves.find(w => date >= w.start && date < waveEnd(w)) || null
+// Tracking only happens in official waves: marked official, or copied from one. The owner's
+// other waves are drafts for writing plans.
+const isOfficial = (wave) => wave.official || wave.basedOn != null
+const officialWaveFor = (waves, date) => waveFor(waves.filter(isOfficial), date)
 const sortWaves = (waves) => [...waves].sort((a, b) => a.start.localeCompare(b.start))
 
 // Day and week numbers for a wave; without one, weeks run Monday to Sunday.
@@ -195,7 +199,8 @@ function Ring({ value, max }) {
     )
 }
 
-function LogList({ entries, render, onDelete }) {
+// `outside(entry)`: true for entries outside the person's official waves, which get a tag.
+function LogList({ entries, render, onDelete, outside = () => false }) {
     const sorted = [...entries].sort((a, b) => b.date.localeCompare(a.date))
     if (!sorted.length) return null
     return (
@@ -210,7 +215,7 @@ function LogList({ entries, render, onDelete }) {
                                 <small>{fmt(e.date, { month: 'short' })}</small>
                             </div>
                             <div className={styles.logMain}>
-                                <b>{main}</b>
+                                <b>{main}{outside(e) && <span className={styles.noWaveTag}>No wave</span>}</b>
                                 <p>{[fmt(e.date, { weekday: 'long' }), detail].filter(Boolean).join(' · ')}</p>
                             </div>
                             <button className={styles.remove} title="Delete" onClick={() => onDelete(e)}><FontAwesomeIcon icon={faXmark} /></button>
@@ -299,33 +304,39 @@ function InstructionsSheet({ field, week, plan, day, toggle, onClose, goToPlan }
     )
 }
 
-// Shown instead of the trackers on a day outside the person's waves.
-function Locked({ data, date, setDate, goToPlan }) {
+// Shown instead of the trackers on a day outside the person's official waves. `draft` is the
+// owner's draft wave covering the day, if any.
+function Locked({ data, date, draft, setDate, goToPlan }) {
     const t = today()
-    const nextWave = data.waves.find(w => w.start > date)
+    const official = data.waves.filter(isOfficial)
+    const nextWave = official.find(w => w.start > date)
+    const day = date === t ? 'Today' : longDate(date)
     return (
-        <Section title={<>Locked<em>.</em></>} count="No wave">
+        <Section title={<>Locked<em>.</em></>} count="No official wave">
             <p className={styles.lockedText}>
-                {data.waves.length
-                    ? `${date === t ? 'Today' : longDate(date)} isn't in one of your waves, so there's nothing to track.`
-                    : 'Start your first wave to track meals, water, coffee, runs and drinks.'}
+                {draft
+                    ? `${draft.name} is a draft. Make it official in the Plan tab to track it.`
+                    : official.length
+                        ? `${day} isn't in one of your official waves, so there's nothing to track.`
+                        : 'Start an official wave to track meals, water, coffee, runs and drinks.'}
             </p>
             <div className={styles.lockedButtons}>
-                {date !== t && waveFor(data.waves, t) && <button className={styles.button} onClick={() => setDate(t)}>Back to today</button>}
+                {date !== t && officialWaveFor(data.waves, t) && <button className={styles.button} onClick={() => setDate(t)}>Back to today</button>}
                 {nextWave && <button className={styles.button} onClick={() => setDate(nextWave.start)}>Go to {nextWave.name}</button>}
-                <button className={cx(styles.button, styles.buttonGhost)} onClick={() => goToPlan('new')}>New wave</button>
+                {draft
+                    ? <button className={cx(styles.button, styles.buttonGhost)} onClick={() => goToPlan(draft.id)}>Open {draft.name}</button>
+                    : <button className={cx(styles.button, styles.buttonGhost)} onClick={() => goToPlan('new')}>Start an official wave</button>}
             </div>
         </Section>
     )
 }
 
-// Runs and drinks: the log form's date must be inside a wave.
-function OutsideWave({ data, date, what, goToPlan }) {
-    if (waveFor(data.waves, date)) return null
+// Runs and drinks can be logged any day; outside an official wave they're history only.
+function NoWaveNote({ data, date }) {
+    if (officialWaveFor(data.waves, date)) return null
     return (
-        <p className={styles.outside}>
-            {data.waves.length ? `${longDate(date)} isn't in one of your waves. Pick a date inside one to log ${what}.` : `Start a wave to log ${what}.`}
-            {' '}<button type="button" className={styles.link} onClick={() => goToPlan('new')}>New wave →</button>
+        <p className={styles.noWave}>
+            {longDate(date)} isn't in one of your official waves. It's kept in your history but doesn't count towards a wave.
         </p>
     )
 }
@@ -335,7 +346,8 @@ function Today({ data, date, setDate, saveDay, goToPlan }) {
 
     const t = today()
     const wave = waveFor(data.waves, date)
-    const nextWave = data.waves.find(w => w.start > date)
+    const tracking = !!wave && isOfficial(wave)
+    const nextWave = data.waves.filter(isOfficial).find(w => w.start > date)
     const program = programFor(wave)
     const dayNo = program.dayOf(date)
     const week = program.weekOf(date)
@@ -354,8 +366,8 @@ function Today({ data, date, setDate, saveDay, goToPlan }) {
     return (
         <>
             <Hero {...hero}
-                sub={!wave ? 'Not in a wave' : isComplete(day) ? 'Day smashed. 💪' : `${mealsDone(day)}/6 meals · ${round(water(day))} L · ${coreDone(day) ? 'core ✓' : 'core'}`}
-                aside={wave && <Ring value={score(day)} max={SCORE_MAX} />}>
+                sub={!wave ? 'Not in an official wave' : !tracking ? 'Draft wave' : isComplete(day) ? 'Day smashed. 💪' : `${mealsDone(day)}/6 meals · ${round(water(day))} L · ${coreDone(day) ? 'core ✓' : 'core'}`}
+                aside={tracking && <Ring value={score(day)} max={SCORE_MAX} />}>
                 <div className={styles.dateNav}>
                     <button className={styles.round} onClick={() => setDate(addDays(date, -1))} aria-label="Previous day"><FontAwesomeIcon icon={faChevronLeft} /></button>
                     <div className={styles.dateLabel}>
@@ -366,10 +378,10 @@ function Today({ data, date, setDate, saveDay, goToPlan }) {
                 </div>
             </Hero>
 
-            {!wave && <Locked data={data} date={date} setDate={setDate} goToPlan={goToPlan} />}
+            {!tracking && <Locked data={data} date={date} draft={wave} setDate={setDate} goToPlan={goToPlan} />}
 
-            {/* Tracking only happens inside a wave. */}
-            {wave && (
+            {/* Tracking only happens inside an official wave. */}
+            {tracking && (
                 <>
                     <Section title={<>Eat<em>.</em></>} count={`${mealsDone(day)} / ${MEALS.length}`}>
                         <div className={styles.meals}>
@@ -464,7 +476,7 @@ function Today({ data, date, setDate, saveDay, goToPlan }) {
                 </>
             )}
 
-            {wave && <Overview data={data} program={program} date={date} setDate={setDate} />}
+            {tracking && <Overview data={data} program={program} date={date} setDate={setDate} />}
         </>
     )
 }
@@ -516,10 +528,9 @@ function Overview({ data, program, date, setDate }) {
 
 // ---- Runs ----
 
-function Runs({ data, program, addEntry, removeEntry, goToPlan }) {
+function Runs({ data, program, addEntry, removeEntry }) {
     const [form, setForm] = useState({ date: today(), km: '', time: '', notes: '' })
     const [saving, setSaving] = useState(false)
-    const canLog = !!waveFor(data.waves, form.date)
     const runs = inProgram(data.runs, program)
     const week = thisWeek(data.runs, program)
     const chart = weeklyTotals(data.runs, 'km', program)
@@ -545,8 +556,8 @@ function Runs({ data, program, addEntry, removeEntry, goToPlan }) {
                         <Field label="Time"><input className={styles.input} placeholder="28:30" value={form.time} onChange={set('time')} /></Field>
                         <Field label="Notes"><input className={styles.input} value={form.notes} onChange={set('notes')} /></Field>
                     </div>
-                    <OutsideWave data={data} date={form.date} what="runs" goToPlan={goToPlan} />
-                    <button className={cx(styles.button, styles.buttonRun, styles.full)} disabled={saving || !canLog}>
+                    <NoWaveNote data={data} date={form.date} />
+                    <button className={cx(styles.button, styles.buttonRun, styles.full)} disabled={saving}>
                         <FontAwesomeIcon icon={faPersonRunning} /> {saving ? 'Saving…' : 'Log run'}
                     </button>
                 </form>
@@ -562,7 +573,7 @@ function Runs({ data, program, addEntry, removeEntry, goToPlan }) {
                 {data.runs.length > 0 && <SprChart labels={chart.labels} values={chart.values} unit="km" colors={['#4290e9', '#67f5f9']} />}
             </Section>
 
-            <LogList entries={data.runs} onDelete={(e) => removeEntry('run', e)}
+            <LogList entries={data.runs} onDelete={(e) => removeEntry('run', e)} outside={(e) => !officialWaveFor(data.waves, e.date)}
                 render={(e) => [`${e.km} km`, [e.time, e.notes].filter(Boolean).join(' · ')]} />
         </>
     )
@@ -570,10 +581,9 @@ function Runs({ data, program, addEntry, removeEntry, goToPlan }) {
 
 // ---- Drinks ----
 
-function Drinks({ data, program, addEntry, removeEntry, goToPlan }) {
+function Drinks({ data, program, addEntry, removeEntry }) {
     const [form, setForm] = useState({ date: today(), quantity: '1', drink: 'Beer', notes: '' })
     const [saving, setSaving] = useState(false)
-    const canLog = !!waveFor(data.waves, form.date)
     const t = today()
     const drinks = inProgram(data.drinks, program)
     const week = thisWeek(data.drinks, program)
@@ -613,7 +623,7 @@ function Drinks({ data, program, addEntry, removeEntry, goToPlan }) {
             <Section title={<>Drinks<em>.</em></>} count={form.date === t ? 'Today' : longDate(form.date)}>
                 <div className={styles.chips}>
                     {favourites.map(name => (
-                        <button key={name} className={cx(styles.button, styles.buttonSmall)} disabled={saving || !canLog}
+                        <button key={name} className={cx(styles.button, styles.buttonSmall)} disabled={saving}
                             onClick={() => add({ date: form.date, quantity: 1, drink: name, notes: '' })}>
                             <FontAwesomeIcon icon={faBeerMugEmpty} /> +1 {name}
                         </button>
@@ -629,8 +639,8 @@ function Drinks({ data, program, addEntry, removeEntry, goToPlan }) {
                         </Field>
                         <Field label="Notes"><input className={styles.input} value={form.notes} onChange={set('notes')} /></Field>
                     </div>
-                    <OutsideWave data={data} date={form.date} what="drinks" goToPlan={goToPlan} />
-                    <button className={cx(styles.button, styles.buttonGhost, styles.full)} disabled={saving || !canLog}>{saving ? 'Saving…' : 'Log drinks'}</button>
+                    <NoWaveNote data={data} date={form.date} />
+                    <button className={cx(styles.button, styles.buttonGhost, styles.full)} disabled={saving}>{saving ? 'Saving…' : 'Log drinks'}</button>
                 </form>
             </Section>
 
@@ -644,7 +654,7 @@ function Drinks({ data, program, addEntry, removeEntry, goToPlan }) {
                 {data.drinks.length > 0 && <SprChart labels={chart.labels} values={chart.values} unit="drinks" colors={['#522566', '#df2793']} />}
             </Section>
 
-            <LogList entries={data.drinks} onDelete={(e) => removeEntry('drink', e)}
+            <LogList entries={data.drinks} onDelete={(e) => removeEntry('drink', e)} outside={(e) => !officialWaveFor(data.waves, e.date)}
                 render={(e) => [`${e.quantity} × ${e.drink}`, e.notes]} />
         </>
     )
@@ -701,7 +711,10 @@ function WaveCard({ wave, data, active, onClick }) {
         <button className={cx(styles.waveCard, active && styles.waveActive)} onClick={onClick} aria-pressed={active}>
             <span className={styles.waveTop}>
                 <b>{wave.name}{wave.official && <FontAwesomeIcon icon={faStar} className={styles.officialStar} title="Official" />}</b>
-                <span className={cx(styles.tag, s.status !== 'now' && styles.tagMuted)}>{WAVE_STATUS[s.status]}</span>
+                <span className={styles.waveTags}>
+                    {!isOfficial(wave) && <span className={cx(styles.tag, styles.tagMuted)}>Draft</span>}
+                    <span className={cx(styles.tag, s.status !== 'now' && styles.tagMuted)}>{WAVE_STATUS[s.status]}</span>
+                </span>
             </span>
             <span className={styles.muted}>{shortDate(wave.start)} – {fmt(addDays(wave.start, wave.length - 1), { day: 'numeric', month: 'short', year: 'numeric' })} · {wave.length} days</span>
             {s.status !== 'upcoming' && (
@@ -717,11 +730,14 @@ function WaveCard({ wave, data, active, onClick }) {
     )
 }
 
-function NewWave({ waves, library, onCreate, onCancel }) {
+// Everyone but the owner starts from an official wave. The owner can also start blank or from
+// one of their own waves.
+function NewWave({ waves, library, owner, onCreate, onCancel }) {
     const last = waves[waves.length - 1]
     // Straight after the last wave if that's still running or ahead, otherwise today.
     const start = last && waveEnd(last) > today() ? waveEnd(last) : today()
-    const [form, setForm] = useState({ name: `Wave ${waves.length + 1}`, start, length: String(DEFAULT_LENGTH), copyFrom: last ? String(last.id) : '' })
+    const defaultSource = owner ? last?.id : library[0]?.id
+    const [form, setForm] = useState({ name: `Wave ${waves.length + 1}`, start, length: String(DEFAULT_LENGTH), copyFrom: defaultSource ? String(defaultSource) : '' })
     const [saving, setSaving] = useState(false)
     const set = (field) => (e) => setForm(f => ({ ...f, [field]: e.target.value }))
 
@@ -732,20 +748,29 @@ function NewWave({ waves, library, onCreate, onCancel }) {
         setSaving(false)
     }
 
+    if (!owner && !library.length) {
+        return (
+            <Section title={<>New wave<em>.</em></>}>
+                <p className={styles.lockedText}>There are no official waves yet. Once the owner makes one, you can start it here.</p>
+                {onCancel && <button className={cx(styles.button, styles.buttonGhost, styles.full)} onClick={onCancel}>Cancel</button>}
+            </Section>
+        )
+    }
+
     return (
-        <Section title={<>New wave<em>.</em></>}>
+        <Section title={<>{owner ? 'New wave' : 'Start an official wave'}<em>.</em></>}>
             <form onSubmit={submit}>
                 <div className={styles.fields}>
                     <Field label="Name" wide><input className={styles.input} value={form.name} maxLength={40} onChange={set('name')} /></Field>
                     <Field label="Start date"><input className={styles.input} type="date" value={form.start} onChange={set('start')} required /></Field>
                     <Field label="Days"><input className={styles.input} type="number" inputMode="numeric" min="1" max="365" value={form.length} onChange={set('length')} required /></Field>
-                    {(waves.length > 0 || library.length > 0) && (
+                    {owner ? (
                         <Field label="Abs workouts and challenges" wide>
                             <select className={styles.input} value={form.copyFrom} onChange={set('copyFrom')}>
-                                <option value="">Start with an empty plan</option>
+                                <option value="">Start with an empty plan (a draft)</option>
                                 {waves.length > 0 && (
                                     <optgroup label="Your waves">
-                                        {[...waves].reverse().map(w => <option key={w.id} value={w.id}>Copy from {w.name}</option>)}
+                                        {[...waves].reverse().map(w => <option key={w.id} value={w.id}>{w.official ? '★ ' : ''}Copy from {w.name}</option>)}
                                     </optgroup>
                                 )}
                                 {library.length > 0 && (
@@ -755,8 +780,15 @@ function NewWave({ waves, library, onCreate, onCancel }) {
                                 )}
                             </select>
                         </Field>
+                    ) : (
+                        <Field label="Official wave" wide>
+                            <select className={styles.input} value={form.copyFrom} onChange={set('copyFrom')} required>
+                                {library.map(w => <option key={w.id} value={w.id}>★ {w.name} by {w.owner} ({w.weeks} {w.weeks === 1 ? 'week' : 'weeks'})</option>)}
+                            </select>
+                        </Field>
                     )}
                 </div>
+                {!owner && <p className={cx(styles.muted, styles.hint)}>Your wave gets its abs workouts and challenges. You choose the name and dates.</p>}
                 <div className={styles.formButtons}>
                     {onCancel && <button type="button" className={cx(styles.button, styles.buttonGhost)} onClick={onCancel}>Cancel</button>}
                     <button className={cx(styles.button, styles.grow)} disabled={saving}>{saving ? 'Creating…' : 'Create wave'}</button>
@@ -781,8 +813,20 @@ function WaveDetail({ wave, data, saveWave, savePlan, deleteWave }) {
                 <Section key={week} className={week === current ? styles.weekCurrent : null}
                     title={<>Week {week}{week === current && <> <span className={styles.tag}>Now</span></>}</>}
                     count={`${shortDate(addDays(wave.start, (week - 1) * 7))} – ${shortDate(addDays(wave.start, Math.min(week * 7, wave.length) - 1))}`}>
-                    <WeekEditor week={week} save={(w, value) => savePlan(wave.id, w, value)}
-                        saved={{ abs: plan[week]?.abs || '', challenge: plan[week]?.challenge || '' }} />
+                    {data.me.owner ? (
+                        <WeekEditor week={week} save={(w, value) => savePlan(wave.id, w, value)}
+                            saved={{ abs: plan[week]?.abs || '', challenge: plan[week]?.challenge || '' }} />
+                    ) : (
+                        // Plans come from the official wave, so they're read-only here.
+                        <div className={styles.readOnlyWeek}>
+                            {[['abs', 'Abs workout'], ['challenge', 'Challenge']].map(([field, label]) => (
+                                <div key={field}>
+                                    <span className={styles.readOnlyLabel}>{label}</span>
+                                    <p>{plan[week]?.[field] || <span className={styles.muted}>Nothing planned</span>}</p>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </Section>
             ))}
 
@@ -818,12 +862,14 @@ function Waves({ data, selected, setSelected, saveWave, createWave, deleteWave, 
                         ))}
                     </div>
                     {!creating && (
-                        <button className={cx(styles.button, styles.buttonGhost, styles.full, styles.spaced)} onClick={() => setSelected('new')}>+ New wave</button>
+                        <button className={cx(styles.button, styles.buttonGhost, styles.full, styles.spaced)} onClick={() => setSelected('new')}>
+                            {data.me.owner ? '+ New wave' : '+ Start an official wave'}
+                        </button>
                     )}
                 </Section>
             )}
 
-            {creating && <NewWave waves={data.waves} library={data.library} onCreate={create} onCancel={data.waves.length ? () => setSelected(null) : null} />}
+            {creating && <NewWave waves={data.waves} library={data.library} owner={data.me.owner} onCreate={create} onCancel={data.waves.length ? () => setSelected(null) : null} />}
             {wave && <WaveDetail key={wave.id} wave={wave} data={data} saveWave={saveWave} savePlan={savePlan} deleteWave={deleteWave} />}
         </>
     )
@@ -985,7 +1031,7 @@ export default function Spr() {
     const days = useRef({})
 
     // Runs and drinks count against the wave running today.
-    const program = useMemo(() => programFor(data && waveFor(data.waves, today())), [data?.waves])
+    const program = useMemo(() => programFor(data && officialWaveFor(data.waves, today())), [data?.waves])
 
     const send = async (method, body, query = '') => {
         let res
@@ -1198,7 +1244,7 @@ export default function Spr() {
         setKey(keyInput.trim())
     }
 
-    const props = { data, program, addEntry, removeEntry, goToPlan }
+    const props = { data, program, addEntry, removeEntry }
 
     return (
         <div className={cx(styles.app, montserrat.className)}>

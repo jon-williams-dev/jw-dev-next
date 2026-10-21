@@ -325,6 +325,50 @@ $radius: 20px;
   .button { padding: 0 8px; white-space: nowrap; letter-spacing: 0.04em; }
 }
 
+// ---- Coffee ----
+
+$coffee: #c08552;
+
+.coffee {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.coffeeCups {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.coffeeCount {
+  font-size: 2.6rem;
+  font-weight: 900;
+  font-style: italic;
+  line-height: 1;
+}
+
+.coffeeIcons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  color: $coffee;
+  font-size: 1.1rem;
+
+  b { color: $muted; font-size: 0.85rem; font-weight: 800; }
+}
+
+.coffeeButtons {
+  display: flex;
+  gap: 8px;
+}
+
+// Doubled class so it wins over .button, which comes later in this file.
+.button.buttonCoffee { background: linear-gradient(135deg, #6f4e37, $coffee); }
+
 // ---- Abs / challenge ----
 
 .core {
@@ -359,12 +403,111 @@ $radius: 20px;
   color: $pink;
 }
 
-.coreText {
+// The card shows a preview; the full text is in the instructions sheet.
+.coreOpen {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
   margin-bottom: 14px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.coreText {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
   white-space: pre-wrap;
   line-height: 1.45;
 }
+
+.coreExpand {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin-left: auto;
+  border: 0;
+  border-radius: 50%;
+  background: rgba($pink, 0.15);
+  color: $pink;
+  font-size: 0.8rem;
+  cursor: pointer;
+
+  &:active { transform: scale(0.92); }
+}
+
+.coreEmpty {
+  flex: 1;
+  margin-bottom: 14px;
+}
+
+// ---- Instructions sheet ----
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.65);
+  animation: fadeIn 0.2s ease;
+
+  @media (min-width: 672px) { align-items: center; padding: 24px; }
+}
+
+.sheet {
+  width: 100%;
+  max-width: 640px;
+  max-height: 88vh;
+  max-height: 88dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 10px 20px calc(24px + env(safe-area-inset-bottom));
+  border: 1px solid $line;
+  border-bottom: 0;
+  border-radius: 28px 28px 0 0;
+  background: $surface;
+  animation: slideUp 0.25s ease;
+
+  @media (min-width: 672px) { border-bottom: 1px solid $line; border-radius: 28px; }
+}
+
+.sheetHandle {
+  width: 44px;
+  height: 5px;
+  margin: 0 auto 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.sheetHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+
+.sheetText {
+  margin: 14px 0 20px;
+  white-space: pre-wrap;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+@keyframes fadeIn { from { opacity: 0; } }
+@keyframes slideUp { from { transform: translateY(40px); opacity: 0; } }
 
 // ---- Buttons and forms ----
 
@@ -528,7 +671,8 @@ textarea.input { resize: vertical; line-height: 1.45; }
 
 // ---- Log lists ----
 
-.log { display: grid; gap: 8px; }
+// minmax(0, …) so a long line (like a code) can't stretch the column past the screen.
+.log { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
 
 .logRow {
   display: flex;
@@ -637,7 +781,8 @@ textarea.input { resize: vertical; line-height: 1.45; }
 
 .tabs {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
   width: 100%;
   max-width: 640px;
 }
@@ -702,4 +847,136 @@ textarea.input { resize: vertical; line-height: 1.45; }
   margin: 0 auto;
   background: #3a1520;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.sheetDone {
+  border-color: $pink;
+  background: linear-gradient(160deg, #2a1424, $surface 60%);
+}
+
+.sheetEdit {
+  display: block;
+  margin: 16px auto 0;
+}
+
+// ---- Waves ----
+
+.waveList { display: grid; gap: 10px; }
+
+.waveCard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid $surface-2;
+  border-radius: 16px;
+  background: $surface-2;
+  color: $text;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  b { font-size: 1.15rem; font-weight: 900; font-style: italic; text-transform: uppercase; }
+}
+
+.waveActive { border-color: $pink; }
+
+.waveTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.waveStats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.tagMuted { background: rgba(255, 255, 255, 0.12); }
+
+.formButtons {
+  display: flex;
+  gap: 10px;
+}
+
+.grow { flex: 1; }
+.spaced { margin-top: 12px; }
+
+.buttonDanger {
+  margin-bottom: 18px;
+  border-color: rgba($danger, 0.5);
+  color: $danger;
+}
+
+select.input { appearance: none; background-image: linear-gradient(45deg, transparent 50%, $muted 50%), linear-gradient(135deg, $muted 50%, transparent 50%); background-position: calc(100% - 20px) 50%, calc(100% - 14px) 50%; background-size: 6px 6px; background-repeat: no-repeat; padding-right: 36px; }
+
+// ---- Admin ----
+
+.personCard {
+  padding: 14px;
+  border-radius: 16px;
+  background: $surface-2;
+
+  .input { background: $surface; font-weight: 800; }
+}
+
+.personHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.personMeta {
+  margin: 8px 0 12px;
+  color: $muted;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.codeRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .round { flex-shrink: 0; background: $surface; }
+}
+
+.code {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: $surface;
+  color: $cyan;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// ---- Official waves ----
+
+.officialStar { margin-left: 8px; color: #ffc94d; font-size: 0.8em; vertical-align: 1px; }
+
+.toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 14px;
+  background: $surface-2;
+  cursor: pointer;
+
+  input { flex-shrink: 0; width: 22px; height: 22px; margin-top: 2px; accent-color: $pink; }
+
+  span { display: grid; gap: 4px; color: $muted; font-size: 0.85rem; line-height: 1.4; }
+  b { color: $text; font-weight: 800; }
+  svg { color: #ffc94d; }
 }

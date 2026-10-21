@@ -299,6 +299,37 @@ function InstructionsSheet({ field, week, plan, day, toggle, onClose, goToPlan }
     )
 }
 
+// Shown instead of the trackers on a day outside the person's waves.
+function Locked({ data, date, setDate, goToPlan }) {
+    const t = today()
+    const nextWave = data.waves.find(w => w.start > date)
+    return (
+        <Section title={<>Locked<em>.</em></>} count="No wave">
+            <p className={styles.lockedText}>
+                {data.waves.length
+                    ? `${date === t ? 'Today' : longDate(date)} isn't in one of your waves, so there's nothing to track.`
+                    : 'Start your first wave to track meals, water, coffee, runs and drinks.'}
+            </p>
+            <div className={styles.lockedButtons}>
+                {date !== t && waveFor(data.waves, t) && <button className={styles.button} onClick={() => setDate(t)}>Back to today</button>}
+                {nextWave && <button className={styles.button} onClick={() => setDate(nextWave.start)}>Go to {nextWave.name}</button>}
+                <button className={cx(styles.button, styles.buttonGhost)} onClick={() => goToPlan('new')}>New wave</button>
+            </div>
+        </Section>
+    )
+}
+
+// Runs and drinks: the log form's date must be inside a wave.
+function OutsideWave({ data, date, what, goToPlan }) {
+    if (waveFor(data.waves, date)) return null
+    return (
+        <p className={styles.outside}>
+            {data.waves.length ? `${longDate(date)} isn't in one of your waves. Pick a date inside one to log ${what}.` : `Start a wave to log ${what}.`}
+            {' '}<button type="button" className={styles.link} onClick={() => goToPlan('new')}>New wave →</button>
+        </p>
+    )
+}
+
 function Today({ data, date, setDate, saveDay, goToPlan }) {
     const day = { ...EMPTY_DAY, ...data.days[date] }
 
@@ -323,8 +354,8 @@ function Today({ data, date, setDate, saveDay, goToPlan }) {
     return (
         <>
             <Hero {...hero}
-                sub={isComplete(day) ? 'Day smashed. 💪' : `${mealsDone(day)}/6 meals · ${round(water(day))} L · ${coreDone(day) ? 'core ✓' : 'core'}`}
-                aside={<Ring value={score(day)} max={SCORE_MAX} />}>
+                sub={!wave ? 'Not in a wave' : isComplete(day) ? 'Day smashed. 💪' : `${mealsDone(day)}/6 meals · ${round(water(day))} L · ${coreDone(day) ? 'core ✓' : 'core'}`}
+                aside={wave && <Ring value={score(day)} max={SCORE_MAX} />}>
                 <div className={styles.dateNav}>
                     <button className={styles.round} onClick={() => setDate(addDays(date, -1))} aria-label="Previous day"><FontAwesomeIcon icon={faChevronLeft} /></button>
                     <div className={styles.dateLabel}>
@@ -335,105 +366,103 @@ function Today({ data, date, setDate, saveDay, goToPlan }) {
                 </div>
             </Hero>
 
-            {!wave && (
-                <div className={styles.notice}>
-                    <span>{data.waves.length
-                        ? "This day isn't in a wave. You can still log it."
-                        : 'Start your first wave to unlock weeks, abs workouts and challenges.'}</span>
-                    <button className={styles.link} onClick={() => goToPlan('new')}>New wave →</button>
-                </div>
-            )}
+            {!wave && <Locked data={data} date={date} setDate={setDate} goToPlan={goToPlan} />}
 
-            <Section title={<>Eat<em>.</em></>} count={`${mealsDone(day)} / ${MEALS.length}`}>
-                <div className={styles.meals}>
-                    {MEALS.map(([field, label]) => (
-                        <button key={field} className={cx(styles.meal, day[field] && styles.mealDone)} onClick={() => toggle(field)}>
-                            <span className={styles.check}>{day[field] && <FontAwesomeIcon icon={faCheck} />}</span>
-                            {label}
-                        </button>
-                    ))}
-                </div>
-            </Section>
-
-            <Section title={<>Hydrate<em>.</em> <FontAwesomeIcon icon={faDroplet} style={{ fontSize: '0.7em', color: '#67f5f9' }} /></>} count={waterDone(day) ? 'Goal hit 💧' : `${litres(Math.max(0, WATER_GOAL - water(day)))} to go`}>
-                <div className={styles.water}>
-                    <div className={styles.waterAmount}>
-                        {round(water(day))}<small>/ {WATER_GOAL} L</small>
-                    </div>
-                    <div className={styles.waterBar}>
-                        <div className={cx(styles.waterFill, waterDone(day) && styles.waterFull)} style={{ width: `${Math.min(100, water(day) / WATER_GOAL * 100)}%` }} />
-                    </div>
-                </div>
-                <div className={styles.waterButtons}>
-                    <button className={cx(styles.button, styles.buttonGhost, styles.buttonSmall)} disabled={!water(day)} aria-label="Remove 250 ml"
-                        onClick={() => saveDay(date, (d) => ({ water: round(Math.max(0, water(d) - 0.25)) }))}>−</button>
-                    {WATER_STEPS.map(step => (
-                        <button key={step} className={cx(styles.button, styles.buttonRun, styles.buttonSmall)}
-                            onClick={() => saveDay(date, (d) => ({ water: round(water(d) + step) }))}>
-                            +{step < 1 ? `${step * 1000} ml` : `${step} L`}
-                        </button>
-                    ))}
-                </div>
-            </Section>
-
-            <Section title={<>Coffee<em>.</em> <FontAwesomeIcon icon={faMugHot} style={{ fontSize: '0.7em', color: '#c08552' }} /></>}
-                count={`Last 7 days: ${cups(weekCoffee)}`}>
-                <div className={styles.coffee}>
-                    <div className={styles.coffeeCups} aria-label={cups(coffee(day))}>
-                        <span className={styles.coffeeCount}>{coffee(day)}</span>
-                        <span className={styles.coffeeIcons}>
-                            {Array.from({ length: Math.min(coffee(day), 8) }, (_, i) => <FontAwesomeIcon key={i} icon={faMugHot} />)}
-                            {coffee(day) > 8 && <b>+{coffee(day) - 8}</b>}
-                        </span>
-                    </div>
-                    <div className={styles.coffeeButtons}>
-                        <button className={cx(styles.button, styles.buttonGhost, styles.buttonSmall)} disabled={!coffee(day)} aria-label="Remove a coffee"
-                            onClick={() => saveDay(date, (d) => ({ coffee: Math.max(0, coffee(d) - 1) }))}>−</button>
-                        <button className={cx(styles.button, styles.buttonCoffee, styles.buttonSmall)}
-                            onClick={() => saveDay(date, (d) => ({ coffee: coffee(d) + 1 }))}>+1 Coffee</button>
-                    </div>
-                </div>
-            </Section>
-
-            <Section title={<>Core<em>.</em></>} count="Abs or challenge">
-                <div className={styles.core}>
-                    {CORE.map(([field, label, icon]) => (
-                        <div key={field} className={cx(styles.coreCard, day[field] && styles.coreDone)}>
-                            <div className={styles.coreTitle}>
-                                <FontAwesomeIcon icon={icon} />{label}
-                                {plan[field] && (
-                                    <button className={styles.coreExpand} onClick={() => setSheet(field)} aria-label={`Show the full ${label.toLowerCase()}`}>
-                                        <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} />
-                                    </button>
-                                )}
-                            </div>
-                            {plan[field] ? (
-                                <button className={styles.coreOpen} onClick={() => setSheet(field)}>
-                                    <span className={styles.coreText}>{plan[field].replace(/\n\s*\n/g, '\n')}</span>
+            {/* Tracking only happens inside a wave. */}
+            {wave && (
+                <>
+                    <Section title={<>Eat<em>.</em></>} count={`${mealsDone(day)} / ${MEALS.length}`}>
+                        <div className={styles.meals}>
+                            {MEALS.map(([field, label]) => (
+                                <button key={field} className={cx(styles.meal, day[field] && styles.mealDone)} onClick={() => toggle(field)}>
+                                    <span className={styles.check}>{day[field] && <FontAwesomeIcon icon={faCheck} />}</span>
+                                    {label}
                                 </button>
-                            ) : (
-                                <div className={styles.coreEmpty}>
-                                    {wave
-                                        ? <span className={styles.muted}>Nothing planned for week {week} yet. <button className={styles.link} onClick={() => goToPlan(wave.id)}>Add it →</button></span>
-                                        : <span className={styles.muted}>Not in a wave. Tick it off when it's done.</span>}
-                                </div>
-                            )}
-                            <button className={cx(styles.button, styles.buttonSmall, day[field] ? styles.buttonDone : styles.buttonGhost)} onClick={() => toggle(field)}>
-                                {day[field] ? <><FontAwesomeIcon icon={faCheck} /> Done</> : 'Mark done'}
-                            </button>
+                            ))}
                         </div>
-                    ))}
-                </div>
-            </Section>
+                    </Section>
 
-            {sheet && (
-                <InstructionsSheet field={sheet} week={week} plan={plan} day={day} toggle={toggle}
-                    onClose={() => setSheet(null)} goToPlan={() => goToPlan(wave.id)} />
+                    <Section title={<>Hydrate<em>.</em> <FontAwesomeIcon icon={faDroplet} style={{ fontSize: '0.7em', color: '#67f5f9' }} /></>} count={waterDone(day) ? 'Goal hit 💧' : `${litres(Math.max(0, WATER_GOAL - water(day)))} to go`}>
+                        <div className={styles.water}>
+                            <div className={styles.waterAmount}>
+                                {round(water(day))}<small>/ {WATER_GOAL} L</small>
+                            </div>
+                            <div className={styles.waterBar}>
+                                <div className={cx(styles.waterFill, waterDone(day) && styles.waterFull)} style={{ width: `${Math.min(100, water(day) / WATER_GOAL * 100)}%` }} />
+                            </div>
+                        </div>
+                        <div className={styles.waterButtons}>
+                            <button className={cx(styles.button, styles.buttonGhost, styles.buttonSmall)} disabled={!water(day)} aria-label="Remove 250 ml"
+                                onClick={() => saveDay(date, (d) => ({ water: round(Math.max(0, water(d) - 0.25)) }))}>−</button>
+                            {WATER_STEPS.map(step => (
+                                <button key={step} className={cx(styles.button, styles.buttonRun, styles.buttonSmall)}
+                                    onClick={() => saveDay(date, (d) => ({ water: round(water(d) + step) }))}>
+                                    +{step < 1 ? `${step * 1000} ml` : `${step} L`}
+                                </button>
+                            ))}
+                        </div>
+                    </Section>
+
+                    <Section title={<>Coffee<em>.</em> <FontAwesomeIcon icon={faMugHot} style={{ fontSize: '0.7em', color: '#c08552' }} /></>}
+                        count={`Last 7 days: ${cups(weekCoffee)}`}>
+                        <div className={styles.coffee}>
+                            <div className={styles.coffeeCups} aria-label={cups(coffee(day))}>
+                                <span className={styles.coffeeCount}>{coffee(day)}</span>
+                                <span className={styles.coffeeIcons}>
+                                    {Array.from({ length: Math.min(coffee(day), 8) }, (_, i) => <FontAwesomeIcon key={i} icon={faMugHot} />)}
+                                    {coffee(day) > 8 && <b>+{coffee(day) - 8}</b>}
+                                </span>
+                            </div>
+                            <div className={styles.coffeeButtons}>
+                                <button className={cx(styles.button, styles.buttonGhost, styles.buttonSmall)} disabled={!coffee(day)} aria-label="Remove a coffee"
+                                    onClick={() => saveDay(date, (d) => ({ coffee: Math.max(0, coffee(d) - 1) }))}>−</button>
+                                <button className={cx(styles.button, styles.buttonCoffee, styles.buttonSmall)}
+                                    onClick={() => saveDay(date, (d) => ({ coffee: coffee(d) + 1 }))}>+1 Coffee</button>
+                            </div>
+                        </div>
+                    </Section>
+
+                    <Section title={<>Core<em>.</em></>} count="Abs or challenge">
+                        <div className={styles.core}>
+                            {CORE.map(([field, label, icon]) => (
+                                <div key={field} className={cx(styles.coreCard, day[field] && styles.coreDone)}>
+                                    <div className={styles.coreTitle}>
+                                        <FontAwesomeIcon icon={icon} />{label}
+                                        {plan[field] && (
+                                            <button className={styles.coreExpand} onClick={() => setSheet(field)} aria-label={`Show the full ${label.toLowerCase()}`}>
+                                                <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} />
+                                            </button>
+                                        )}
+                                    </div>
+                                    {plan[field] ? (
+                                        <button className={styles.coreOpen} onClick={() => setSheet(field)}>
+                                            <span className={styles.coreText}>{plan[field].replace(/\n\s*\n/g, '\n')}</span>
+                                        </button>
+                                    ) : (
+                                        <div className={styles.coreEmpty}>
+                                            {wave
+                                                ? <span className={styles.muted}>Nothing planned for week {week} yet. <button className={styles.link} onClick={() => goToPlan(wave.id)}>Add it →</button></span>
+                                                : <span className={styles.muted}>Not in a wave. Tick it off when it's done.</span>}
+                                        </div>
+                                    )}
+                                    <button className={cx(styles.button, styles.buttonSmall, day[field] ? styles.buttonDone : styles.buttonGhost)} onClick={() => toggle(field)}>
+                                        {day[field] ? <><FontAwesomeIcon icon={faCheck} /> Done</> : 'Mark done'}
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </Section>
+
+                    {sheet && (
+                        <InstructionsSheet field={sheet} week={week} plan={plan} day={day} toggle={toggle}
+                            onClose={() => setSheet(null)} goToPlan={() => goToPlan(wave.id)} />
+                    )}
+
+                    <Section title={<>Notes<em>.</em></>}>
+                        <NotesField key={date} saved={day.notes} save={(notes) => saveDay(date, { notes })} />
+                    </Section>
+                </>
             )}
-
-            <Section title={<>Notes<em>.</em></>}>
-                <NotesField key={date} saved={day.notes} save={(notes) => saveDay(date, { notes })} />
-            </Section>
 
             {wave && <Overview data={data} program={program} date={date} setDate={setDate} />}
         </>
@@ -487,9 +516,10 @@ function Overview({ data, program, date, setDate }) {
 
 // ---- Runs ----
 
-function Runs({ data, program, addEntry, removeEntry }) {
+function Runs({ data, program, addEntry, removeEntry, goToPlan }) {
     const [form, setForm] = useState({ date: today(), km: '', time: '', notes: '' })
     const [saving, setSaving] = useState(false)
+    const canLog = !!waveFor(data.waves, form.date)
     const runs = inProgram(data.runs, program)
     const week = thisWeek(data.runs, program)
     const chart = weeklyTotals(data.runs, 'km', program)
@@ -515,7 +545,8 @@ function Runs({ data, program, addEntry, removeEntry }) {
                         <Field label="Time"><input className={styles.input} placeholder="28:30" value={form.time} onChange={set('time')} /></Field>
                         <Field label="Notes"><input className={styles.input} value={form.notes} onChange={set('notes')} /></Field>
                     </div>
-                    <button className={cx(styles.button, styles.buttonRun, styles.full)} disabled={saving}>
+                    <OutsideWave data={data} date={form.date} what="runs" goToPlan={goToPlan} />
+                    <button className={cx(styles.button, styles.buttonRun, styles.full)} disabled={saving || !canLog}>
                         <FontAwesomeIcon icon={faPersonRunning} /> {saving ? 'Saving…' : 'Log run'}
                     </button>
                 </form>
@@ -539,9 +570,10 @@ function Runs({ data, program, addEntry, removeEntry }) {
 
 // ---- Drinks ----
 
-function Drinks({ data, program, addEntry, removeEntry }) {
+function Drinks({ data, program, addEntry, removeEntry, goToPlan }) {
     const [form, setForm] = useState({ date: today(), quantity: '1', drink: 'Beer', notes: '' })
     const [saving, setSaving] = useState(false)
+    const canLog = !!waveFor(data.waves, form.date)
     const t = today()
     const drinks = inProgram(data.drinks, program)
     const week = thisWeek(data.drinks, program)
@@ -581,7 +613,7 @@ function Drinks({ data, program, addEntry, removeEntry }) {
             <Section title={<>Drinks<em>.</em></>} count={form.date === t ? 'Today' : longDate(form.date)}>
                 <div className={styles.chips}>
                     {favourites.map(name => (
-                        <button key={name} className={cx(styles.button, styles.buttonSmall)} disabled={saving}
+                        <button key={name} className={cx(styles.button, styles.buttonSmall)} disabled={saving || !canLog}
                             onClick={() => add({ date: form.date, quantity: 1, drink: name, notes: '' })}>
                             <FontAwesomeIcon icon={faBeerMugEmpty} /> +1 {name}
                         </button>
@@ -597,7 +629,8 @@ function Drinks({ data, program, addEntry, removeEntry }) {
                         </Field>
                         <Field label="Notes"><input className={styles.input} value={form.notes} onChange={set('notes')} /></Field>
                     </div>
-                    <button className={cx(styles.button, styles.buttonGhost, styles.full)} disabled={saving}>{saving ? 'Saving…' : 'Log drinks'}</button>
+                    <OutsideWave data={data} date={form.date} what="drinks" goToPlan={goToPlan} />
+                    <button className={cx(styles.button, styles.buttonGhost, styles.full)} disabled={saving || !canLog}>{saving ? 'Saving…' : 'Log drinks'}</button>
                 </form>
             </Section>
 
@@ -1165,7 +1198,7 @@ export default function Spr() {
         setKey(keyInput.trim())
     }
 
-    const props = { data, program, addEntry, removeEntry }
+    const props = { data, program, addEntry, removeEntry, goToPlan }
 
     return (
         <div className={cx(styles.app, montserrat.className)}>

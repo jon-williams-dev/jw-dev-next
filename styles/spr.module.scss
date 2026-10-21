@@ -980,3 +980,24 @@ select.input { appearance: none; background-image: linear-gradient(45deg, transp
   b { color: $text; font-weight: 800; }
   svg { color: #ffc94d; }
 }
+
+// ---- Outside a wave ----
+
+.lockedText { margin-bottom: 16px; color: $muted; line-height: 1.5; }
+
+.lockedButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  .button { flex: 1 1 auto; }
+}
+
+.outside {
+  margin: -4px 0 14px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba($pink, 0.12);
+  font-size: 0.85rem;
+  line-height: 1.45;
+}

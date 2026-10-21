@@ -15,7 +15,7 @@
 //
 // A wave is a block of days (90 by default) with its own weekly plan. Days, runs and drinks are
 // stored by date and belong to whichever of the person's waves covers that date; a person's
-// waves never overlap.
+// waves never overlap. Nothing can be logged on a date outside their waves.
 //
 //   GET                                          everything for the signed-in person
 //   POST   { type: run|drink|wave|person, ... }  log a run or drinks, start a wave (copyFrom
@@ -283,6 +283,11 @@ async function waveFields(userId, body, waveId = null) {
   return { name, start, length }
 }
 
+const inOwnWave = async (userId, date) => (await query({
+  sql: "SELECT 1 FROM waves WHERE user_id = ? AND start <= ? AND date(start, '+' || num_days || ' days') > ?",
+  args: [userId, date, date],
+})).length > 0
+
 const ownWave = async (userId, waveId) =>
   (await query({ sql: 'SELECT 1 FROM waves WHERE id = ? AND user_id = ?', args: [waveId, userId] })).length > 0
 
@@ -487,6 +492,7 @@ export default async function handler(req, res) {
       if (!TABLES[type] || (req.method === 'POST') !== loggable) return res.status(400).json({ error: 'Unknown type' })
       const statement = statementFor(me.id, type, body)
       if (typeof statement === 'string') return res.status(400).json({ error: statement })
+      if (!(await inOwnWave(me.id, body.date))) return res.status(400).json({ error: "That date isn't in one of your waves" })
       const [sql, args] = statement
       // Write, then read the stored row back (new runs and drinks get their id here).
       const [, { rows: [saved] }] = await database().batch([

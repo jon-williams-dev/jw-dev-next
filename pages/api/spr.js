@@ -68,7 +68,6 @@ const SCHEMA = [
     user_id INTEGER NOT NULL,
     date TEXT NOT NULL,
     km REAL NOT NULL,
-    time TEXT NOT NULL DEFAULT '',
     notes TEXT NOT NULL DEFAULT ''
   )`,
   `CREATE TABLE IF NOT EXISTS drinks (
@@ -312,8 +311,8 @@ function statementFor(userId, type, body) {
     case 'run': {
       const km = number(body.km, 0.01, 500)
       if (!date || km === null) return 'Date and km are required'
-      return ['INSERT INTO runs (id, user_id, date, km, time, notes) VALUES (?, ?, ?, ?, ?, ?)',
-        [randomUUID(), userId, date, km, text(body.time, 20), text(body.notes, 500)]]
+      return ['INSERT INTO runs (id, user_id, date, km, notes) VALUES (?, ?, ?, ?, ?)',
+        [randomUUID(), userId, date, km, text(body.notes, 500)]]
     }
     case 'drink': {
       const quantity = number(body.quantity, 0.1, 100)

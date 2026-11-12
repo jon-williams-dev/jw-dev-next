@@ -517,7 +517,7 @@ function Overview({ data, program, date, setDate }) {
 // ---- Runs ----
 
 function Runs({ data, program, addEntry, removeEntry }) {
-    const [form, setForm] = useState({ date: today(), km: '', time: '', notes: '' })
+    const [form, setForm] = useState({ date: today(), km: '', notes: '' })
     const [saving, setSaving] = useState(false)
     const runs = inProgram(data.runs, program)
     const week = thisWeek(data.runs, program)
@@ -527,7 +527,7 @@ function Runs({ data, program, addEntry, removeEntry }) {
     const submit = async (e) => {
         e.preventDefault()
         setSaving(true)
-        if (await addEntry('run', form)) setForm(f => ({ ...f, km: '', time: '', notes: '' }))
+        if (await addEntry('run', form)) setForm(f => ({ ...f, km: '', notes: '' }))
         setSaving(false)
     }
 
@@ -541,8 +541,7 @@ function Runs({ data, program, addEntry, removeEntry }) {
                     <div className={styles.fields}>
                         <Field label="Date"><input className={styles.input} type="date" value={form.date} onChange={set('date')} required /></Field>
                         <Field label="Distance (km)"><input className={styles.input} type="number" inputMode="decimal" step="any" min="0.01" placeholder="5.0" value={form.km} onChange={set('km')} required /></Field>
-                        <Field label="Time"><input className={styles.input} placeholder="28:30" value={form.time} onChange={set('time')} /></Field>
-                        <Field label="Notes"><input className={styles.input} value={form.notes} onChange={set('notes')} /></Field>
+                        <Field label="Notes" wide><input className={styles.input} value={form.notes} onChange={set('notes')} /></Field>
                     </div>
                     <NoWaveNote data={data} date={form.date} />
                     <button className={cx(styles.button, styles.buttonRun, styles.full)} disabled={saving}>
@@ -562,7 +561,7 @@ function Runs({ data, program, addEntry, removeEntry }) {
             </Section>
 
             <LogList entries={data.runs} onDelete={(e) => removeEntry('run', e)} outside={(e) => !waveFor(data.waves, e.date)}
-                render={(e) => [`${e.km} km`, [e.time, e.notes].filter(Boolean).join(' · ')]} />
+                render={(e) => [`${e.km} km`, e.notes]} />
         </>
     )
 }

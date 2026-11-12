@@ -4,6 +4,7 @@
 //   --solar --grid --battery --home --line --text --muted --faint --card
 
 import { useEffect, useRef, useState } from 'react'
+import { kioskFetch } from './kiosk_layout'
 
 export const POLL_MS = 5000
 export const LIVE_MS = 15000      // newer than this counts as live
@@ -49,11 +50,14 @@ export function summary(battery, grid) {
 // ── data ─────────────────────────────────────────────────────────────────────
 
 // Polls /api/varta/status without overlapping requests, pausing while the tab is hidden.
+// On the public site the readings need the family key: `unpaired` until it's entered, then `retry()`.
 export function useVartaStatus() {
     const [data, setData] = useState(null)          // last good reading
     const [lastSuccess, setLastSuccess] = useState(null)
     const [error, setError] = useState(null)
     const [unavailable, setUnavailable] = useState(false)
+    const [unpaired, setUnpaired] = useState(false)
+    const [attempt, setAttempt] = useState(0)
     const timer = useRef(null)
 
     useEffect(() => {
@@ -62,8 +66,10 @@ export function useVartaStatus() {
         const poll = async () => {
             clearTimeout(timer.current)
             try {
-                const res = await fetch('/api/varta/status', { cache: 'no-store', signal: AbortSignal.timeout(8000) })
+                const res = await kioskFetch('/api/varta/status', { cache: 'no-store', signal: AbortSignal.timeout(8000) })
                 if (res.status === 404) { if (!cancelled) setUnavailable(true); return }
+                if (res.status === 401) { if (!cancelled) setUnpaired(true); return }
+                if (!cancelled) setUnpaired(false)
                 const body = await res.json()
                 if (cancelled) return
                 if (body.connected) {
@@ -91,9 +97,9 @@ export function useVartaStatus() {
             clearTimeout(timer.current)
             document.removeEventListener('visibilitychange', onVisibility)
         }
-    }, [])
+    }, [attempt])
 
-    return { data, lastSuccess, error, unavailable }
+    return { data, lastSuccess, error, unavailable, unpaired, retry: () => setAttempt((a) => a + 1) }
 }
 
 export function useNow(interval = 1000) {

@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 import {
     POLL_MS, LIVE_MS, IDLE_W, fmtPower, splitPower, fmtKwh, batteryEta, summary, useVartaStatus, useNow, Freshness, PowerFlow,
 } from '../components/energy_flow'
+import { PairForm } from '../components/kiosk_layout'
 
 const VartaCharts = dynamic(() => import('../components/varta_charts'), { ssr: false })
 
@@ -78,7 +79,7 @@ function Stat({ label, value, unit, note }) {
 // ── page ─────────────────────────────────────────────────────────────────────
 
 export default function Varta() {
-    const { data, lastSuccess, error, unavailable } = useVartaStatus()
+    const { data, lastSuccess, error, unavailable, unpaired, retry } = useVartaStatus()
     const now = useNow()
     const stale = !lastSuccess || now - lastSuccess >= LIVE_MS || !!error
 
@@ -108,7 +109,7 @@ export default function Varta() {
                         <div className="brand-sub">VARTA element · 6 kWh</div>
                     </div>
                 </div>
-                {!unavailable && <Freshness lastSuccess={lastSuccess} error={error} now={now} />}
+                {!unavailable && !unpaired && <Freshness lastSuccess={lastSuccess} error={error} now={now} />}
             </header>
 
             <main className="wrap">
@@ -119,7 +120,15 @@ export default function Varta() {
                     </div>
                 )}
 
-                {!unavailable && !data && (
+                {unpaired && (
+                    <div className="card notice">
+                        <h2>Enter the family key</h2>
+                        <p>This device needs the key once to show the battery. It’s remembered afterwards.</p>
+                        <PairForm onPaired={retry} className="pair" />
+                    </div>
+                )}
+
+                {!unavailable && !unpaired && !data && (
                     <div className="card notice">
                         {error
                             ? <><h2>Can't reach the battery</h2><p>{error}. Retrying every {POLL_MS / 1000} seconds.</p></>
@@ -274,6 +283,9 @@ export default function Varta() {
                 .energy .notice { max-width: 560px; margin: 3rem auto; text-align: center; padding: 2rem; }
                 .energy .notice h2 { font-size: 1rem; text-transform: none; letter-spacing: 0; color: var(--text); margin-bottom: 0.5rem; }
                 .energy .notice p { color: var(--muted); }
+                .energy .pair { display: flex; gap: 0.5rem; margin-top: 1.25rem; }
+                .energy .pair input { flex: 1; min-width: 0; padding: 0.7rem 0.9rem; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--text); font: inherit; }
+                .energy .pair button { padding: 0.7rem 1.1rem; border-radius: 10px; border: 0; background: var(--battery); color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
                 .energy .loading { display: flex; gap: 0.4rem; justify-content: center; }
                 .energy .loading span { width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--faint); animation: e-bounce 1.2s infinite; }
                 .energy .loading span:nth-child(2) { animation-delay: 0.15s; }

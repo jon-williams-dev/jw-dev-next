@@ -17,6 +17,7 @@
 // The kiosk picks it up once from /stauperle13?key=... and remembers it.
 import ical from 'node-ical'
 import { JWT } from 'google-auth-library'
+import { kioskPaired } from '../../lib/kiosk_auth'
 
 const CACHE_TTL = 5 * 60 * 1000
 const API_CACHE_TTL = 60 * 1000
@@ -152,8 +153,7 @@ async function apiEvents(cal, from, to) {
 const isUrl = (source) => /^(https?|webcal):\/\//.test(source)
 
 export default async function handler(req, res) {
-  const key = process.env.STAUPERLE_KEY
-  if (key ? req.headers['x-kiosk-key'] !== key : process.env.NODE_ENV === 'production') {
+  if (!kioskPaired(req)) {
     return res.status(401).json({ error: 'Not paired', code: 'unpaired' })
   }
 

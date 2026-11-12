@@ -1,26 +1,29 @@
-import KioskLayout from '../../components/kiosk_layout'
+import KioskLayout, { PairForm } from '../../components/kiosk_layout'
 import { SunbankIcon } from '../../components/kiosk_icons'
 import {
     LIVE_MS, IDLE_W, fmtPower, splitPower, fmtKwh, batteryEta, summary, useVartaStatus, useNow, Freshness, PowerFlow,
 } from '../../components/energy_flow'
 import styles from '../../styles/stauperle.module.scss'
 
-// Live overview of the VARTA battery and grid, read on the home network (same API as /varta).
+// Live overview of the VARTA battery and grid, read on the home network or pushed from it (same API as /varta).
 export default function Sunbank() {
-    const { data, lastSuccess, error, unavailable } = useVartaStatus()
+    const { data, lastSuccess, error, unavailable, unpaired, retry } = useVartaStatus()
     const now = useNow()
 
-    if (unavailable || !data) {
+    if (unavailable || unpaired || !data) {
         return (
             <KioskLayout title="Sunbank">
                 <section className={`${styles.placeholder} ${styles.sun}`}>
                     <SunbankIcon />
-                    <h2>Sunbank</h2>
+                    <h2>{unpaired ? 'Enter the family key' : 'Sunbank'}</h2>
                     <p>
-                        {unavailable
-                            ? 'Live battery data is only available on the home network.'
-                            : error ? `Can’t reach the battery – ${error}. Retrying…` : 'Connecting to the battery…'}
+                        {unpaired
+                            ? 'This device needs the key once to show the battery. It’s remembered afterwards.'
+                            : unavailable
+                                ? 'Live battery data is only available on the home network.'
+                                : error ? `Can’t reach the battery – ${error}. Retrying…` : 'Connecting to the battery…'}
                     </p>
+                    {unpaired && <PairForm onPaired={retry} />}
                 </section>
             </KioskLayout>
         )

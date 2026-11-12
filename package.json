@@ -8,7 +8,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "varta:push": "node --experimental-detect-module --env-file=.env.local scripts/varta_push.mjs"
   },
   "dependencies": {
     "@apollo/client": "^3.5.10",

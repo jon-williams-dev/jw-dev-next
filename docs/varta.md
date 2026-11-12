@@ -14,6 +14,8 @@ Live view of the VARTA element 6 kWh battery, read directly from the battery ove
 | `pages/api/varta/history.js` | `GET /api/varta/history?range=1h\|6h\|24h\|7d\|30d` |
 | `components/varta_charts.js` | History charts (Chart.js) |
 | `instrumentation.js` | Starts the collector when the server starts |
+| `scripts/varta_push.mjs` | Sends readings from home to the public site |
+| `lib/varta_remote.js` / `pages/api/varta/push.js` | Stores and serves the pushed readings |
 
 ## Configuration
 
@@ -25,7 +27,21 @@ VARTA_PORT=502
 VARTA_UNIT_ID=255
 ```
 
-Without `VARTA_HOST` the API responds 404 and the page shows "Available on the home network only". That is what happens on the public (Vercel) deployment, which can't reach the home network anyway.
+Without `VARTA_HOST` (or `VARTA_PUSH_KEY`, below) the API responds 404 and the page shows "Available on the home network only".
+
+## Public site (pushed from home)
+
+Vercel can't reach the home network, so a script at home sends the readings to the site:
+
+```
+npm run varta:push
+```
+
+It needs Node 20.10+ on a machine on the home network that stays on. It reads `.env.local` (`VARTA_HOST`, `VARTA_PUSH_KEY`, and optionally `VARTA_PUSH_URL`, default https://jon-williams.dev). Every 10 s it POSTs the status, and every minute the history for each range, to `/api/varta/push` with `Authorization: Bearer $VARTA_PUSH_KEY`. The site keeps them as JSON snapshots in Turso (`varta_snapshots`, `lib/varta_remote.js`).
+
+On the site (`VARTA_PUSH_KEY` set, `VARTA_HOST` not), `/api/varta/status` and `/api/varta/history` serve those snapshots, only to devices paired with the Stauperle family key (`STAUPERLE_KEY`, header `x-kiosk-key`). Sunbank and `/varta` ask for the key once per device.
+
+The script also records history to `data/varta`, unless the Next.js server on the same machine already does: whichever starts first holds `data/varta/.collector.pid`. Nothing on the home network is reachable from outside; the script only makes outgoing requests and only reads from the battery.
 
 ## Running and testing
 

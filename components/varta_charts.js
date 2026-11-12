@@ -5,6 +5,7 @@ import {
     Chart as ChartJS, LinearScale, CategoryScale, PointElement, LineElement, BarElement, Filler, Tooltip, Legend,
 } from 'chart.js'
 import { Line, Bar } from 'react-chartjs-2'
+import { kioskFetch } from './kiosk_layout'
 
 ChartJS.register(LinearScale, CategoryScale, PointElement, LineElement, BarElement, Filler, Tooltip, Legend)
 
@@ -205,7 +206,7 @@ export default function VartaCharts() {
             if (document.hidden) return
             setLoading(true)
             try {
-                const res = await fetch(`/api/varta/history?range=${range}`, { cache: 'no-store', signal: AbortSignal.timeout(15000) })
+                const res = await kioskFetch(`/api/varta/history?range=${range}`, { cache: 'no-store', signal: AbortSignal.timeout(15000) })
                 if (!res.ok) throw new Error(`History unavailable (${res.status})`)
                 const body = await res.json()
                 if (!cancelled) { setData(body); setError(null) }

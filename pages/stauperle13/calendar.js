@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
-import KioskLayout, { kioskFetch, kioskKey, setKioskKey } from '../../components/kiosk_layout'
+import KioskLayout, { kioskFetch, PairForm } from '../../components/kiosk_layout'
 import styles from '../../styles/stauperle.module.scss'
 
 const DAYS = 14
@@ -107,32 +107,6 @@ function Event({ ev, large }) {
 const MESSAGES = {
   unpaired: ['Enter the family key', 'This device needs the key once to show the calendar. It’s remembered afterwards.'],
   unconfigured: ['No calendars set up', 'Add Google Calendar iCal links to STAUPERLE_CALENDARS.'],
-}
-
-function PairForm({ onPaired }) {
-  const [value, setValue] = useState('')
-  const rejected = Boolean(kioskKey())
-
-  const submit = (e) => {
-    e.preventDefault()
-    if (!value.trim()) return
-    setKioskKey(value)
-    onPaired()
-  }
-
-  return (
-    <form className={styles.pair} onSubmit={submit}>
-      <input
-        type="password"
-        autoComplete="current-password"
-        placeholder={rejected ? 'Key not accepted, try again' : 'Key'}
-        value={value}
-        onChange={e => setValue(e.target.value)}
-        autoFocus
-      />
-      <button type="submit">Unlock</button>
-    </form>
-  )
 }
 
 export default function FamilyCalendar() {

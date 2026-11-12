@@ -28,9 +28,8 @@
 //                                                your name, or a person (owner: name, and a
 //                                                new code: newKey for a random one, or key)
 //   DELETE ?type=run|drink|wave|person&id=...    remove one (a person takes all their data)
-import { createClient } from '@libsql/client'
 import { createCipheriv, createDecipheriv, createHash, randomBytes, randomUUID } from 'crypto'
-import { mkdirSync } from 'fs'
+import { database } from '../../lib/db'
 
 // Run next to the database (Turso in Frankfurt) rather than Vercel's default US region.
 export const config = { regions: ['fra1'] }
@@ -136,20 +135,7 @@ const TO_WAVES = [
   `INSERT OR IGNORE INTO settings (key, value) VALUES ('waves_migrated', '1')`,
 ]
 
-let db = null
 let ready = null
-
-function database() {
-  if (db) return db
-  let url = process.env.TURSO_DATABASE_URL
-  if (!url) {
-    if (process.env.NODE_ENV === 'production') throw new Error('TURSO_DATABASE_URL is not set')
-    mkdirSync('.data', { recursive: true })
-    url = 'file:.data/spr.db'
-  }
-  db = createClient({ url, authToken: process.env.TURSO_AUTH_TOKEN })
-  return db
-}
 
 const columnsOf = async (client, table) => new Set((await client.execute(`PRAGMA table_info(${table})`)).rows.map(r => r.name))
 

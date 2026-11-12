@@ -42,9 +42,36 @@ export const setKioskKey = (key) => setDeviceSetting('key', key.trim())
 // is only for the hallway screen: open it once with ?kiosk=1. ?kiosk=0 turns it off.
 const isKioskMode = () => deviceSetting('kiosk') === '1'
 
-export function kioskFetch(url) {
+export function kioskFetch(url, options = {}) {
   const key = kioskKey()
-  return fetch(url, { headers: key ? { 'x-kiosk-key': key } : {} })
+  return fetch(url, { ...options, headers: { ...options.headers, ...(key ? { 'x-kiosk-key': key } : {}) } })
+}
+
+// Asks for the family key when an API answers 401 { code: 'unpaired' }.
+export function PairForm({ onPaired, className = styles.pair }) {
+  const [value, setValue] = useState('')
+  const rejected = Boolean(kioskKey())
+
+  const submit = (e) => {
+    e.preventDefault()
+    if (!value.trim()) return
+    setKioskKey(value)
+    onPaired()
+  }
+
+  return (
+    <form className={className} onSubmit={submit}>
+      <input
+        type="password"
+        autoComplete="current-password"
+        placeholder={rejected ? 'Key not accepted, try again' : 'Key'}
+        value={value}
+        onChange={e => setValue(e.target.value)}
+        autoFocus
+      />
+      <button type="submit">Unlock</button>
+    </form>
+  )
 }
 
 function Clock() {

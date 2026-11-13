@@ -47,3 +47,95 @@
   position: sticky !important;
   top: 50px !important;
 }
+// /profile/ai
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.card {
+  padding: 1.25rem;
+  border: 1px solid #eee;
+  border-radius: 12px;
+}
+
+.cardIcon {
+  font-size: 1.4rem;
+  color: #3e8ed0;
+  margin-bottom: 0.75rem;
+}
+
+.cardTitle {
+  font-weight: 700;
+  margin-bottom: 0.4rem !important;
+}
+
+.cardText {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 0 !important;
+}
+
+.journey {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.journeyItem p { margin-bottom: 0 !important; }
+
+.journeyYears {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #aaa;
+}
+
+.journeyRole { font-weight: 700; }
+
+.journeyWhere {
+  font-size: 1rem;
+  color: #666;
+}
+
+.helpList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.helpItem {
+  padding-left: 1rem;
+  border-left: 3px solid #3e8ed0;
+}
+
+.journeyWhat {
+  font-size: 0.95rem;
+  font-style: italic;
+  color: #888;
+}
+
+.process {
+  margin-left: 1.5rem !important;
+
+  li { margin-bottom: 1rem; }
+  li::marker { font-weight: 700; color: #3e8ed0; }
+}
+
+// /profile: points to /profile/ai.
+.updateBanner {
+  display: block;
+  // Clears the layout's fixed 1.5rem color bar.
+  padding: calc(1.5rem + 0.75rem) 1rem 0.75rem;
+  background: #3e8ed0;
+  color: #fff !important;
+  text-align: center;
+
+  &:hover { background: #3082c5; }
+}

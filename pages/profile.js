@@ -18,6 +18,10 @@ export default function Profile() {
           <title>Jon Williams | Profile</title>
         </Head>
 
+        <Link href="/profile/ai" className={profileStyles.updateBanner}>
+          <strong>Since 2026,</strong> AI has changed how I work. See my new profile →
+        </Link>
+
         <div className="container">
           <section className="hero is-fullheight" style={{position: 'relative'}}>
             <div className="hero-body">

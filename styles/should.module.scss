@@ -1,0 +1,111 @@
+// /should/<topic>. One big question, a Yes that grows and a No that runs away.
+
+$bg: #0b0b10;
+$surface: #16161e;
+$text: #ffffff;
+$muted: #9a9aab;
+$pink: #df2793;
+$indigo: #566dd0;
+$pink-gradient: linear-gradient(135deg, $indigo, $pink);
+
+.page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background: radial-gradient(circle at 50% 0%, rgba($pink, 0.25), transparent 60%), $bg;
+  color: $text;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+
+  button { font-family: inherit; cursor: pointer; }
+}
+
+.card {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  text-align: center;
+}
+
+.emoji {
+  font-size: 88px;
+  line-height: 1;
+  margin-bottom: 16px;
+  animation: rev 1.2s ease-in-out infinite;
+}
+
+.question {
+  font-size: clamp(28px, 7vw, 44px);
+  font-weight: 900;
+  line-height: 1.15;
+  margin: 0 0 40px;
+}
+
+.sub {
+  color: $muted;
+  font-weight: 600;
+  margin: -24px 0 32px;
+}
+
+.buttons {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  align-items: center;
+  min-height: 80px;
+}
+
+.yes,
+.no,
+.again {
+  border: 0;
+  border-radius: 999px;
+  font-size: 20px;
+  font-weight: 800;
+  padding: 16px 40px;
+  color: $text;
+}
+
+.yes,
+.again {
+  background: $pink-gradient;
+  box-shadow: 0 10px 30px rgba($pink, 0.4);
+  transition: transform 0.2s ease;
+
+  &:hover { filter: brightness(1.1); }
+}
+
+.no {
+  background: $surface;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  min-width: 120px;
+  z-index: 10;
+  touch-action: none;
+  transition: left 0.15s ease-out, top 0.15s ease-out;
+}
+
+.confetti {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+
+  span {
+    position: absolute;
+    top: -40px;
+    font-size: 28px;
+    animation: fall linear infinite;
+  }
+}
+
+@keyframes rev {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-6deg) translateX(-4px); }
+  75% { transform: rotate(4deg) translateX(4px); }
+}
+
+@keyframes fall {
+  to { transform: translateY(110vh) rotate(360deg); }
+}

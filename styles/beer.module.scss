@@ -1,0 +1,101 @@
+// /should/beer. A pint glass that fills up as beer o'clock gets closer. Builds on should.module.scss.
+
+$surface: #16161e;
+$line: rgba(255, 255, 255, 0.12);
+$muted: #9a9aab;
+$amber: #f5b301;
+
+.page {
+  background: radial-gradient(circle at 50% 0%, rgba($amber, 0.22), transparent 60%), #0b0b10;
+}
+
+.kicker {
+  color: $muted;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0 0 20px;
+}
+
+.answer { margin-bottom: 32px; }
+
+.glass {
+  position: relative;
+  width: 150px;
+  height: 220px;
+  margin: 0 auto 28px;
+  // Wider at the rim, like a pint glass.
+  clip-path: polygon(0 0, 100% 0, 88% 100%, 12% 100%);
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+}
+
+.liquid {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  background: var(--liquid);
+  transition: height 1s ease-out, background 0.4s;
+}
+
+.head {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 1;
+  height: 26px;
+  background: var(--head);
+}
+
+.bubble {
+  position: absolute;
+  bottom: 0;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  animation: rise linear infinite;
+}
+
+.countdown {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: -12px 0 32px;
+
+  div {
+    min-width: 90px;
+    padding: 14px 8px;
+    background: $surface;
+    border: 1px solid $line;
+    border-radius: 16px;
+  }
+
+  strong {
+    display: block;
+    font-size: clamp(32px, 9vw, 48px);
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+  }
+
+  span {
+    color: $muted;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+}
+
+.ask {
+  font-size: 22px;
+  font-weight: 800;
+  margin: 0 0 24px;
+}
+
+@keyframes rise {
+  from { transform: translateY(0); opacity: 0; }
+  10% { opacity: 1; }
+  to { transform: translateY(-220px); opacity: 0; }
+}

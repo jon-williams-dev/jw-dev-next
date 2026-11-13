@@ -38,7 +38,7 @@ const HELP = [
   ['Working with AI as a team', 'Helping developers and teams get real results from AI tools, from someone who uses them every day.'],
 ]
 
-const AI_TOOLS = ['Claude Code', 'AI Agents', 'LLMs', 'Prompt Engineering', 'Rapid Prototyping']
+const AI_TOOLS = ['Claude Code', 'GitHub Copilot', 'Many AI Models', 'AI Agents', 'LLMs', 'Prompt Engineering', 'Rapid Prototyping']
 const FOUNDATIONS = ['Ruby on Rails', 'React', 'Next.js', 'PostgreSQL', 'MySQL', 'GraphQL', 'Hotwire', 'Docker', 'Kamal', 'NGINX', 'Linux', 'Git', 'GitHub Actions']
 
 const JOURNEY = [
@@ -148,6 +148,7 @@ export default function ProfileAI() {
                       <p>AI has changed my job. I used to spend my days writing code; now I spend them deciding what to build, directing AI to build it, and making sure what comes out is good enough to ship.</p>
                       <p>The result is that I build more, and more ambitious, things than I ever could by hand. Projects that would once have taken a team months now take me days or weeks, and side ideas that would have stayed on a list actually get built.</p>
                       <p>The part that hasn't changed is the part that matters most: years of experience knowing how software should be built, and what happens when it isn't. AI is a brilliant, tireless collaborator, but it needs someone who knows where it's going and can tell when it's wrong.</p>
+                      <p>I don't tie myself to one tool. I use Claude Code, GitHub Copilot and a wide range of AI models, picking whichever fits the job best, and keep trying new ones as they arrive.</p>
                     </div>
 
                     <div className="block mb-6">

@@ -33,3 +33,14 @@ export function SunbankIcon(props) {
     </svg>
   )
 }
+
+export function VacuumIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <circle cx="12" cy="12" r="9.5" />
+      <circle cx="12" cy="12" r="5" />
+      <circle cx="12" cy="12" r="1.5" />
+      <path d="M9 4.5h6" />
+    </svg>
+  )
+}

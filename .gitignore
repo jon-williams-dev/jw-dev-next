@@ -38,5 +38,13 @@ package-lock.json
 # Varta dashboard history (local only)
 /data/varta/
 
+# Roborock login and device cache for the kiosk (scripts/roborock_start.py)
+/.roborock.json
+/.roborock.cache
+/.venv-roborock/
+
 # /spr local SQLite database (production uses Turso)
 /.data/
+
+# Python bytecode
+__pycache__/

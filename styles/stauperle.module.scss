@@ -10,6 +10,7 @@ $muted: #8fa3b8;
 $calendar: #4fa3ff;
 $sun: #ffb020;
 $school: #3ddc97;
+$vacuum: #b18cff;
 
 .kiosk {
   position: fixed;
@@ -179,6 +180,16 @@ $gap: clamp(0.75rem, 3vw, 1.75rem);
 
 .school {
   --accent: #{$school};
+}
+
+.vacuum {
+  --accent: #{$vacuum};
+  border: 0;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  &:disabled { cursor: progress; }
 }
 
 .tileIcon {

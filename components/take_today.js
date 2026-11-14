@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { BagIcon, BinIcon, CoatIcon, SnowflakeIcon, SunIcon, UmbrellaIcon } from './kiosk_icons'
 import { BIN_TYPES, binsOn, planEnds } from '../lib/stauperle_bins'
 import { TIMETABLES, WEEKDAYS, focusDay, kitFor } from '../lib/stauperle_timetables'
 import styles from '../styles/stauperle.module.scss'
@@ -34,12 +35,12 @@ function weatherAdvice(weather, date, isToday, now) {
 
   const advice = []
   const wet = hours.find(h => h.rain >= RAIN_CHANCE)
-  if (wet) advice.push({ icon: '☔', text: `Rain jacket · ${Math.max(...hours.map(h => h.rain))}% from ${pad(wet.hour)}:00` })
+  if (wet) advice.push({ Icon: UmbrellaIcon, color: '#4fa3ff', text: `Rain jacket · ${Math.max(...hours.map(h => h.rain))}% from ${pad(wet.hour)}:00` })
   const low = Math.min(...hours.map(h => h.temp))
   const high = Math.max(...hours.map(h => h.temp))
-  if (low <= FREEZING) advice.push({ icon: '🧤', text: `Hat & gloves · ${Math.round(low)}°` })
-  else if (low <= COLD) advice.push({ icon: '🧥', text: `Warm coat · ${Math.round(low)}°` })
-  if (high >= HOT) advice.push({ icon: '🧴', text: `Sun cream & water · ${Math.round(high)}°` })
+  if (low <= FREEZING) advice.push({ Icon: SnowflakeIcon, color: '#c9d6ff', text: `Hat & gloves · ${Math.round(low)}°` })
+  else if (low <= COLD) advice.push({ Icon: CoatIcon, color: '#c9d6ff', text: `Warm coat · ${Math.round(low)}°` })
+  if (high >= HOT) advice.push({ Icon: SunIcon, color: '#ffb020', text: `Sun cream & water · ${Math.round(high)}°` })
   return advice
 }
 
@@ -54,7 +55,7 @@ function binReminders(now) {
   const reminders = []
   if (now.getHours() < 12 && binsOn(today).length) reminders.push(reminder('Today:', binsOn(today)))
   if (binsOn(tomorrow).length) reminders.push(reminder('Tonight: put out', binsOn(tomorrow)))
-  if (today > planEnds()) reminders.push({ icon: '🗑️', text: 'Add this year’s bin plan' })
+  if (today > planEnds()) reminders.push({ Icon: BinIcon, color: '#8fa3b8', text: 'Add this year’s bin plan' })
   return reminders
 }
 
@@ -84,18 +85,18 @@ export default function TakeToday() {
     ...weatherAdvice(weather, dateFor(index, now), isToday, now),
     ...TIMETABLES.map(child => ({ child, kit: kitFor(child, day.key) }))
       .filter(({ kit }) => kit.length)
-      .map(({ child, kit }) => ({ icon: '🎒', text: `${child.name}: ${kit.join(', ')}` })),
+      .map(({ child, kit }) => ({ Icon: BagIcon, color: '#3ddc97', text: `${child.name}: ${kit.join(', ')}` })),
   ]
   if (!items.length) return null
 
   return (
     <section className={styles.takeToday}>
       <span className={styles.takeTodayLabel}>{label}</span>
-      {items.map(({ icon, colors, text }) => (
+      {items.map(({ Icon, color, colors, text }) => (
         <span key={text} className={styles.takeTodayItem}>
           {colors
             ? colors.map(color => <span key={color} className={styles.binDot} style={{ background: color }} aria-hidden="true" />)
-            : <span aria-hidden="true">{icon}</span>}
+            : <Icon className={styles.takeTodayIcon} style={{ color }} />}
           {' '}{text}
         </span>
       ))}

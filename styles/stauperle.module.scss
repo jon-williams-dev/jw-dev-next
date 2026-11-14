@@ -50,6 +50,27 @@ $vacuum: #b18cff;
   letter-spacing: 0.02em;
 }
 
+// Hallway screen only: restarts the Pi.
+.restart {
+  min-height: 48px;
+  padding: 0 1.1rem;
+  border: 0;
+  border-radius: 999px;
+  background: $surface;
+  color: $muted;
+  font: inherit;
+  font-size: clamp(0.85rem, 2.6vh, 1.1rem);
+
+  &:active {
+    background: $surface-active;
+  }
+}
+
+.restartConfirm {
+  background: #ff5c7a;
+  color: #fff;
+}
+
 .pageTitle {
   font-size: clamp(1.25rem, 4vh, 2rem);
   font-weight: 600;

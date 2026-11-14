@@ -74,6 +74,38 @@ export function PairForm({ onPaired, className = styles.pair }) {
   )
 }
 
+const CONFIRM_MS = 5 * 1000
+
+// Restarts the Pi (/api/reboot). Tap once to arm, again within a few seconds to restart.
+function RestartButton() {
+  const [state, setState] = useState('idle') // idle → confirm → restarting, or an error message
+
+  useEffect(() => {
+    if (state === 'idle' || state === 'restarting') return
+    const id = setTimeout(() => setState('idle'), CONFIRM_MS)
+    return () => clearTimeout(id)
+  }, [state])
+
+  const tap = async () => {
+    if (state === 'restarting') return
+    if (state !== 'confirm') return setState('confirm')
+    setState('restarting')
+    try {
+      const res = await kioskFetch('/api/reboot', { method: 'POST' })
+      if (!res.ok) setState((await res.json().catch(() => ({}))).error || 'Could not restart')
+    } catch {
+      setState('Could not restart')
+    }
+  }
+
+  const label = { idle: 'Restart', confirm: 'Tap again to restart', restarting: 'Restarting…' }[state] ?? state
+  return (
+    <button type="button" className={`${styles.restart} ${state === 'confirm' ? styles.restartConfirm : ''}`} onClick={tap}>
+      {label}
+    </button>
+  )
+}
+
 function Clock() {
   const [now, setNow] = useState(null)
 
@@ -149,6 +181,7 @@ export default function KioskLayout({ title, children, home }) {
           </Link>
         )}
         {title && !home && <div className={styles.pageTitle}>{title}</div>}
+        {home && kioskMode && <RestartButton />}
         <Clock />
       </header>
 

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import KioskLayout, { kioskFetch } from '../../components/kiosk_layout'
 import WeatherWidget from '../../components/weather_widget'
+import TakeToday from '../../components/take_today'
 import { CalendarIcon, SchoolIcon, SunbankIcon, VacuumIcon } from '../../components/kiosk_icons'
 import { schoolSummary } from '../../lib/stauperle_timetables'
 import styles from '../../styles/stauperle.module.scss'
@@ -67,6 +68,7 @@ export default function Stauperle13() {
           ))}
           <VacuumTile />
         </nav>
+        <TakeToday />
       </div>
     </KioskLayout>
   )

@@ -7,6 +7,8 @@ import styles from '../styles/stauperle.module.scss'
 export const KIOSK_HOME = '/stauperle13'
 // Subpages fall back to the home screen after this long without a touch.
 const IDLE_MS = 2 * 60 * 1000
+// Touches inside an embedded page (iframe) don't reach this window, so overlays report them.
+export const KIOSK_ACTIVITY = 'stauperle13:activity'
 
 const memory = {}
 
@@ -40,7 +42,7 @@ export const setKioskKey = (key) => setDeviceSetting('key', key.trim())
 
 // Kiosk mode (hidden cursor, no text selection or context menu, idle return to home)
 // is only for the hallway screen: open it once with ?kiosk=1. ?kiosk=0 turns it off.
-const isKioskMode = () => deviceSetting('kiosk') === '1'
+export const isKioskMode = () => deviceSetting('kiosk') === '1'
 
 export function kioskFetch(url, options = {}) {
   const key = kioskKey()
@@ -83,12 +85,14 @@ function scrollableParent(el) {
     if ((SCROLLS.test(style.overflowY) && el.scrollHeight > el.clientHeight) ||
         (SCROLLS.test(style.overflowX) && el.scrollWidth > el.clientWidth)) return el
   }
-  return null
+  // A plain page that scrolls as a whole, e.g. /varta in the Sunbank overlay.
+  const page = document.scrollingElement
+  return page && page.scrollHeight > page.clientHeight ? page : null
 }
 
 // Some Pi touchscreens reach Chromium as a mouse, so a swipe never scrolls (and with the
 // scrollbars hidden there is nothing to grab). In kiosk mode, a mouse drag scrolls the panel under it.
-function useDragScroll(enabled) {
+export function useDragScroll(enabled) {
   useEffect(() => {
     if (!enabled) return
     let drag = null
@@ -186,7 +190,7 @@ function Clock() {
   )
 }
 
-export default function KioskLayout({ title, children, home }) {
+export default function KioskLayout({ title, children, home, actions }) {
   const router = useRouter()
   const [kioskMode, setKioskMode] = useState(false)
 
@@ -202,7 +206,7 @@ export default function KioskLayout({ title, children, home }) {
       clearTimeout(timer)
       timer = setTimeout(() => router.push(KIOSK_HOME), IDLE_MS)
     }
-    const events = ['pointerdown', 'touchstart', 'keydown']
+    const events = ['pointerdown', 'touchstart', 'keydown', KIOSK_ACTIVITY]
     events.forEach(e => window.addEventListener(e, reset, { passive: true }))
     reset()
     return () => {
@@ -239,6 +243,7 @@ export default function KioskLayout({ title, children, home }) {
           </Link>
         )}
         {title && !home && <div className={styles.pageTitle}>{title}</div>}
+        {actions}
         {home && kioskMode && <RestartButton />}
         <Clock />
       </header>

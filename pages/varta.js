@@ -1,11 +1,12 @@
 import Head from 'next/head'
+import { useEffect, useState } from 'react'
 import { Inter } from 'next/font/google'
 import dynamic from 'next/dynamic'
 
 import {
     POLL_MS, LIVE_MS, IDLE_W, fmtPower, splitPower, fmtKwh, batteryEta, summary, useVartaStatus, useNow, Freshness, PowerFlow,
 } from '../components/energy_flow'
-import { PairForm } from '../components/kiosk_layout'
+import { PairForm, isKioskMode, useDragScroll } from '../components/kiosk_layout'
 
 const VartaCharts = dynamic(() => import('../components/varta_charts'), { ssr: false })
 
@@ -91,8 +92,17 @@ export default function Varta() {
     const bp = battery && splitPower(battery.power)
     const gp = grid && splitPower(grid.direction === 'idle' ? 0 : grid.power)
 
+    // Opened inside the /stauperle13 Sunbank overlay: dark like the kiosk, and on the hallway
+    // screen no cursor and drag-to-scroll, as on the kiosk pages themselves.
+    const [embed, setEmbed] = useState({ framed: false, kiosk: false })
+    useEffect(() => {
+        const framed = window.self !== window.top
+        setEmbed({ framed, kiosk: framed && isKioskMode() })
+    }, [])
+    useDragScroll(embed.kiosk)
+
     return (
-        <div className={`energy ${inter.className}`}>
+        <div className={`energy ${inter.className} ${embed.framed ? 'is-framed' : ''} ${embed.kiosk ? 'is-kiosk' : ''}`}>
             <Head>
                 <title>Home Energy</title>
                 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -229,6 +239,15 @@ export default function Varta() {
                         --c-battery: #0e9f6e; --c-grid: #3b82f6;
                     }
                 }
+                /* same tokens as the dark scheme above */
+                .energy.is-framed {
+                    --bg: #0a0e17; --card: #121826; --card-2: #182031; --line: #232c3f;
+                    --text: #e8edf6; --muted: #8b97ad; --faint: #5d6880;
+                    --shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 10px 30px rgba(0, 0, 0, 0.35);
+                    --c-battery: #0e9f6e; --c-grid: #3b82f6;
+                }
+                .energy.is-kiosk { user-select: none; -webkit-user-select: none; }
+                .energy.is-kiosk, .energy.is-kiosk * { cursor: none !important; }
                 .energy *, .energy *::before, .energy *::after { box-sizing: border-box; }
                 .energy h2 { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 0; }
                 .energy p { margin: 0; color: inherit; }

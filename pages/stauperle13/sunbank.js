@@ -1,12 +1,43 @@
-import KioskLayout, { PairForm } from '../../components/kiosk_layout'
-import { SunbankIcon } from '../../components/kiosk_icons'
+import { useEffect, useState } from 'react'
+import KioskLayout, { PairForm, KIOSK_ACTIVITY } from '../../components/kiosk_layout'
+import { CloseIcon, SunbankIcon } from '../../components/kiosk_icons'
 import {
     LIVE_MS, IDLE_W, fmtPower, splitPower, fmtKwh, batteryEta, summary, useVartaStatus, useNow, Freshness, PowerFlow,
 } from '../../components/energy_flow'
 import styles from '../../styles/stauperle.module.scss'
 
+// The full /varta dashboard (history, bought and sold, device details) over the kiosk page.
+function DetailsOverlay({ onClose }) {
+    useEffect(() => {
+        const onKey = (e) => e.key === 'Escape' && onClose()
+        window.addEventListener('keydown', onKey)
+        return () => window.removeEventListener('keydown', onKey)
+    }, [onClose])
+
+    // Keep the kiosk's idle timer from sending it home while someone reads the dashboard.
+    const forwardActivity = (e) => {
+        const reportActivity = () => window.dispatchEvent(new Event(KIOSK_ACTIVITY))
+        for (const name of ['pointerdown', 'touchstart', 'keydown']) {
+            e.currentTarget.contentWindow?.addEventListener(name, reportActivity, { passive: true })
+        }
+    }
+
+    return (
+        <div className={styles.overlay} role="dialog" aria-modal="true" aria-label="Home Energy">
+            <div className={styles.overlayBar}>
+                <span className={styles.overlayTitle}>Home Energy</span>
+                <button type="button" className={styles.overlayClose} onClick={onClose}>
+                    <CloseIcon /> Close
+                </button>
+            </div>
+            <iframe className={styles.overlayFrame} src="/varta" title="Home Energy" onLoad={forwardActivity} />
+        </div>
+    )
+}
+
 // Live overview of the VARTA battery and grid, read on the home network or pushed from it (same API as /varta).
 export default function Sunbank() {
+    const [details, setDetails] = useState(false)
     const { data, lastSuccess, error, unavailable, unpaired, retry } = useVartaStatus()
     const now = useNow()
 
@@ -37,8 +68,15 @@ export default function Sunbank() {
     const bp = splitPower(battery.power)
     const gp = splitPower(grid.direction === 'idle' ? 0 : grid.power)
 
+    const detailsButton = (
+        <button type="button" className={styles.detailsButton} onClick={() => setDetails(true)}>
+            More details <span aria-hidden="true">›</span>
+        </button>
+    )
+
     return (
-        <KioskLayout title="Sunbank">
+        <KioskLayout title="Sunbank" actions={detailsButton}>
+            {details && <DetailsOverlay onClose={() => setDetails(false)} />}
             <div className={`${styles.sunbank} ${stale ? styles.sunStale : ''}`}>
                 <section className={styles.sunFlow}>
                     <div className={styles.sunFlowHead}>

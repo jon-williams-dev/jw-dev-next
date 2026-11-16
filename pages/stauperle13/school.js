@@ -1,14 +1,17 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import KioskLayout from '../../components/kiosk_layout'
+import { BagIcon } from '../../components/kiosk_icons'
 import {
-  LERNBUERO, TIMETABLES, WEEKDAYS, focusDay, lessonAt, nowMinutes, subjectColor, timeToMinutes,
+  LERNBUERO, TIMETABLES, WEEKDAYS, focusDay, kitFor, lessonAt, lessonsOn, nowMinutes, subjectColor, timeToMinutes,
 } from '../../lib/stauperle_timetables'
 import styles from '../../styles/stauperle.module.scss'
 
-// One tab per child, then the Lernbüro rota.
-const TABS = [...TIMETABLES.map(c => c.name), 'Lernbüro']
+// One tab per child, the Lernbüro rota, then the day's overview for everyone.
+const TABS = [...TIMETABLES.map(c => c.name), 'Lernbüro', 'Today']
 const LERNBUERO_TAB = TIMETABLES.length
+const OVERVIEW_TAB = TIMETABLES.length + 1
+const childAt = (tab) => TIMETABLES[tab]
 
 export default function School() {
   const router = useRouter()
@@ -16,7 +19,7 @@ export default function School() {
   // Time-dependent highlights are client-only, so server and kiosk render the same first frame.
   const [now, setNow] = useState(null)
 
-  // ?child=Jack (or ?child=lernbuero) opens that tab directly.
+  // ?child=Jack (or ?child=today, ?child=lernbuero) opens that tab directly.
   useEffect(() => {
     if (!router.isReady || !router.query.child) return
     const wanted = String(router.query.child).toLowerCase().replace('ü', 'ue')
@@ -31,6 +34,9 @@ export default function School() {
   }, [])
 
   const focus = now && focusDay(now)
+  // After school the overview moves on to the next school day, and its tab says so.
+  const tabLabel = (name, i) => i !== OVERVIEW_TAB || !focus || focus.isToday ? name
+    : focus.isTomorrow ? 'Tomorrow' : WEEKDAYS[focus.index].long
 
   return (
     <KioskLayout title="School">
@@ -48,16 +54,88 @@ export default function School() {
               ].join(' ')}
               onClick={() => setSelected(i)}
             >
-              {name}
+              {tabLabel(name, i)}
             </button>
           ))}
         </div>
 
-        {selected === LERNBUERO_TAB
-          ? <Lernbuero focus={focus} />
-          : <Timetable child={TIMETABLES[selected]} focus={focus} now={now} />}
+        {selected === OVERVIEW_TAB
+          ? <Overview focus={focus} now={now} />
+          : selected === LERNBUERO_TAB
+            ? <Lernbuero focus={focus} />
+            : <Timetable child={childAt(selected)} focus={focus} now={now} />}
       </div>
     </KioskLayout>
+  )
+}
+
+// Back-to-back periods of the same subject become one block, e.g. a double lesson.
+function lessonBlocks(child, dayKey) {
+  const blocks = []
+  for (const lesson of lessonsOn(child, dayKey)) {
+    const last = blocks[blocks.length - 1]
+    if (last && last.subject === lesson.subject && last.note === lesson.note && last.lastPeriod === lesson.period - 1) {
+      last.end = lesson.end
+      last.lastPeriod = lesson.period
+      last.count++
+    } else {
+      blocks.push({ ...lesson, lastPeriod: lesson.period, count: 1 })
+    }
+  }
+  return blocks
+}
+
+// Everyone's school day side by side: lessons, clubs afterwards and what to pack.
+function Overview({ focus, now }) {
+  if (!focus) return <div className={styles.overview} />
+  const day = WEEKDAYS[focus.index]
+  const minute = focus.isToday ? nowMinutes(now) : null
+
+  return (
+    <div className={styles.overview}>
+      {TIMETABLES.map(child => {
+        const blocks = lessonBlocks(child, day.key)
+        const activities = child.activities?.[day.key] || []
+        const kit = kitFor(child, day.key)
+        return (
+          <section key={child.name} className={styles.ovChild}>
+            <div className={styles.ovHead}>
+              <span className={styles.ovName}>{child.name}</span>
+              <span>{blocks.length ? `${blocks[0].start} – ${blocks[blocks.length - 1].end}` : 'No school'}</span>
+            </div>
+
+            <ol className={styles.ovLessons}>
+              {blocks.map(b => {
+                const done = minute !== null && minute >= timeToMinutes(b.end)
+                const current = minute !== null && !done && minute >= timeToMinutes(b.start)
+                return (
+                  <li
+                    key={b.period}
+                    className={`${styles.ovLesson} ${done ? styles.ovDone : ''} ${current ? styles.ttNow : ''}`}
+                    style={{ '--subject': subjectColor(b.subject) }}
+                  >
+                    <span className={styles.ovTime}>{b.start}–{b.end}</span>
+                    <span className={styles.ovSubject}>
+                      {b.subject}{b.count > 1 && <small> ×{b.count}</small>}
+                      {b.note && <span className={styles.ttNote}> · {b.note}</span>}
+                    </span>
+                  </li>
+                )
+              })}
+            </ol>
+
+            {activities.length > 0 && (
+              <div className={styles.ovAfter}>
+                {activities.map(([time, name]) => <span key={time + name}><b>{time}</b> {name}</span>)}
+              </div>
+            )}
+            {kit.length > 0 && (
+              <div className={styles.ovKit}><BagIcon /> {kit.join(', ')}</div>
+            )}
+          </section>
+        )
+      })}
+    </div>
   )
 }
 

@@ -1136,6 +1136,128 @@ $grid: $calendar;
   outline-offset: -2px;
 }
 
+// Today overview: one column per child
+
+.overview {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.5rem, 1.5vw, 1rem);
+}
+
+.ovChild {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.4rem, 1.5vh, 0.75rem);
+  padding: clamp(0.6rem, 2vh, 1.1rem) clamp(0.6rem, 1.5vw, 1.1rem);
+  border-radius: 28px;
+  background: $surface;
+  overflow-y: auto;
+}
+
+.ovHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  color: $muted;
+  font-size: clamp(0.8rem, 2.4vh, 1rem);
+  font-variant-numeric: tabular-nums;
+}
+
+.ovName {
+  color: $text;
+  font-size: clamp(1.15rem, 3.8vh, 1.6rem);
+  font-weight: 600;
+}
+
+.ovLessons {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(3px, 0.8vh, 6px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ovLesson {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: clamp(0.3rem, 1vh, 0.5rem) clamp(0.4rem, 1vw, 0.7rem);
+  border-left: 4px solid var(--subject);
+  border-radius: 4px 10px 10px 4px;
+  background: color-mix(in srgb, var(--subject) 22%, transparent);
+  font-size: clamp(0.8rem, 2.6vh, 1.1rem);
+  line-height: 1.2;
+}
+
+.ovDone {
+  opacity: 0.4;
+}
+
+.ovTime {
+  flex: none;
+  color: $muted;
+  font-size: 0.8em;
+  font-variant-numeric: tabular-nums;
+}
+
+.ovSubject {
+  min-width: 0;
+  font-weight: 500;
+
+  small {
+    color: $muted;
+    font-size: 0.75em;
+    font-weight: 400;
+  }
+}
+
+.ovAfter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding-top: clamp(0.3rem, 1vh, 0.6rem);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: $muted;
+  font-size: clamp(0.75rem, 2.3vh, 1rem);
+
+  b {
+    color: $text;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.ovKit {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: $school;
+  font-size: clamp(0.75rem, 2.3vh, 1rem);
+
+  svg {
+    flex: none;
+    width: 1.2em;
+    height: 1.2em;
+  }
+}
+
+@media (max-width: 720px) {
+  .overview {
+    flex: none;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ovChild {
+    overflow: visible;
+  }
+}
+
 // Lernbüro rota
 
 .lbDay {

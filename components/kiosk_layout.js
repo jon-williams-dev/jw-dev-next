@@ -80,58 +80,61 @@ const DRAG_PX = 8
 const SCROLLS = /(auto|scroll)/
 
 function scrollableParent(el) {
-  for (; el && el !== document.body; el = el.parentElement) {
-    const style = getComputedStyle(el)
+  const doc = el.ownerDocument
+  for (; el && el !== doc.body; el = el.parentElement) {
+    const style = doc.defaultView.getComputedStyle(el)
     if ((SCROLLS.test(style.overflowY) && el.scrollHeight > el.clientHeight) ||
         (SCROLLS.test(style.overflowX) && el.scrollWidth > el.clientWidth)) return el
   }
   // A plain page that scrolls as a whole, e.g. /varta in the Sunbank overlay.
-  const page = document.scrollingElement
+  const page = doc.scrollingElement
   return page && page.scrollHeight > page.clientHeight ? page : null
 }
 
 // Some Pi touchscreens reach Chromium as a mouse, so a swipe never scrolls (and with the
-// scrollbars hidden there is nothing to grab). In kiosk mode, a mouse drag scrolls the panel under it.
-export function useDragScroll(enabled) {
-  useEffect(() => {
-    if (!enabled) return
-    let drag = null
+// scrollbars hidden there is nothing to grab). A mouse drag in `win` scrolls the panel under it.
+// Returns a function that stops it.
+export function dragToScroll(win) {
+  let drag = null
 
-    const down = (e) => {
-      if (e.pointerType !== 'mouse' || e.button !== 0) return
-      const el = scrollableParent(e.target)
-      drag = el && { el, x: e.clientX, y: e.clientY, left: el.scrollLeft, top: el.scrollTop, moved: false }
-    }
-    const move = (e) => {
-      if (!drag) return
-      if (!(e.buttons & 1)) return (drag = null)
-      const dx = e.clientX - drag.x
-      const dy = e.clientY - drag.y
-      if (!drag.moved && Math.hypot(dx, dy) < DRAG_PX) return
-      drag.moved = true
-      drag.el.scrollLeft = drag.left - dx
-      drag.el.scrollTop = drag.top - dy
-    }
-    // A drag that scrolled shouldn't also tap whatever it ended on.
-    const up = () => {
-      if (!drag?.moved) return (drag = null)
-      drag = null
-      const swallow = (e) => { e.preventDefault(); e.stopPropagation() }
-      window.addEventListener('click', swallow, { capture: true, once: true })
-      setTimeout(() => window.removeEventListener('click', swallow, { capture: true }), 0)
-    }
+  const down = (e) => {
+    if (e.pointerType !== 'mouse' || e.button !== 0 || !e.target.ownerDocument) return
+    const el = scrollableParent(e.target)
+    drag = el && { el, x: e.clientX, y: e.clientY, left: el.scrollLeft, top: el.scrollTop, moved: false }
+  }
+  const move = (e) => {
+    if (!drag) return
+    if (!(e.buttons & 1)) return (drag = null)
+    const dx = e.clientX - drag.x
+    const dy = e.clientY - drag.y
+    if (!drag.moved && Math.hypot(dx, dy) < DRAG_PX) return
+    drag.moved = true
+    drag.el.scrollLeft = drag.left - dx
+    drag.el.scrollTop = drag.top - dy
+  }
+  // A drag that scrolled shouldn't also tap whatever it ended on.
+  const up = () => {
+    if (!drag?.moved) return (drag = null)
+    drag = null
+    const swallow = (e) => { e.preventDefault(); e.stopPropagation() }
+    win.addEventListener('click', swallow, { capture: true, once: true })
+    setTimeout(() => win.removeEventListener('click', swallow, { capture: true }), 0)
+  }
 
-    window.addEventListener('pointerdown', down)
-    window.addEventListener('pointermove', move)
-    window.addEventListener('pointerup', up)
-    window.addEventListener('pointercancel', up)
-    return () => {
-      window.removeEventListener('pointerdown', down)
-      window.removeEventListener('pointermove', move)
-      window.removeEventListener('pointerup', up)
-      window.removeEventListener('pointercancel', up)
-    }
-  }, [enabled])
+  win.addEventListener('pointerdown', down)
+  win.addEventListener('pointermove', move)
+  win.addEventListener('pointerup', up)
+  win.addEventListener('pointercancel', up)
+  return () => {
+    win.removeEventListener('pointerdown', down)
+    win.removeEventListener('pointermove', move)
+    win.removeEventListener('pointerup', up)
+    win.removeEventListener('pointercancel', up)
+  }
+}
+
+function useDragScroll(enabled) {
+  useEffect(() => (enabled ? dragToScroll(window) : undefined), [enabled])
 }
 
 const CONFIRM_MS = 5 * 1000

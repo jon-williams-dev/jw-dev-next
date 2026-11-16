@@ -53,6 +53,65 @@ export function CloseIcon(props) {
   )
 }
 
+// The Should I…? page.
+
+export function QuestionIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M12 3a8.5 8.5 0 0 1 7.4 12.7L21 21l-5.3-1.6A8.5 8.5 0 1 1 12 3z" />
+      <path d="M9.6 9.4a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2-2.4 3.7" />
+      <path d="M12 16.6v.1" />
+    </svg>
+  )
+}
+
+export function MotorbikeIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <circle cx="5" cy="16.5" r="3.5" />
+      <circle cx="19" cy="16.5" r="3.5" />
+      <circle cx="5" cy="16.5" r="0.6" />
+      <circle cx="19" cy="16.5" r="0.6" />
+      <path d="M19 16.5 16 8.5M14.8 7.2h2.6" />
+      <path d="M10 10.5c1.2-1.9 4.2-2.2 6.3-.6l-.7 2.2H10.6z" />
+      <path d="M4.2 10.5H10M6.5 10.5 5 16.5" />
+      <rect x="9.8" y="12.6" width="4.4" height="3.2" rx="0.8" />
+      <path d="M7.2 18.6h5.4" />
+    </svg>
+  )
+}
+
+export function BeerIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M5 7h11v12.5A1.5 1.5 0 0 1 14.5 21h-8A1.5 1.5 0 0 1 5 19.5z" />
+      <path d="M16 10h2a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-2" />
+      <path d="M5 7a2.5 2.5 0 0 1 2.5-3.5A3 3 0 0 1 13 3a2.5 2.5 0 0 1 3 4" />
+      <path d="M8.5 11v6M12.5 11v6" />
+    </svg>
+  )
+}
+
+export function CarIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M3 16.5v-4l2-5.5A2 2 0 0 1 6.9 5.5h10.2A2 2 0 0 1 19 7l2 5.5v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z" />
+      <path d="M3.5 12h17" />
+      <circle cx="7" cy="14.5" r="0.8" />
+      <circle cx="17" cy="14.5" r="0.8" />
+      <path d="M5 17.5v2M19 17.5v2" />
+    </svg>
+  )
+}
+
+export function ChevronIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M9 5l7 7-7 7" />
+    </svg>
+  )
+}
+
 // Small icons for the home screen's reminders strip.
 
 export function UmbrellaIcon(props) {

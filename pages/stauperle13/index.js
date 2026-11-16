@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import KioskLayout, { kioskFetch } from '../../components/kiosk_layout'
 import WeatherWidget from '../../components/weather_widget'
 import TakeToday from '../../components/take_today'
-import { CalendarIcon, SchoolIcon, SunbankIcon, VacuumIcon } from '../../components/kiosk_icons'
+import { CalendarIcon, QuestionIcon, SchoolIcon, SunbankIcon, VacuumIcon } from '../../components/kiosk_icons'
 import { schoolSummary } from '../../lib/stauperle_timetables'
 import styles from '../../styles/stauperle.module.scss'
 
@@ -55,7 +55,9 @@ export default function Stauperle13() {
   ]
 
   return (
-    <KioskLayout home>
+    <KioskLayout home actions={
+      <Link href="/stauperle13/should" className={styles.shouldButton} aria-label="Should I…?"><QuestionIcon /></Link>
+    }>
       <div className={styles.home}>
         <WeatherWidget />
         <nav className={styles.tiles}>

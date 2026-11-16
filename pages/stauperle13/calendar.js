@@ -71,6 +71,11 @@ function timeLabel(ev, dayStart, dayEnd) {
   return `${time(ev.from)} – ${time(ev.to)}`
 }
 
+// End time of an event that's on now; the weekday too if it ends on a later day.
+const until = (to) => to < addDays(startOfDay(new Date()), 1)
+  ? time(to)
+  : `${to.toLocaleDateString('de-DE', { weekday: 'short' })} ${time(to)}`
+
 function buildDays(events, now) {
   const today = startOfDay(now)
   return Array.from({ length: DAYS }, (_, i) => {
@@ -96,7 +101,7 @@ function Event({ ev, large }) {
       style={{ '--cal': ev.color }}
     >
       <span className={styles.eventTime}>
-        {ev.now ? <strong>Now</strong> : ev.label}
+        {ev.now ? <><strong>Now</strong> · until {until(ev.to)}</> : ev.label}
       </span>
       <span className={styles.eventTitle}>{ev.title}</span>
       {ev.location && <span className={styles.eventLocation}>{ev.location}</span>}

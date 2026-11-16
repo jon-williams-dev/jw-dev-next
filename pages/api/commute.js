@@ -12,7 +12,8 @@
 // SLOTS.length requests per direction per CACHE_MS, and DAILY_LIMIT caps a bad day.
 import { demoSlots } from '../../lib/commute'
 
-const API_KEY = process.env.GOOGLE_ROUTES_API_KEY
+// Pasted keys sometimes keep their quotes or a stray space.
+const API_KEY = (process.env.GOOGLE_ROUTES_API_KEY || '').trim().replace(/^(['"])(.*)\1$/, '$2').trim()
 const ENDPOINT = 'https://routes.googleapis.com/directions/v2:computeRoutes'
 const FIELDS = 'routes.duration,routes.staticDuration,routes.distanceMeters,routes.description,routes.routeLabels,routes.warnings,routes.polyline.encodedPolyline'
 
@@ -95,7 +96,12 @@ async function routes(origin, destination, departAt) {
     signal: AbortSignal.timeout(10000),
   })
   const body = await res.json().catch(() => ({}))
-  if (!res.ok) throw new Error(body.error?.message || `Routes API ${res.status}`)
+  if (!res.ok) {
+    const message = body.error?.message || `Routes API ${res.status}`
+    // Enough to spot a mangled key in Vercel without showing it: Google keys are 39 characters starting AIza.
+    const hint = /API key not valid/i.test(message) ? ` (the key set here is ${API_KEY.length} characters${API_KEY.startsWith('AIza') ? '' : ' and doesn’t start with AIza'})` : ''
+    throw new Error(message + hint)
+  }
   if (!body.routes?.length) throw new Error('No route found')
   return body.routes.map(r => ({
     route: r.description || '',

@@ -74,6 +74,62 @@ export function PairForm({ onPaired, className = styles.pair }) {
   )
 }
 
+const DRAG_PX = 8
+const SCROLLS = /(auto|scroll)/
+
+function scrollableParent(el) {
+  for (; el && el !== document.body; el = el.parentElement) {
+    const style = getComputedStyle(el)
+    if ((SCROLLS.test(style.overflowY) && el.scrollHeight > el.clientHeight) ||
+        (SCROLLS.test(style.overflowX) && el.scrollWidth > el.clientWidth)) return el
+  }
+  return null
+}
+
+// Some Pi touchscreens reach Chromium as a mouse, so a swipe never scrolls (and with the
+// scrollbars hidden there is nothing to grab). In kiosk mode, a mouse drag scrolls the panel under it.
+function useDragScroll(enabled) {
+  useEffect(() => {
+    if (!enabled) return
+    let drag = null
+
+    const down = (e) => {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return
+      const el = scrollableParent(e.target)
+      drag = el && { el, x: e.clientX, y: e.clientY, left: el.scrollLeft, top: el.scrollTop, moved: false }
+    }
+    const move = (e) => {
+      if (!drag) return
+      if (!(e.buttons & 1)) return (drag = null)
+      const dx = e.clientX - drag.x
+      const dy = e.clientY - drag.y
+      if (!drag.moved && Math.hypot(dx, dy) < DRAG_PX) return
+      drag.moved = true
+      drag.el.scrollLeft = drag.left - dx
+      drag.el.scrollTop = drag.top - dy
+    }
+    // A drag that scrolled shouldn't also tap whatever it ended on.
+    const up = () => {
+      if (!drag?.moved) return (drag = null)
+      drag = null
+      const swallow = (e) => { e.preventDefault(); e.stopPropagation() }
+      window.addEventListener('click', swallow, { capture: true, once: true })
+      setTimeout(() => window.removeEventListener('click', swallow, { capture: true }), 0)
+    }
+
+    window.addEventListener('pointerdown', down)
+    window.addEventListener('pointermove', move)
+    window.addEventListener('pointerup', up)
+    window.addEventListener('pointercancel', up)
+    return () => {
+      window.removeEventListener('pointerdown', down)
+      window.removeEventListener('pointermove', move)
+      window.removeEventListener('pointerup', up)
+      window.removeEventListener('pointercancel', up)
+    }
+  }, [enabled])
+}
+
 const CONFIRM_MS = 5 * 1000
 
 // Restarts the Pi (/api/reboot). Tap once to arm, again within a few seconds to restart.
@@ -162,6 +218,8 @@ export default function KioskLayout({ title, children, home }) {
     window.addEventListener('contextmenu', block)
     return () => window.removeEventListener('contextmenu', block)
   }, [kioskMode])
+
+  useDragScroll(kioskMode)
 
   return (
     <div className={`${styles.kiosk} ${kioskMode ? styles.kioskMode : ''}`}>

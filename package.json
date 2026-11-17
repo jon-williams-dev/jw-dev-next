@@ -48,10 +48,10 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.5",
-    "magic-string": "^0.30.17",
+    "magic-string": "0.30.17",
     "tailwindcss": "^4.3.5"
   },
   "overrides": {
-    "magic-string": "0.30.17"
+    "magic-string": "$magic-string"
   }
 }

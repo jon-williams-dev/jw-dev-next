@@ -45,5 +45,13 @@
     "remark-html": "^13.0.2",
     "sass": "^1.32.12",
     "yet-another-react-lightbox": "^3.17.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.5",
+    "magic-string": "^0.30.17",
+    "tailwindcss": "^4.3.5"
+  },
+  "overrides": {
+    "magic-string": "0.30.17"
   }
 }

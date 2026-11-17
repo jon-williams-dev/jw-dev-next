@@ -1,0 +1,56 @@
+/* Tailwind only scans files in this folder, so it never touches the rest of the site */
+@import "tailwindcss" source(".");
+
+/* Firemní barvy převzaté z původního loga a webu */
+@theme {
+  --color-brand: #19b4e8;        /* modrá z loga "mar con" */
+  --color-brand-dark: #0b86b3;
+  --color-brand-50: #eaf8fd;
+  --color-lime: #8cc63f;         /* zelená vlnovka z loga */
+  --color-lime-50: #eef8e3;      /* odkaz na původní zelený sloupec #bdecb8 */
+  --color-slate: #5e7180;        /* původní barva textu */
+  --color-ink: #26343e;
+  --color-line: #dde6ec;
+
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-logo: var(--font-nunito), var(--font-inter), sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #ffffff;
+  color: var(--color-ink);
+  font-size: 1.0625rem; /* o něco větší písmo – lepší čitelnost */
+  line-height: 1.65;
+}
+
+.container-page {
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+@media (min-width: 768px) {
+  .container-page { padding-inline: 2rem; }
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.6rem;
+  padding: 0.75rem 1.25rem;
+  font-weight: 600;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+.btn-primary { background: var(--color-brand); color: #fff; }
+.btn-primary:hover { background: var(--color-brand-dark); }
+.btn-ghost { border: 1px solid var(--color-line); color: var(--color-ink); background: #fff; }
+.btn-ghost:hover { border-color: var(--color-brand); color: var(--color-brand-dark); }
+
+.prose-legal h2 { font-size: 1.25rem; font-weight: 700; margin: 2rem 0 0.5rem; color: var(--color-ink); }
+.prose-legal p { margin: 0.75rem 0; color: #3b4a55; }

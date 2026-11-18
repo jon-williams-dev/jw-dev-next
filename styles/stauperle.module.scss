@@ -66,6 +66,35 @@ $vacuum: #b18cff;
   }
 }
 
+// The restart button on the hallway screen: a faint power icon by the name, which spells it out once tapped.
+.power {
+  @extend .restart;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 48px;
+  padding: 0 0.75rem;
+  background: transparent;
+  opacity: 0.45;
+
+  svg {
+    flex: none;
+    width: 24px;
+    height: 24px;
+  }
+
+  // Spelling something out: Restarting… or why it couldn't.
+  &:has(span) {
+    opacity: 1;
+    background: $surface;
+  }
+
+  &.restartConfirm {
+    background: #ff5c7a;
+    color: #fff;
+  }
+}
+
 .restartConfirm {
   background: #ff5c7a;
   color: #fff;

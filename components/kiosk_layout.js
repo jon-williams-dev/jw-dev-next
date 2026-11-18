@@ -2,6 +2,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import { PowerIcon } from './kiosk_icons'
 import styles from '../styles/stauperle.module.scss'
 
 export const KIOSK_HOME = '/stauperle13'
@@ -161,10 +162,12 @@ function RestartButton() {
     }
   }
 
-  const label = { idle: 'Restart', confirm: 'Tap again to restart', restarting: 'Restarting…' }[state] ?? state
+  // Just the icon until tapped; then it says what happens next.
+  const label = { idle: null, confirm: 'Tap again to restart', restarting: 'Restarting…' }[state] ?? state
   return (
-    <button type="button" className={`${styles.restart} ${state === 'confirm' ? styles.restartConfirm : ''}`} onClick={tap}>
-      {label}
+    <button type="button" aria-label="Restart" className={`${styles.power} ${state === 'confirm' ? styles.restartConfirm : ''}`} onClick={tap}>
+      <PowerIcon />
+      {label && <span>{label}</span>}
     </button>
   )
 }

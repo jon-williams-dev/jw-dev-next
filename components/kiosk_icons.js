@@ -177,3 +177,12 @@ export function BinIcon(props) {
     </svg>
   )
 }
+
+export function PowerIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M12 3v8.5" />
+      <path d="M7 6.2a7.5 7.5 0 1 0 10 0" />
+    </svg>
+  )
+}

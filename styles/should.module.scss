@@ -37,6 +37,14 @@ $pink-gradient: linear-gradient(135deg, $indigo, $pink);
   animation: rev 1.2s ease-in-out infinite;
 }
 
+.art {
+  display: block;
+  width: 110px;
+  height: auto;
+  margin: 0 auto;
+  filter: drop-shadow(0 10px 24px rgba(255, 190, 0, 0.35));
+}
+
 .question {
   font-size: clamp(28px, 7vw, 44px);
   font-weight: 900;

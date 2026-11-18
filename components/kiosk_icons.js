@@ -92,6 +92,16 @@ export function BeerIcon(props) {
   )
 }
 
+export function CrispsIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <path d="M5 3.5h14l-1.2 2.5L19 8.5 17.8 11l1.2 2.5-1.2 2.5 1.2 2.5L19 20.5H5L5 18.5 6.2 16 5 13.5 6.2 11 5 8.5 6.2 6z" />
+      <ellipse cx="12" cy="12" rx="3.5" ry="2.6" />
+      <path d="M8.5 5.5h7M8.5 18.5h7" />
+    </svg>
+  )
+}
+
 export function CarIcon(props) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>

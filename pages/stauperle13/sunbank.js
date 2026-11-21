@@ -1,17 +1,41 @@
-import { useState } from 'react'
-import KioskLayout, { PairForm } from '../../components/kiosk_layout'
+import { useEffect, useState } from 'react'
+import KioskLayout, { PairForm, kioskFetch } from '../../components/kiosk_layout'
 import KioskOverlay from '../../components/kiosk_overlay'
 import { SunbankIcon } from '../../components/kiosk_icons'
 import {
     LIVE_MS, IDLE_W, fmtPower, splitPower, fmtKwh, batteryEta, summary, useVartaStatus, useNow, Freshness, PowerFlow,
 } from '../../components/energy_flow'
+import { BUY_CT, SELL_CT, fmtEuro } from '../../lib/energy_prices'
 import styles from '../../styles/stauperle.module.scss'
+
+const TODAY_MS = 5 * 60 * 1000
+
+// Today's grid import and export (Wh) from the recorded history, refreshed every few minutes.
+function useTodayGrid() {
+    const [today, setToday] = useState(null)
+    useEffect(() => {
+        let cancelled = false
+        const load = async () => {
+            try {
+                const res = await kioskFetch('/api/varta/history?range=24h', { cache: 'no-store', signal: AbortSignal.timeout(15000) })
+                if (!res.ok) return
+                const day = (await res.json()).days?.at(-1)
+                if (!cancelled && day) setToday(day)
+            } catch { /* keep the last figures */ }
+        }
+        load()
+        const id = setInterval(load, TODAY_MS)
+        return () => { cancelled = true; clearInterval(id) }
+    }, [])
+    return today
+}
 
 // Live overview of the VARTA battery and grid, read on the home network or pushed from it (same API as /varta).
 export default function Sunbank() {
     const [details, setDetails] = useState(false)
     const { data, lastSuccess, error, unavailable, unpaired, retry } = useVartaStatus()
     const now = useNow()
+    const today = useTodayGrid()
 
     if (unavailable || unpaired || !data) {
         return (
@@ -87,6 +111,14 @@ export default function Sunbank() {
                         <div className={styles.sunFacts}>
                             <span>{grid.direction === 'import' ? 'Buying electricity' : grid.direction === 'export' ? 'Selling surplus' : 'Not buying or selling'}</span>
                         </div>
+                        {/* Estimated from the battery's grid readings, not the meter: hence the ≈. */}
+                        {today && (
+                            <div className={`${styles.sunFacts} ${styles.sunToday}`}>
+                                <span>Today ≈</span>
+                                <span><b>{fmtEuro(today.importWh / 1000 * BUY_CT / 100)}</b> bought</span>
+                                <span><b>{fmtEuro(today.exportWh / 1000 * SELL_CT / 100)}</b> sold</span>
+                            </div>
+                        )}
                     </section>
                 </div>
             </div>

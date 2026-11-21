@@ -6,6 +6,7 @@ import {
 } from 'chart.js'
 import { Line, Bar } from 'react-chartjs-2'
 import { kioskFetch } from './kiosk_layout'
+import { BUY_CT, SELL_CT, fmtEuro } from '../lib/energy_prices'
 
 ChartJS.register(LinearScale, CategoryScale, PointElement, LineElement, BarElement, Filler, Tooltip, Legend)
 
@@ -17,6 +18,10 @@ const RANGES = [
     { key: '30d', label: '30 days', refresh: 300000 },
 ]
 const RANGE_KEY = 'varta:range'
+
+// What grid energy cost or earned, ≈ because it's from the battery's readings rather than the meter.
+const bought = (wh) => `≈ ${fmtEuro(wh / 1000 * BUY_CT / 100)}`
+const sold = (wh) => `≈ ${fmtEuro(wh / 1000 * SELL_CT / 100)}`
 
 const fmtW = (w) => (Math.abs(w) < 1000 ? `${Math.round(w)} W` : `${(w / 1000).toLocaleString('en-GB', { maximumFractionDigits: 2 })} kW`).replace('-', '−')
 const signedW = (w) => `${w > 0 ? '+' : ''}${fmtW(w)}`
@@ -310,7 +315,11 @@ export default function VartaCharts() {
             const d = data.days[items[0].dataIndex]
             return `${new Date(`${d.date}T12:00:00`).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}${d.coverage < 0.95 ? ` · ${Math.round(d.coverage * 100)}% recorded` : ''}`
         }
-        o.plugins.tooltip.callbacks.label = (c) => ` ${fmtWh(Math.abs(c.parsed.y) * 1000)}  ${c.dataset.label}`
+        o.plugins.tooltip.callbacks.label = (c) => {
+            const wh = Math.abs(c.parsed.y) * 1000
+            const money = kind === 'grid' ? `  ${c.datasetIndex === 0 ? bought(wh) : sold(wh)}` : ''
+            return ` ${fmtWh(wh)}  ${c.dataset.label}${money}`
+        }
         return { chartData, options: o, color, inLabel, outLabel }
     }
     const dailyBattery = dailyChart('battery')
@@ -325,7 +334,7 @@ export default function VartaCharts() {
                 <div>
                     <h2 className="section-title">History</h2>
                     <p className="muted">
-                        {data?.since ? `Recording since ${fmtDay(data.since)} ${fmtClock(data.since)} · every ${data.sampleMs / 1000} s` : 'Recording starts with the first reading'}
+                        {data?.since ? `Recording since ${fmtDay(data.since)} ${fmtClock(data.since)} · every ${data.sampleMs / 1000} s · ${coverage}% of this range recorded` : 'Recording starts with the first reading'}
                     </p>
                 </div>
                 <div className="segmented" role="tablist" aria-label="Time range">
@@ -342,8 +351,8 @@ export default function VartaCharts() {
                     <div className="h-tiles">
                         <Tile label="Battery charged" value={fmtWh(totals.chargedWh)} />
                         <Tile label="Battery discharged" value={fmtWh(totals.dischargedWh)} />
-                        <Tile label="Grid import" value={fmtWh(totals.importWh)} />
-                        <Tile label="Grid export" value={fmtWh(totals.exportWh)} note={`${coverage}% of this range recorded`} />
+                        <Tile label="Grid import" value={fmtWh(totals.importWh)} note={`${bought(totals.importWh)} bought`} />
+                        <Tile label="Grid export" value={fmtWh(totals.exportWh)} note={`${sold(totals.exportWh)} earned`} />
                     </div>
 
                     {!enough && (
@@ -379,11 +388,10 @@ export default function VartaCharts() {
                                         <LegendRow items={[{ label: `${c.inLabel} ↑`, color: c.color, kind: 'bar' }, { label: `${c.outLabel} ↓`, color: c.color, kind: 'bar', faded: true }]} />
                                     </div>
                                     <div className="chart-box"><Bar data={c.chartData} options={c.options} /></div>
-                                    <TableView head={['Day', c.inLabel, c.outLabel, 'Recorded']}
-                                        rows={data.days.slice().reverse().map((d) => [dayLabel(d.date),
-                                            fmtWh(c.inLabel === 'Charged' ? d.chargedWh : d.importWh),
-                                            fmtWh(c.inLabel === 'Charged' ? d.dischargedWh : d.exportWh),
-                                            `${Math.round(d.coverage * 100)}%`])} />
+                                    <TableView head={c.inLabel === 'Charged' ? ['Day', 'Charged', 'Discharged', 'Recorded'] : ['Day', 'Imported', 'Bought', 'Exported', 'Earned', 'Recorded']}
+                                        rows={data.days.slice().reverse().map((d) => c.inLabel === 'Charged'
+                                            ? [dayLabel(d.date), fmtWh(d.chargedWh), fmtWh(d.dischargedWh), `${Math.round(d.coverage * 100)}%`]
+                                            : [dayLabel(d.date), fmtWh(d.importWh), bought(d.importWh), fmtWh(d.exportWh), sold(d.exportWh), `${Math.round(d.coverage * 100)}%`])} />
                                 </div>
                             ))}
                         </div>

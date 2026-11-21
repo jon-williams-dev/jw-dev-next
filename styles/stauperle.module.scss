@@ -1045,6 +1045,11 @@ $grid: $calendar;
   }
 }
 
+.sunToday {
+  margin-top: 0.5rem;
+  font-size: clamp(0.8rem, 2.4vh, 1.05rem);
+}
+
 .grid_import .sunBig { color: $grid; }
 .grid_export .sunBig { color: $battery; }
 

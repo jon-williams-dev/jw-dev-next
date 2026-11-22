@@ -481,6 +481,9 @@
 }
 
 // While one circle is highlighted, the rest step back.
+// A slice's arc is already drawn from the top.
+.ringSlice { transform: none; }
+
 .hasFocus .item:not(.itemActive) { opacity: 0.4; }
 
 .itemActive .body {

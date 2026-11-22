@@ -373,6 +373,7 @@ function OverlapChart({ project, active, setActive, onOpen, onChange }) {
         const circles = items
             .map((item) => ({ item, ...circleFor(item, project, PAD_X, pxPerDay) }))
             .sort((a, b) => b.r - a.r || a.item.id.localeCompare(b.item.id)) // biggest first, so smaller circles sit on top
+        sliceTwins(circles, items)
         const maxD = Math.max(120, ...circles.map((c) => c.r * 2))
         const cy = LABEL_H + 12 + maxD / 2
         const axisY = cy + maxD / 2 + LABEL_H + 12
@@ -452,8 +453,9 @@ function OverlapChart({ project, active, setActive, onOpen, onChange }) {
                         <svg width={chart.w} height={chart.h} role="group" className={focusId ? styles.hasFocus : ''}
                             aria-label={`Timeline from ${fmtDate(project.start)} to ${fmtDate(project.end)}. Each circle is an item: Enter edits it, arrow keys move it.`}>
                             <defs>
-                                {chart.circles.map(({ item }) => (
-                                    <radialGradient key={item.id} id={`${gradientId}-${item.id}`} cx="50%" cy="42%" r="62%">
+                                {chart.circles.map(({ item, cx, r, slice }) => (
+                                    <radialGradient key={item.id} id={`${gradientId}-${item.id}`}
+                                        {...(slice ? { gradientUnits: 'userSpaceOnUse', cx, cy: chart.cy - r * 0.16, r: Math.max(r * 1.24, 1) } : { cx: '50%', cy: '42%', r: '62%' })}>
                                         <stop offset="0%" stopColor={item.colour} stopOpacity="0.06" />
                                         <stop offset="100%" stopColor={item.colour} stopOpacity="0.34" />
                                     </radialGradient>
@@ -487,13 +489,13 @@ function OverlapChart({ project, active, setActive, onOpen, onChange }) {
                             </g>
 
                             {/* Items, biggest first */}
-                            {chart.circles.map(({ item, cx, r }) => (
+                            {chart.circles.map(({ item, cx, r, slice }) => (
                                 <g
                                     key={item.id}
                                     className={`${styles.item} ${focusId === item.id ? styles.itemActive : ''} ${drag?.id === item.id ? styles.itemDragging : ''}`}
                                     tabIndex={0}
                                     role="button"
-                                    aria-label={`${item.name}, ${fmtRange(item.start, item.end)}, ${item.state}, ${item.progress}% done`}
+                                    aria-label={`${item.name}, ${fmtRange(item.start, item.end)}${slice ? `, same dates as ${slice.count - 1} other item${slice.count > 2 ? 's' : ''}` : ''}, ${item.state}, ${item.progress}% done`}
                                     onClick={(e) => onTap(e, item)}
                                     onKeyDown={(e) => onKey(e, item)}
                                     onMouseEnter={() => !drag && setActive(item.id)}
@@ -502,12 +504,20 @@ function OverlapChart({ project, active, setActive, onOpen, onChange }) {
                                     onBlur={() => setActive((a) => (a === item.id ? null : a))}
                                     {...pressHandlers(item, 'move')}
                                 >
-                                    <circle className={styles.body} cx={cx} cy={chart.cy} r={Math.max(r, 1)} fill={`url(#${gradientId}-${item.id})`} stroke={item.colour}
-                                        strokeDasharray={item.state === 'Cancelled' ? '6 5' : undefined} />
-                                    {item.progress > 0 && item.state !== 'Cancelled' && (
+                                    {slice ? (
+                                        <path className={styles.body} d={wedge(cx, chart.cy, Math.max(r, 1), slice)} fill={`url(#${gradientId}-${item.id})`} stroke={item.colour}
+                                            strokeLinejoin="round" strokeDasharray={item.state === 'Cancelled' ? '6 5' : undefined} />
+                                    ) : (
+                                        <circle className={styles.body} cx={cx} cy={chart.cy} r={Math.max(r, 1)} fill={`url(#${gradientId}-${item.id})`} stroke={item.colour}
+                                            strokeDasharray={item.state === 'Cancelled' ? '6 5' : undefined} />
+                                    )}
+                                    {item.progress > 0 && item.state !== 'Cancelled' && (slice ? (
+                                        <path className={`${styles.ring} ${styles.ringSlice}`} d={arc(cx, chart.cy, Math.max(r, 1), slice)} stroke={item.colour} pathLength={100}
+                                            strokeDasharray={`${item.progress} 100`} />
+                                    ) : (
                                         <circle className={styles.ring} cx={cx} cy={chart.cy} r={Math.max(r, 1)} stroke={item.colour} pathLength={100}
                                             strokeDasharray={`${item.progress} 100`} />
-                                    )}
+                                    ))}
                                 </g>
                             ))}
 
@@ -552,16 +562,50 @@ function OverlapChart({ project, active, setActive, onOpen, onChange }) {
     )
 }
 
+// Items with exactly the same dates would be identical circles, each hiding the ones under it, so
+// they share one circle cut into slices instead (clockwise from the top, in list order).
+function sliceTwins(circles, items) {
+    const order = new Map(items.map((i, n) => [i.id, n]))
+    const groups = new Map()
+    for (const c of circles) {
+        const key = `${c.item.start}|${c.item.end}`
+        groups.set(key, [...(groups.get(key) || []), c])
+    }
+    for (const group of groups.values()) {
+        if (group.length < 2) continue
+        group.sort((a, b) => order.get(a.item.id) - order.get(b.item.id))
+        group.forEach((c, index) => { c.slice = { index, count: group.length } })
+    }
+}
+
+const sliceAngles = ({ index, count }) => [-Math.PI / 2 + (index / count) * 2 * Math.PI, -Math.PI / 2 + ((index + 1) / count) * 2 * Math.PI]
+const onCircle = (cx, cy, r, a) => `${(cx + r * Math.cos(a)).toFixed(2)} ${(cy + r * Math.sin(a)).toFixed(2)}`
+
+// The slice's outer edge, drawn clockwise, for its progress ring.
+function arc(cx, cy, r, slice) {
+    const [a0, a1] = sliceAngles(slice)
+    return `M${onCircle(cx, cy, r, a0)}A${r} ${r} 0 ${a1 - a0 > Math.PI ? 1 : 0} 1 ${onCircle(cx, cy, r, a1)}`
+}
+
+function wedge(cx, cy, r, slice) {
+    return `M${cx} ${cy}L${arc(cx, cy, r, slice).slice(1)}Z`
+}
+
 // Puts each label above its circle, or below if that's taken, or hides it if both would collide.
 function placeLabels(circles, cy, width) {
     const boxes = []
     const collides = (b) => boxes.some((o) => b.x1 < o.x2 && b.x2 > o.x1 && b.y1 < o.y2 && b.y2 > o.y1)
-    return circles.map(({ item, cx, r }) => {
+    return circles.map(({ item, cx, r, slice }) => {
         const name = item.state === 'Done' ? `✓ ${item.name}` : item.name
         const text = name.length > MAX_LABEL ? `${name.slice(0, MAX_LABEL - 1)}…` : name
         const half = (text.length * CHAR_W) / 2 + 4
-        const x = Math.min(Math.max(cx, half + 2), width - half - 2)
-        for (const y of [cy - r - 8, cy + r + 18]) {
+        // A slice's label leans towards its side of the circle, and starts below for a bottom slice.
+        const [a0, a1] = slice ? sliceAngles(slice) : [0, 0]
+        const mid = (a0 + a1) / 2
+        const lean = slice && Math.abs(Math.cos(mid)) > 0.2 ? Math.sign(Math.cos(mid)) * (half + 4) : 0
+        const x = Math.min(Math.max(cx + lean, half + 2), width - half - 2)
+        const above = cy - r - 8, below = cy + r + 18
+        for (const y of slice && Math.sin(mid) > 0.5 ? [below, above] : [above, below]) {
             const box = { x1: x - half, x2: x + half, y1: y - 14, y2: y + 4 }
             if (!collides(box)) {
                 boxes.push(box)
@@ -601,7 +645,7 @@ function Tooltip({ circle: { item, cx, r }, cy, width, project, items, dragging 
     const deps = project.items.filter((i) => item.dependsOn.includes(i.id))
     const overlaps = items
         .filter((o) => o.id !== item.id && sharedDays(item, o) > 0)
-        .map((o) => ({ o, text: contains(o, item) ? 'inside it' : contains(item, o) ? 'inside this' : `${sharedDays(item, o)} d` }))
+        .map((o) => ({ o, text: o.start === item.start && o.end === item.end ? 'same dates' : contains(o, item) ? 'inside it' : contains(item, o) ? 'inside this' : `${sharedDays(item, o)} d` }))
     return (
         <div className={`${styles.tooltip} ${dragging ? styles.tooltipLive : ''}`}
             style={{ left: Math.min(Math.max(cx, 140), width - 140), top: below ? top + 14 : top - 14, transform: below ? 'translateX(-50%)' : 'translate(-50%, -100%)' }}>

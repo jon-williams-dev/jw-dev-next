@@ -144,6 +144,68 @@ $vacuum: #b18cff;
   }
 }
 
+// Home header: the way into the JW Overlap Chart timelines, as the logo's three circles.
+.overlapButton {
+  @extend .shouldButton;
+  width: auto;
+  margin-left: -0.5rem; // sits close beside the Should I…? button
+  padding: 0 clamp(0.9rem, 2.2vh, 1.2rem);
+  border-radius: 999px;
+
+  svg {
+    width: clamp(46px, 9vh, 58px);
+    height: auto;
+  }
+}
+
+// Projects page (the JW Overlap Chart): project chips, a line of facts, and the chart filling the rest.
+.projectSwitch {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: clamp(0.5rem, 2vh, 1rem);
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  button {
+    flex: none;
+    min-height: 48px;
+    padding: 0 1.2rem;
+    border: 0;
+    border-radius: 999px;
+    background: $surface;
+    color: $muted;
+    font: inherit;
+    font-size: clamp(0.95rem, 2.8vh, 1.15rem);
+
+    &[aria-pressed='true'] {
+      background: $text;
+      color: $bg;
+      font-weight: 600;
+    }
+  }
+}
+
+.projectFacts {
+  margin-bottom: 0.25rem;
+  color: $muted;
+  font-size: clamp(0.95rem, 2.8vh, 1.15rem);
+}
+
+.overlapStage {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  > div { min-width: 0; }
+}
+
+.overlapPlaceholder svg {
+  width: clamp(110px, 26vh, 180px);
+  height: auto;
+}
+
 // Should I…? page: one big row per question.
 .shouldList {
   flex: 1;

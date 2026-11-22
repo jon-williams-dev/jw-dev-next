@@ -99,6 +99,16 @@
   }
 }
 
+// The chart on the hallway screen (/stauperle13/overlap): always dark, on the kiosk's background.
+.app.onKiosk {
+  @include dark;
+  --card: #1a2532;
+  --line: #2c3a4a;
+  --grid: #1c2734;
+  min-height: 0;
+  background: transparent;
+}
+
 .primary {
   background: var(--accent) !important;
   border-color: var(--accent) !important;

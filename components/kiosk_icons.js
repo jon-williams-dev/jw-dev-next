@@ -186,3 +186,14 @@ export function PowerIcon(props) {
     </svg>
   )
 }
+
+// The JW Overlap Chart logo's three circles, in their own colours.
+export function OverlapIcon(props) {
+  return (
+    <svg viewBox="0 0 74 48" strokeWidth="2.6" aria-hidden="true" {...props}>
+      <circle cx="14" cy="24" r="9" fill="#f0a030" fillOpacity="0.3" stroke="#f0a030" />
+      <circle cx="30" cy="24" r="13.5" fill="#5b8cff" fillOpacity="0.3" stroke="#5b8cff" />
+      <circle cx="52" cy="24" r="19" fill="#3fbf5a" fillOpacity="0.3" stroke="#3fbf5a" />
+    </svg>
+  )
+}

@@ -117,3 +117,38 @@ $pink-gradient: linear-gradient(135deg, $indigo, $pink);
 @keyframes fall {
   to { transform: translateY(110vh) rotate(360deg); }
 }
+
+// /should/joke: the setup, a pause, then the punchline.
+.setup {
+  margin-bottom: 24px;
+  animation: pop 0.35s ease-out;
+}
+
+.punchline {
+  min-height: 3.2em;
+  margin: 0 0 32px;
+  font-size: clamp(22px, 5vw, 30px);
+  font-weight: 800;
+  line-height: 1.25;
+  background: $pink-gradient;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+  span { display: inline-block; animation: pop 0.35s ease-out; }
+}
+
+.thinking {
+  color: $muted;
+  -webkit-text-fill-color: $muted;
+  letter-spacing: 0.2em;
+  animation: blink 1s ease-in-out infinite !important;
+}
+
+@keyframes pop {
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+}
+
+@keyframes blink {
+  50% { opacity: 0.3; }
+}

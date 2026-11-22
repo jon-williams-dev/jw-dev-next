@@ -102,6 +102,16 @@ export function CrispsIcon(props) {
   )
 }
 
+export function JokeIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
+      <circle cx="12" cy="12" r="9.5" />
+      <path d="M7.5 9.5q1.2-1.5 2.4 0M14.1 9.5q1.2-1.5 2.4 0" />
+      <path d="M7 13.5h10a5 5 0 0 1-10 0z" />
+    </svg>
+  )
+}
+
 export function CarIcon(props) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>

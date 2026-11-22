@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import KioskLayout from '../../components/kiosk_layout'
 import KioskOverlay from '../../components/kiosk_overlay'
-import { BeerIcon, CarIcon, ChevronIcon, CrispsIcon, MotorbikeIcon } from '../../components/kiosk_icons'
+import { BeerIcon, CarIcon, ChevronIcon, CrispsIcon, JokeIcon, MotorbikeIcon } from '../../components/kiosk_icons'
 import styles from '../../styles/stauperle.module.scss'
 
 // The site's fun questions, each opening over the kiosk with a Close button.
@@ -10,6 +10,7 @@ const QUESTIONS = [
   { src: '/should/beer', title: 'Is it beer o’clock?', sub: 'Counting down to 12:00', Icon: BeerIcon, color: '#ffb020' },
   { src: '/should/motorbike', title: 'Should I buy a new motorbike?', sub: 'Try saying no', Icon: MotorbikeIcon, color: '#ff7ab6' },
   { src: '/should/crisps', title: 'Should I eat some crisps?', sub: 'You’ll have to really want them', Icon: CrispsIcon, color: '#7ab8ff' },
+  { src: '/should/joke', title: 'Tell me a joke', sub: 'A new one every time', Icon: JokeIcon, color: '#b18cff' },
 ]
 
 export default function Should() {

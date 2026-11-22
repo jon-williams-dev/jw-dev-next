@@ -221,7 +221,7 @@ $vacuum: #b18cff;
 
 .shouldItem {
   width: 100%;
-  min-height: clamp(76px, 20vh, 140px);
+  min-height: clamp(60px, 13vh, 120px); // all five questions fit on the hallway screen
   display: flex;
   align-items: center;
   gap: clamp(0.75rem, 3vw, 1.5rem);

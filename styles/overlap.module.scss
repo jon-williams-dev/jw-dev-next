@@ -412,6 +412,30 @@
   &[data-tone='Cancelled'] { background: #f1f3f5; color: #868e96; text-decoration: line-through; }
 }
 
+// A second, quieter line in a table cell.
+.cellNote {
+  display: block;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+// Signal bars plus the word; the colour warms up with the level.
+.prio {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text);
+  font-size: 0.85rem;
+  white-space: nowrap;
+
+  rect { fill: var(--line); }
+  .prioOn { fill: currentColor; }
+
+  &[data-level='Low'] { color: var(--muted); }
+  &[data-level='High'] { color: #e67700; font-weight: 600; }
+  &[data-level='Critical'] { color: var(--danger); font-weight: 700; }
+}
+
 // ── chart ────────────────────────────────────────────────────────────────────
 
 .chartWrap {

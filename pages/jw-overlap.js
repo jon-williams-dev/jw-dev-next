@@ -688,6 +688,19 @@ function Tooltip({ circle: { item, cx, r }, cy, width, height, project, items, d
 
 // ── item list ────────────────────────────────────────────────────────────────
 
+// The priority with signal bars, one more lit for each level up.
+function PriorityTag({ value }) {
+    const level = PRIORITIES.indexOf(value) + 1
+    return (
+        <span className={styles.prio} data-level={value}>
+            <svg width="14" height="12" viewBox="0 0 14 12" aria-hidden="true">
+                {PRIORITIES.map((p, i) => <rect key={p} x={i * 3.5} y={9 - i * 3} width="2.5" height={3 + i * 3} rx="1" className={i < level ? styles.prioOn : ''} />)}
+            </svg>
+            {value}
+        </span>
+    )
+}
+
 function ItemList({ project, active, setActive, onOpen, onDelete }) {
     if (!project.items.length) return <p className={styles.muted}>Nothing here yet. Use “Add item” to start the chart.</p>
     const items = [...project.items].sort((a, b) => toMs(a.start) - toMs(b.start) || toMs(a.end) - toMs(b.end) || a.name.localeCompare(b.name))
@@ -698,9 +711,9 @@ function ItemList({ project, active, setActive, onOpen, onDelete }) {
                     <tr>
                         <th scope="col">Item</th>
                         <th scope="col">Dates</th>
-                        <th scope="col">Duration</th>
                         <th scope="col">Owner</th>
                         <th scope="col">State</th>
+                        <th scope="col">Priority</th>
                         <th scope="col">Progress</th>
                         <th scope="col"><span className={styles.srOnly}>Actions</span></th>
                     </tr>
@@ -716,10 +729,13 @@ function ItemList({ project, active, setActive, onOpen, onDelete }) {
                                     {item.name}
                                 </button>
                             </td>
-                            <td className={styles.nowrap}>{fmtRange(item.start, item.end)}</td>
-                            <td className={styles.nowrap}>{fmtDuration(item.start, item.end)}</td>
+                            <td className={styles.nowrap}>
+                                {fmtRange(item.start, item.end)}
+                                <span className={styles.cellNote}>{fmtDuration(item.start, item.end)}</span>
+                            </td>
                             <td>{item.owner || <span className={styles.muted}>–</span>}</td>
                             <td><span className={styles.badge} data-tone={item.state}>{item.state}</span></td>
+                            <td><PriorityTag value={item.priority} /></td>
                             <td className={styles.progressCell}><Progress value={item.progress} label={`${item.name} progress`} colour={item.colour} /></td>
                             <td className={styles.rowActions}>
                                 <button type="button" onClick={() => onOpen(item)} aria-label={`Edit ${item.name}`}>Edit</button>

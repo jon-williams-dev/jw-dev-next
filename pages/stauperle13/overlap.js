@@ -83,7 +83,7 @@ export default function Overlap() {
                     <section className={`${styles.placeholder} ${styles.overlapPlaceholder}`}>
                         <OverlapIcon />
                         <h2>Projects</h2>
-                        <p>{error ? `Can’t load the projects – ${error}. Retrying…` : data ? 'No projects yet: add one at jw.dev/jw-overlap.' : 'Loading…'}</p>
+                        <p>{error ? `Can’t load the projects – ${error}. Retrying…` : data ? 'No projects yet: add one at jon-williams.dev/jw-overlap.' : 'Loading…'}</p>
                     </section>
                 )}
             </div>

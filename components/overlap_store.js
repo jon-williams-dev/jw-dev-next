@@ -144,11 +144,12 @@ export function useOverlapStore() {
         timer.current = setTimeout(push, SAVE_DELAY_MS)
     }, [state])
 
-    // Leaving the tab saves at once; coming back picks up changes made elsewhere.
+    // Leaving the tab saves at once; coming back picks up changes made elsewhere, and checks again
+    // whether the server takes saves (a tab left open in 'local' would otherwise never find out).
     useEffect(() => {
         const onVisibility = () => {
             if (document.visibilityState === 'hidden') { if (timer.current) push() }
-            else if (sync.status !== 'local' && !timer.current) connect()
+            else if (!timer.current) connect()
         }
         document.addEventListener('visibilitychange', onVisibility)
         return () => document.removeEventListener('visibilitychange', onVisibility)

@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
-import { Fragment, useEffect, useId, useMemo, useRef, useState } from 'react'
+import { Fragment, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import {
     COLOURS, ITEM_STATES, PRIORITIES, PROJECT_STATUSES,
     addDays, blankItem, blankProject, busiest, circleFor, contains, daysBetween, fmtDate, fmtDuration, fmtRange, fmtShort,
@@ -346,6 +346,7 @@ const CHAR_W = 7 // rough width of a 13px label character, for collision checks
 const MAX_LABEL = 30
 const DRAG_PX = 4 // movement before a press counts as a drag rather than a click
 const KEYS = { ArrowLeft: -1, ArrowRight: 1 }
+const TOOLTIP_NAMES = 4 // overlapping items named in the tooltip before "and N more"
 
 function OverlapChart({ project, active, setActive, onOpen, onChange }) {
     const wrapRef = useRef(null)
@@ -545,7 +546,7 @@ function OverlapChart({ project, active, setActive, onOpen, onChange }) {
                             )}
                         </svg>
 
-                        {focused && <Tooltip circle={focused} cy={chart.cy} width={chart.w} project={project} items={items} dragging={!!drag?.moved} />}
+                        {focused && <Tooltip circle={focused} cy={chart.cy} width={chart.w} height={chart.h} project={project} items={items} dragging={!!drag?.moved} />}
                     </div>
                 )}
                 {project.items.length === 0 && <p className={styles.chartEmpty}>No items yet. Add one to draw its circle.</p>}
@@ -639,28 +640,43 @@ function Guides({ circle: { item, left, right }, cy, axisY, width }) {
     )
 }
 
-function Tooltip({ circle: { item, cx, r }, cy, width, project, items, dragging }) {
-    const top = cy - r
-    const below = top < 150 // not enough room above: show it just inside the circle's top
-    const deps = project.items.filter((i) => item.dependsOn.includes(i.id))
-    const overlaps = items
-        .filter((o) => o.id !== item.id && sharedDays(item, o) > 0)
-        .map((o) => ({ o, text: o.start === item.start && o.end === item.end ? 'same dates' : contains(o, item) ? 'inside it' : contains(item, o) ? 'inside this' : `${sharedDays(item, o)} d` }))
+// Names, cut short so a busy chart doesn't make the tooltip taller than the chart.
+function Names({ items, note }) {
+    const shown = items.slice(0, TOOLTIP_NAMES)
     return (
-        <div className={`${styles.tooltip} ${dragging ? styles.tooltipLive : ''}`}
-            style={{ left: Math.min(Math.max(cx, 140), width - 140), top: below ? top + 14 : top - 14, transform: below ? 'translateX(-50%)' : 'translate(-50%, -100%)' }}>
+        <>
+            {shown.map((o, i) => (
+                <Fragment key={o.id}>{i > 0 && ', '}<b style={{ color: o.colour }}>{o.name}</b>{note && ` (${note(o)})`}</Fragment>
+            ))}
+            {items.length > shown.length && <> and {items.length - shown.length} more</>}
+        </>
+    )
+}
+
+function Tooltip({ circle: { item, cx, r }, cy, width, height, project, items, dragging }) {
+    const ref = useRef(null)
+    const [boxHeight, setBoxHeight] = useState(0)
+    useLayoutEffect(() => { setBoxHeight(ref.current.offsetHeight) })
+
+    // Above the circle if it fits, else just inside its top, else as high as the chart allows.
+    const top = cy - r
+    const y = top - 14 - boxHeight >= 4 ? top - 14 - boxHeight : Math.max(4, Math.min(top + 14, height - boxHeight - 4))
+
+    const deps = project.items.filter((i) => item.dependsOn.includes(i.id))
+    const others = items.filter((o) => o.id !== item.id && sharedDays(item, o) > 0)
+    const twins = others.filter((o) => o.start === item.start && o.end === item.end)
+    const overlaps = others.filter((o) => !twins.includes(o))
+    const overlapNote = (o) => (contains(o, item) ? 'inside it' : contains(item, o) ? 'inside this' : `${sharedDays(item, o)} d`)
+    return (
+        <div ref={ref} className={`${styles.tooltip} ${dragging ? styles.tooltipLive : ''}`}
+            style={{ left: Math.min(Math.max(cx, 140), width - 140), top: y, transform: 'translateX(-50%)', visibility: boxHeight ? undefined : 'hidden' }}>
             <strong><span className={styles.swatch} style={{ background: item.colour }} />{item.name}</strong>
             <span className={styles.tooltipDates}>{fmtRange(item.start, item.end)} · {fmtDuration(item.start, item.end)}</span>
             {!dragging && (
                 <>
                     <span><span className={styles.badge} data-tone={item.state}>{item.state}</span> {item.progress}%{item.owner ? ` · ${item.owner}` : ''}</span>
-                    {overlaps.length > 0 && (
-                        <span className={styles.tooltipList}>
-                            Overlaps {overlaps.map(({ o, text }, i) => (
-                                <Fragment key={o.id}>{i > 0 && ', '}<b style={{ color: o.colour }}>{o.name}</b> ({text})</Fragment>
-                            ))}
-                        </span>
-                    )}
+                    {twins.length > 0 && <span className={styles.tooltipList}>Same dates as <Names items={twins} /></span>}
+                    {overlaps.length > 0 && <span className={styles.tooltipList}>Overlaps <Names items={overlaps} note={overlapNote} /></span>}
                     {deps.length > 0 && <span className={styles.tooltipList}>After {deps.map((d) => d.name).join(', ')}</span>}
                 </>
             )}

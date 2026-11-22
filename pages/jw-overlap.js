@@ -4,8 +4,8 @@ import { Inter } from 'next/font/google'
 import { Fragment, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import {
     COLOURS, ITEM_STATES, PRIORITIES, PROJECT_STATUSES,
-    addDays, blankItem, blankProject, busiest, circleFor, contains, daysBetween, fmtDate, fmtDuration, fmtRange, fmtShort,
-    lateDependencies, nudged, parseTags, projectProgress, sampleProject, sharedDays, ticksFor, toMs, validateItem, validateProject, withProgress, withState,
+    addDays, blankItem, blankProject, busiest, circleFor, contains, daysBetween, fmtDate, fmtDuration, fmtRange, fmtShort, isDate,
+    lateDependencies, nudged, parseTags, projectProgress, sampleProject, sharedDays, ticksFor, toMs, validateItem, validateProject, widenedFor, withProgress, withState,
 } from '../lib/overlap'
 import { useOverlapStore } from '../components/overlap_store'
 import styles from '../styles/overlap.module.scss'
@@ -85,8 +85,10 @@ export default function OverlapPage() {
 
     const saveItem = (item, message) => {
         const exists = project.items.some((i) => i.id === item.id)
-        commit(withProject({ ...project, items: exists ? project.items.map((i) => (i.id === item.id ? item : i)) : [...project.items, item] }),
-            message || (exists ? `Saved “${item.name}”` : `Added “${item.name}”`))
+        const widened = widenedFor(project, item)
+        const grew = widened.start !== project.start || widened.end !== project.end
+        commit(withProject({ ...widened, items: exists ? project.items.map((i) => (i.id === item.id ? item : i)) : [...project.items, item] }),
+            (message || `${exists ? 'Saved' : 'Added'} “${item.name}”`) + (grew ? `: the project now runs ${fmtRange(widened.start, widened.end)}` : ''))
         setEditingItem(null)
     }
 
@@ -781,12 +783,12 @@ function Field({ label, error, children, wide, hint }) {
 // Name, dates, owner, progress, priority, tags, description and notes: shared by both editors.
 // A project's progress comes from its items, so it gets `progressNote` instead of a slider;
 // an item passes `onProgress` to keep its state in step.
-function CommonFields({ draft, set, errors, dateBounds, progressNote, onProgress }) {
+function CommonFields({ draft, set, errors, progressNote, onProgress }) {
     return (
         <>
             <Field label="Name *" error={errors.name} wide>{(a) => <input {...a} value={draft.name} onChange={set('name')} autoFocus />}</Field>
-            <Field label="Start date *" error={errors.start}>{(a) => <input {...a} type="date" value={draft.start} onChange={set('start')} {...dateBounds} />}</Field>
-            <Field label="End date *" error={errors.end}>{(a) => <input {...a} type="date" value={draft.end} onChange={set('end')} {...dateBounds} />}</Field>
+            <Field label="Start date *" error={errors.start}>{(a) => <input {...a} type="date" value={draft.start} onChange={set('start')} />}</Field>
+            <Field label="End date *" error={errors.end}>{(a) => <input {...a} type="date" value={draft.end} onChange={set('end')} />}</Field>
             <Field label="Owner">{(a) => <input {...a} value={draft.owner} onChange={set('owner')} />}</Field>
             <Field label="Priority">{(a) => <select {...a} value={draft.priority} onChange={set('priority')}>{PRIORITIES.map((p) => <option key={p}>{p}</option>)}</select>}</Field>
             {progressNote ? (
@@ -839,6 +841,8 @@ function ItemEditor({ item, project, isNew, onSave, onDelete, onClose }) {
     const { draft, setDraft, errors, setErrors, set } = useDraft(item)
     const others = project.items.filter((i) => i.id !== item.id)
     const late = lateDependencies(draft, project)
+    const wider = isDate(draft.start) && isDate(draft.end) && toMs(draft.end) > toMs(draft.start) ? widenedFor(project, draft) : project
+    const widens = wider.start !== project.start || wider.end !== project.end
 
     const toggleDependency = (id) => setDraft((d) => ({ ...d, dependsOn: d.dependsOn.includes(id) ? d.dependsOn.filter((x) => x !== id) : [...d.dependsOn, id] }))
 
@@ -853,9 +857,13 @@ function ItemEditor({ item, project, isNew, onSave, onDelete, onClose }) {
     return (
         <Modal title={isNew ? 'New item' : 'Edit item'} onClose={onClose}>
             <form onSubmit={submit} noValidate>
-                <p className={styles.dialogNote}>Dates must fall within the project: {fmtRange(project.start, project.end)}.</p>
+                <p className={styles.dialogNote}>
+                    {widens
+                        ? <>These dates are outside the project, so saving widens it to {fmtRange(wider.start, wider.end)}.</>
+                        : <>The project runs {fmtRange(project.start, project.end)}. Dates outside it widen the project.</>}
+                </p>
                 <div className={styles.form}>
-                    <CommonFields draft={draft} set={set} errors={errors} dateBounds={{ min: project.start, max: project.end }}
+                    <CommonFields draft={draft} set={set} errors={errors}
                         onProgress={(e) => setDraft((d) => withProgress(d, Number(e.target.value)))} />
                     <Field label="State">{(a) => <select {...a} value={draft.state} onChange={(e) => setDraft((d) => withState(d, e.target.value))}>{ITEM_STATES.map((s) => <option key={s}>{s}</option>)}</select>}</Field>
 

@@ -93,6 +93,17 @@ export default function OverlapPage() {
         setEditingItem(null)
     }
 
+    // From dragging a row in the table: `items` is the new running order, `moved` the item at its new
+    // dates. The table keeps this order from then on (manualOrder) until it's sorted by date again.
+    const reorderItems = (items, moved, where) => {
+        const widened = widenedFor(project, moved)
+        const grew = widened.start !== project.start || widened.end !== project.end
+        commit(withProject({ ...widened, manualOrder: true, items: items.map((i) => (i.id === moved.id ? moved : i)) }),
+            `“${moved.name}” now ${fmtRange(moved.start, moved.end)}, ${where}` + (grew ? `: the project now runs ${fmtRange(widened.start, widened.end)}` : ''))
+    }
+
+    const sortByDate = () => commit(withProject({ ...project, manualOrder: false, items: byDate(project.items) }), 'Items sorted by date')
+
     // From dragging or the arrow keys on the chart.
     const moveItem = (item) => saveItem(item, `“${item.name}” now ${fmtRange(item.start, item.end)}`)
 
@@ -166,10 +177,11 @@ export default function OverlapPage() {
                         <section className={styles.card} aria-labelledby="items-title">
                             <div className={styles.cardHead}>
                                 <h2 id="items-title">Items <span className={styles.count}>{project.items.length}</span></h2>
+                                {project.manualOrder && <button type="button" onClick={sortByDate}>Sort by date</button>}
                             </div>
                             <ItemList project={project} active={active} setActive={setActive} onOpen={setEditingItem}
                                 onDelete={(item) => window.confirm(`Delete “${item.name}”?`) && deleteItem(item)}
-                                onMove={(item, where) => saveItem(item, `“${item.name}” now ${fmtRange(item.start, item.end)}, ${where}`)} />
+                                onReorder={reorderItems} />
                         </section>
                     </>
                 )}
@@ -355,12 +367,15 @@ function PriorityTag({ value }) {
     )
 }
 
+const byDate = (items) => [...items].sort((a, b) => toMs(a.start) - toMs(b.start) || toMs(a.end) - toMs(b.end) || a.name.localeCompare(b.name))
+
 // Rows can be dragged by their grip (or moved with ↑ ↓ on it) to change the running order: the item
 // keeps its length and is rescheduled to start as the item above it ends.
-function ItemList({ project, active, setActive, onOpen, onDelete, onMove }) {
+function ItemList({ project, active, setActive, onOpen, onDelete, onReorder }) {
     const [drag, setDrag] = useState(null) // { id, y0, dy, mids: [row midpoints of the other items], gap }
     const rows = useRef({})
-    const items = [...project.items].sort((a, b) => toMs(a.start) - toMs(b.start) || toMs(a.end) - toMs(b.end) || a.name.localeCompare(b.name))
+    // In date order, or in the order rows were dragged into.
+    const items = project.manualOrder ? project.items : byDate(project.items)
     if (!items.length) return <p className={styles.muted}>Nothing here yet. Use “Add item” to start the chart.</p>
 
     // Moves `item` into the gap before others[gap] (others = every item but this one, in order).
@@ -369,7 +384,7 @@ function ItemList({ project, active, setActive, onOpen, onDelete, onMove }) {
         if (gap === items.indexOf(item) || !others.length) return
         const prev = others[gap - 1], next = others[gap]
         const moved = sequenced(item, prev, next)
-        if (moved.start !== item.start) onMove(moved, prev ? `after “${prev.name}”` : `before “${next.name}”`)
+        onReorder([...others.slice(0, gap), moved, ...others.slice(gap)], moved, prev ? `after “${prev.name}”` : `before “${next.name}”`)
     }
 
     const gripDown = (e, item) => {

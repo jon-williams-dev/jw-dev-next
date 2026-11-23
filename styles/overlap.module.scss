@@ -759,9 +759,42 @@
   .touchHint { display: inline; }
 }
 
+// Re-ordering rows: the grip, the row being dragged, and the line where it would land.
+.gripCell {
+  width: 1px;
+  padding-right: 0 !important;
+}
+
+.grip {
+  min-height: 32px !important;
+  min-width: 24px;
+  padding: 0 !important;
+  border: 0 !important;
+  background: none !important;
+  color: var(--muted) !important;
+  cursor: grab !important;
+  touch-action: none;
+
+  svg { fill: currentColor; }
+  &:hover { color: var(--text) !important; }
+}
+
 .rowActive {
   background: color-mix(in srgb, var(--item) 10%, transparent);
   box-shadow: inset 3px 0 0 var(--item);
+}
+
+// After .rowActive, so the drop line shows on a hovered row too, and the dragged row is solid.
+.dropBefore { box-shadow: inset 0 3px 0 var(--accent); }
+.dropAfter { box-shadow: inset 0 -3px 0 var(--accent); }
+
+.rowDragging {
+  position: relative;
+  z-index: 2;
+  background: color-mix(in srgb, var(--item) 10%, var(--card));
+  box-shadow: inset 3px 0 0 var(--item), 0 8px 24px rgba(16, 24, 40, 0.18);
+
+  .grip { cursor: grabbing !important; }
 }
 
 .progressCell .progress {

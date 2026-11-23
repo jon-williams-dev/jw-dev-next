@@ -5,7 +5,7 @@ import { Fragment, useEffect, useId, useRef, useState } from 'react'
 import {
     COLOURS, ITEM_STATES, PRIORITIES, PROJECT_STATUSES,
     blankItem, blankProject, busiest, daysBetween, fmtDuration, fmtRange, fmtShort, isDate,
-    lateDependencies, parseTags, projectProgress, sampleProject, toMs, validateItem, validateProject, widenedFor, withProgress, withState,
+    lateDependencies, parseTags, projectProgress, sampleProject, sequenced, toMs, validateItem, validateProject, widenedFor, withProgress, withState,
 } from '../lib/overlap'
 import OverlapChart from '../components/overlap_chart'
 import { useOverlapStore } from '../components/overlap_store'
@@ -168,7 +168,8 @@ export default function OverlapPage() {
                                 <h2 id="items-title">Items <span className={styles.count}>{project.items.length}</span></h2>
                             </div>
                             <ItemList project={project} active={active} setActive={setActive} onOpen={setEditingItem}
-                                onDelete={(item) => window.confirm(`Delete “${item.name}”?`) && deleteItem(item)} />
+                                onDelete={(item) => window.confirm(`Delete “${item.name}”?`) && deleteItem(item)}
+                                onMove={(item, where) => saveItem(item, `“${item.name}” now ${fmtRange(item.start, item.end)}, ${where}`)} />
                         </section>
                     </>
                 )}
@@ -354,14 +355,60 @@ function PriorityTag({ value }) {
     )
 }
 
-function ItemList({ project, active, setActive, onOpen, onDelete }) {
-    if (!project.items.length) return <p className={styles.muted}>Nothing here yet. Use “Add item” to start the chart.</p>
+// Rows can be dragged by their grip (or moved with ↑ ↓ on it) to change the running order: the item
+// keeps its length and is rescheduled to start as the item above it ends.
+function ItemList({ project, active, setActive, onOpen, onDelete, onMove }) {
+    const [drag, setDrag] = useState(null) // { id, y0, dy, mids: [row midpoints of the other items], gap }
+    const rows = useRef({})
     const items = [...project.items].sort((a, b) => toMs(a.start) - toMs(b.start) || toMs(a.end) - toMs(b.end) || a.name.localeCompare(b.name))
+    if (!items.length) return <p className={styles.muted}>Nothing here yet. Use “Add item” to start the chart.</p>
+
+    // Moves `item` into the gap before others[gap] (others = every item but this one, in order).
+    const place = (item, gap) => {
+        const others = items.filter((i) => i.id !== item.id)
+        if (gap === items.indexOf(item) || !others.length) return
+        const prev = others[gap - 1], next = others[gap]
+        const moved = sequenced(item, prev, next)
+        if (moved.start !== item.start) onMove(moved, prev ? `after “${prev.name}”` : `before “${next.name}”`)
+    }
+
+    const gripDown = (e, item) => {
+        if (e.button !== 0) return
+        e.currentTarget.setPointerCapture(e.pointerId)
+        const mids = items.filter((i) => i.id !== item.id).map((i) => {
+            const r = rows.current[i.id].getBoundingClientRect()
+            return r.top + r.height / 2
+        })
+        setDrag({ id: item.id, y0: e.clientY, dy: 0, mids, gap: items.indexOf(item) })
+    }
+    const gripMove = (e) => {
+        if (!drag) return
+        setDrag({ ...drag, dy: e.clientY - drag.y0, gap: drag.mids.filter((m) => m < e.clientY).length })
+    }
+    const gripUp = (item) => {
+        if (!drag) return
+        setDrag(null)
+        place(item, drag.gap)
+    }
+    const gripKey = (e, item) => {
+        const step = { ArrowUp: -1, ArrowDown: 1 }[e.key]
+        if (!step) return
+        e.preventDefault()
+        const at = items.indexOf(item)
+        if (at + step >= 0 && at + step < items.length) place(item, at + step)
+    }
+
+    // Where a dragged row would land: a line above the row it would go before (or below the last).
+    const others = drag ? items.filter((i) => i.id !== drag.id) : []
+    const lineBefore = drag && drag.gap !== items.findIndex((i) => i.id === drag.id) ? others[drag.gap]?.id : null
+    const lineAfterLast = drag && drag.gap === others.length && drag.gap !== items.length - 1
+
     return (
         <div className={styles.tableScroll}>
             <table className={styles.table}>
                 <thead>
                     <tr>
+                        <th scope="col"><span className={styles.srOnly}>Order</span></th>
                         <th scope="col">Item</th>
                         <th scope="col">Dates</th>
                         <th scope="col">Owner</th>
@@ -372,9 +419,21 @@ function ItemList({ project, active, setActive, onOpen, onDelete }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {items.map((item) => (
-                        <tr key={item.id} className={active === item.id ? styles.rowActive : ''} style={{ '--item': item.colour }}
+                    {items.map((item, n) => (
+                        <tr key={item.id} ref={(el) => { rows.current[item.id] = el }}
+                            className={[active === item.id && styles.rowActive, drag?.id === item.id && styles.rowDragging,
+                                lineBefore === item.id && styles.dropBefore, lineAfterLast && n === items.length - 1 && styles.dropAfter].filter(Boolean).join(' ')}
+                            style={{ '--item': item.colour, ...(drag?.id === item.id ? { transform: `translateY(${drag.dy}px)` } : {}) }}
                             onMouseEnter={() => setActive(item.id)} onMouseLeave={() => setActive((a) => (a === item.id ? null : a))}>
+                            <td className={styles.gripCell}>
+                                <button type="button" className={styles.grip} aria-label={`Move ${item.name}: up and down arrows change its place in the order`}
+                                    onPointerDown={(e) => gripDown(e, item)} onPointerMove={gripMove} onPointerUp={() => gripUp(item)} onPointerCancel={() => setDrag(null)}
+                                    onKeyDown={(e) => gripKey(e, item)}>
+                                    <svg viewBox="0 0 10 16" width="10" height="16" aria-hidden="true">
+                                        {[3, 8, 13].map((y) => <Fragment key={y}><circle cx="2.5" cy={y} r="1.4" /><circle cx="7.5" cy={y} r="1.4" /></Fragment>)}
+                                    </svg>
+                                </button>
+                            </td>
                             <td>
                                 <button type="button" className={styles.itemName} onClick={() => onOpen(item)}
                                     onFocus={() => setActive(item.id)} onBlur={() => setActive((a) => (a === item.id ? null : a))}>

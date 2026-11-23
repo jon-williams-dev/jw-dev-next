@@ -79,18 +79,22 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
         // Zoomed in, the dates spread out and the chart scrolls sideways.
         const maxZoom = Math.max(1, MAX_PX_PER_DAY / pxPerDay)
         const z = Math.min(zoom, maxZoom)
+        // The zoom a project opens at: enough for a typical (median-length) item to be readable.
+        const spans = project.items.map((i) => daysBetween(i.start, i.end)).sort((a, b) => a - b)
+        const typical = spans[Math.floor(spans.length / 2)] || 1
+        const autoZoom = Math.min(Math.max(TYPICAL_D / (typical * pxPerDay), 1), maxZoom)
+        // The height suits that view and stays put while zooming and dragging (zoomed further in, the
+        // bigger circles are cut off at the top and bottom, their ends still on the centre line). It's
+        // never taller than most of the window; the hallway screen sizes its own.
+        const longestSaved = Math.max(1, ...project.items.map((i) => daysBetween(i.start, i.end)))
+        const tallest = (LABEL_H + 12) * 2 + Math.max(120, longestSaved * pxPerDay * (fitHeight ? 1 : autoZoom)) + AXIS_H
+        const h = fitHeight || !windowH ? tallest : Math.min(tallest, Math.max(MIN_MAX_HEIGHT, Math.round(windowH * MAX_HEIGHT_SHARE)))
         pxPerDay *= z
         w = pxPerDay * days + PAD_X * 2
         const circles = items
             .map((item) => ({ item, ...circleFor(item, project, PAD_X, pxPerDay) }))
             .sort((a, b) => b.r - a.r || a.item.id.localeCompare(b.item.id)) // biggest first, so smaller circles sit on top
         sliceTwins(circles, items)
-        // Tall enough for the biggest circle and its labels, but never taller than most of the window
-        // (the hallway screen sizes its own): bigger circles are cut off at the top and bottom, their
-        // ends still on the centre line.
-        const maxD = Math.max(120, ...circles.map((c) => c.r * 2))
-        const tallest = (LABEL_H + 12) * 2 + maxD + AXIS_H
-        const h = fitHeight || !windowH ? tallest : Math.min(tallest, Math.max(MIN_MAX_HEIGHT, Math.round(windowH * MAX_HEIGHT_SHARE)))
         const axisY = h - AXIS_H
         const cy = axisY / 2
         const weekends = []
@@ -102,7 +106,7 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
         }
         return {
             w, h, pxPerDay, cy, axisY, circles, weekends, labels: placeLabels(circles, cy, w, axisY), ticks: ticksFor(project, pxPerDay),
-            zoom: z, maxZoom, scrolls: w > width + 1,
+            zoom: z, maxZoom, autoZoom, scrolls: w > width + 1,
         }
     }, [project, items, width, fitHeight, zoom, windowH])
 
@@ -132,17 +136,13 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
         navRedraw.current?.()
     }, [chart])
 
-    // Each project opens on a view that suits it: zoomed so a typical (median-length) item is big
-    // enough to read, unless everything already is, and scrolled to today if it's in the project.
+    // Each project opens on a view that suits it (chart.autoZoom), scrolled to today if it's in the project.
     const opened = useRef(null)
     useLayoutEffect(() => {
         const el = wrapRef.current
         if (readOnly || !chart || !el || opened.current === project.id) return
         opened.current = project.id
-        const spans = project.items.map((i) => daysBetween(i.start, i.end)).sort((a, b) => a - b)
-        const typical = spans[Math.floor(spans.length / 2)] || 1
-        const base = chart.pxPerDay / chart.zoom
-        const z = Math.min(Math.max(TYPICAL_D / (typical * base), 1), chart.maxZoom)
+        const z = chart.autoZoom
         const today = todayLocal()
         const day = toMs(today) > toMs(project.start) && toMs(today) < toMs(project.end) ? daysBetween(project.start, today) : 0
         const vx = day ? el.clientWidth * START_AT : PAD_X

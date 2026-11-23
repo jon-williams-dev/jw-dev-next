@@ -1,7 +1,7 @@
 // The overlap chart itself: one circle per item on a single date line, left edge = start, right
 // edge = end. Used by /jw-overlap (editable) and the hallway screen's /stauperle13/overlap.
 
-import { Fragment, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { Fragment, useEffect, useId, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react'
 import { addDays, circleFor, contains, daysBetween, fmtDate, fmtDuration, fmtRange, fmtShort, nudged, sharedDays, ticksFor, toMs } from '../lib/overlap'
 import styles from '../styles/overlap.module.scss'
 
@@ -15,6 +15,18 @@ const MAX_LABEL = 30
 const DRAG_PX = 4 // movement before a press counts as a drag rather than a click
 const KEYS = { ArrowLeft: -1, ArrowRight: 1 }
 const TOOLTIP_NAMES = 4 // overlapping items named in the tooltip before "and N more"
+const MAX_PX_PER_DAY = 160 // zooming in stops here
+const TYPICAL_D = 64 // a project opens zoomed so its typical item is about this wide
+const START_AT = 1 / 3 // ...with today (or the start) this far across the view
+const MAX_HEIGHT_SHARE = 0.7 // the chart is never taller than this much of the window
+const MIN_MAX_HEIGHT = 320
+const ZOOM_STEP = 1.5 // each press of + or −
+const ZOOM_KEYS = { '+': ZOOM_STEP, '=': ZOOM_STEP, '-': 1 / ZOOM_STEP }
+const NAV_H = 54
+const NAV_BAND = 36 // the items' band at the top of the navigator; date labels go under it
+const NAV_PAD = 8
+const NAV_EDGE = 12 // grab zone at each end of the navigator's window
+const NAV_MIN_DAYS = 1 // the window can't be squeezed shorter than this
 
 // readOnly: look but don't touch (the hallway screen): a tap shows an item's details instead of
 // opening or moving it. fitHeight: squeeze the dates so the biggest circle fits that many pixels.
@@ -24,6 +36,14 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
     const [width, setWidth] = useState(0)
     const [drag, setDrag] = useState(null) // { id, mode, x0, origin, start, end, moved }
     const lastPointer = useRef(null) // 'mouse', 'pen' or 'touch'
+    const [zoom, setZoom] = useState(1) // 1 = the whole project fits the width
+    const [zooming, setZooming] = useState(false) // circles jump rather than glide while zooming
+    const zoomTimer = useRef(null)
+    const anchor = useRef(null) // the point to keep still while zooming, applied once the chart redraws
+    const [windowH, setWindowH] = useState(0)
+    const [pan, setPan] = useState(null) // { x, left } while dragging the view along
+    const navRedraw = useRef(null) // the navigator's redraw, for when a zoom moves the view
+    const spaceHeld = useRef(false) // Space + drag pans even over circles, which can cover the whole view
 
     useEffect(() => {
         const el = wrapRef.current
@@ -31,6 +51,13 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
         const observer = new ResizeObserver(([entry]) => setWidth(Math.floor(entry.contentRect.width)))
         observer.observe(el)
         return () => observer.disconnect()
+    }, [])
+
+    useEffect(() => {
+        const update = () => setWindowH(window.innerHeight)
+        update()
+        window.addEventListener('resize', update)
+        return () => window.removeEventListener('resize', update)
     }, [])
 
     // While dragging, the chart draws the item at its new dates; nothing is saved until release.
@@ -41,21 +68,31 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
         const days = daysBetween(project.start, project.end)
         let w = Math.max(width, MIN_WIDTH)
         let pxPerDay = (w - PAD_X * 2) / days
+        const longest = Math.max(1, ...items.map((i) => daysBetween(i.start, i.end)))
         if (fitHeight) {
-            const longest = Math.max(1, ...items.map((i) => daysBetween(i.start, i.end)))
             const fits = Math.max(fitHeight - LABEL_H * 2 - 24 - AXIS_H, 120) / longest
             if (fits < pxPerDay) {
                 pxPerDay = fits
                 w = pxPerDay * days + PAD_X * 2
             }
         }
+        // Zoomed in, the dates spread out and the chart scrolls sideways.
+        const maxZoom = Math.max(1, MAX_PX_PER_DAY / pxPerDay)
+        const z = Math.min(zoom, maxZoom)
+        pxPerDay *= z
+        w = pxPerDay * days + PAD_X * 2
         const circles = items
             .map((item) => ({ item, ...circleFor(item, project, PAD_X, pxPerDay) }))
             .sort((a, b) => b.r - a.r || a.item.id.localeCompare(b.item.id)) // biggest first, so smaller circles sit on top
         sliceTwins(circles, items)
+        // Tall enough for the biggest circle and its labels, but never taller than most of the window
+        // (the hallway screen sizes its own): bigger circles are cut off at the top and bottom, their
+        // ends still on the centre line.
         const maxD = Math.max(120, ...circles.map((c) => c.r * 2))
-        const cy = LABEL_H + 12 + maxD / 2
-        const axisY = cy + maxD / 2 + LABEL_H + 12
+        const tallest = (LABEL_H + 12) * 2 + maxD + AXIS_H
+        const h = fitHeight || !windowH ? tallest : Math.min(tallest, Math.max(MIN_MAX_HEIGHT, Math.round(windowH * MAX_HEIGHT_SHARE)))
+        const axisY = h - AXIS_H
+        const cy = axisY / 2
         const weekends = []
         if (pxPerDay >= 8) {
             for (let d = 0; d < days; d++) {
@@ -63,8 +100,139 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
                 if (day === 0 || day === 6) weekends.push(d)
             }
         }
-        return { w, h: axisY + AXIS_H, pxPerDay, cy, axisY, circles, weekends, labels: placeLabels(circles, cy, w), ticks: ticksFor(project, pxPerDay) }
-    }, [project, items, width, fitHeight])
+        return {
+            w, h, pxPerDay, cy, axisY, circles, weekends, labels: placeLabels(circles, cy, w, axisY), ticks: ticksFor(project, pxPerDay),
+            zoom: z, maxZoom, scrolls: w > width + 1,
+        }
+    }, [project, items, width, fitHeight, zoom, windowH])
+
+    // ── zooming and panning (not on the hallway screen) ──
+    // Zooms to `next`, keeping the date under the point vx of the visible box still.
+    const zoomTo = (next, vx) => {
+        const el = wrapRef.current
+        if (!chart || !el || readOnly) return
+        const z = Math.min(Math.max(next, 1), chart.maxZoom)
+        if (Math.abs(z - chart.zoom) < 0.001) return
+        vx ??= el.clientWidth / 2
+        anchor.current = { day: (el.scrollLeft + vx - PAD_X) / chart.pxPerDay, vx }
+        setZoom(z)
+        setZooming(true)
+        clearTimeout(zoomTimer.current)
+        zoomTimer.current = setTimeout(() => setZooming(false), 250)
+    }
+    const zoomRef = useRef(zoomTo)
+    zoomRef.current = zoomTo
+
+    useLayoutEffect(() => {
+        const el = wrapRef.current
+        const a = anchor.current
+        if (!chart || !el || !a) return
+        anchor.current = null
+        el.scrollLeft = PAD_X + a.day * chart.pxPerDay - a.vx
+        navRedraw.current?.()
+    }, [chart])
+
+    // Each project opens on a view that suits it: zoomed so a typical (median-length) item is big
+    // enough to read, unless everything already is, and scrolled to today if it's in the project.
+    const opened = useRef(null)
+    useLayoutEffect(() => {
+        const el = wrapRef.current
+        if (readOnly || !chart || !el || opened.current === project.id) return
+        opened.current = project.id
+        const spans = project.items.map((i) => daysBetween(i.start, i.end)).sort((a, b) => a - b)
+        const typical = spans[Math.floor(spans.length / 2)] || 1
+        const base = chart.pxPerDay / chart.zoom
+        const z = Math.min(Math.max(TYPICAL_D / (typical * base), 1), chart.maxZoom)
+        const today = todayLocal()
+        const day = toMs(today) > toMs(project.start) && toMs(today) < toMs(project.end) ? daysBetween(project.start, today) : 0
+        const vx = day ? el.clientWidth * START_AT : PAD_X
+        if (Math.abs(z - chart.zoom) < 0.001) {
+            el.scrollLeft = PAD_X + day * chart.pxPerDay - vx
+        } else {
+            anchor.current = { day, vx }
+            setZoom(z)
+        }
+    }, [chart, project, readOnly])
+
+    // Trackpad pinch (which arrives as Ctrl + wheel) and Ctrl/⌘ + wheel zoom around the pointer;
+    // two fingers on a touchscreen pinch-zoom around their midpoint. Both need non-passive listeners.
+    useEffect(() => {
+        const el = wrapRef.current
+        if (!el || readOnly) return
+        const local = (x) => x - el.getBoundingClientRect().left
+        const onWheel = (e) => {
+            if (!e.ctrlKey && !e.metaKey) return
+            e.preventDefault()
+            const dy = Math.max(-50, Math.min(50, e.deltaY))
+            zoomRef.current(currentZoom.current * Math.exp(-dy * 0.01), local(e.clientX))
+        }
+        let pinch = null
+        const spread = (t) => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY)
+        const onTouchStart = (e) => {
+            if (e.touches.length === 2) pinch = { d: spread(e.touches), z: currentZoom.current }
+        }
+        const onTouchMove = (e) => {
+            if (!pinch || e.touches.length !== 2) return
+            e.preventDefault()
+            const [a, b] = e.touches
+            zoomRef.current(pinch.z * (spread(e.touches) / pinch.d), local((a.clientX + b.clientX) / 2))
+        }
+        const onTouchEnd = (e) => { if (e.touches.length < 2) pinch = null }
+        el.addEventListener('wheel', onWheel, { passive: false })
+        el.addEventListener('touchstart', onTouchStart, { passive: true })
+        el.addEventListener('touchmove', onTouchMove, { passive: false })
+        el.addEventListener('touchend', onTouchEnd)
+        el.addEventListener('touchcancel', onTouchEnd)
+        return () => {
+            el.removeEventListener('wheel', onWheel)
+            el.removeEventListener('touchstart', onTouchStart)
+            el.removeEventListener('touchmove', onTouchMove)
+            el.removeEventListener('touchend', onTouchEnd)
+            el.removeEventListener('touchcancel', onTouchEnd)
+        }
+    }, [readOnly])
+    const currentZoom = useRef(1)
+    currentZoom.current = chart?.zoom ?? 1
+
+    // With the mouse, dragging the background pans, and so does dragging anywhere with Space held or
+    // with the middle button. Circles still move items; touch scrolls natively.
+    useEffect(() => {
+        if (readOnly) return
+        const typing = (e) => e.target.closest?.('input, textarea, select, [contenteditable]')
+        const down = (e) => { if (e.key === ' ' && !typing(e) && wrapRef.current?.classList.contains(styles.pannable)) { spaceHeld.current = true; if (!e.target.closest?.('button, [role=button]')) e.preventDefault() } }
+        const up = (e) => { if (e.key === ' ') spaceHeld.current = false }
+        const reset = () => { spaceHeld.current = false }
+        window.addEventListener('keydown', down)
+        window.addEventListener('keyup', up)
+        window.addEventListener('blur', reset)
+        return () => {
+            window.removeEventListener('keydown', down)
+            window.removeEventListener('keyup', up)
+            window.removeEventListener('blur', reset)
+        }
+    }, [readOnly])
+
+    const panStart = (e) => {
+        const el = wrapRef.current
+        if (readOnly || e.pointerType !== 'mouse') return
+        const anywhere = e.button === 1 || (e.button === 0 && spaceHeld.current)
+        if (!anywhere && (e.button !== 0 || e.target.closest('[role=button], [data-handle]'))) return
+        if (el.scrollWidth <= el.clientWidth) return
+        e.preventDefault() // no middle-click autoscroll
+        e.currentTarget.setPointerCapture(e.pointerId)
+        setPan({ x: e.clientX, left: el.scrollLeft })
+    }
+    const panMove = (e) => {
+        if (!pan) return
+        wrapRef.current.scrollLeft = pan.left - (e.clientX - pan.x)
+    }
+
+    // + and − zoom and 0 fits, from anywhere in the chart (the circles pass these keys on).
+    const onZoomKey = (e) => {
+        if (readOnly || e.ctrlKey || e.metaKey || e.altKey) return
+        if (ZOOM_KEYS[e.key]) { e.preventDefault(); zoomTo(chart.zoom * ZOOM_KEYS[e.key]) }
+        else if (e.key === '0') { e.preventDefault(); zoomTo(1) }
+    }
 
     const focusId = drag?.id || active
     const today = todayLocal()
@@ -79,6 +247,7 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
         if (e.button !== 0) return
         // On touch screens a drag on the circle scrolls the chart; only the handles resize.
         if (mode === 'move' && e.pointerType === 'touch') return
+        if (spaceHeld.current) return // that's a pan
         e.currentTarget.setPointerCapture(e.pointerId)
         setDrag({ id: item.id, mode, x0: e.clientX, origin: item, start: item.start, end: item.end, moved: false })
         setActive(item.id)
@@ -125,8 +294,18 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
     }
 
     return (
-        <div className={styles.chartWrap}>
-            <div className={`${styles.chartScroll} ${drag?.moved ? styles.dragging : ''}`} ref={wrapRef}>
+        <div className={styles.chartWrap} onKeyDown={onZoomKey}>
+            {!readOnly && chart && project.items.length > 0 && (
+                <div className={styles.zoomBar} role="group" aria-label="Zoom">
+                    <button type="button" onClick={() => zoomTo(chart.zoom / ZOOM_STEP)} disabled={chart.zoom <= 1} aria-label="Zoom out">−</button>
+                    <span className={styles.zoomLevel} aria-live="polite">{Math.round(chart.zoom * 100)}%</span>
+                    <button type="button" onClick={() => zoomTo(chart.zoom * ZOOM_STEP)} disabled={chart.zoom >= chart.maxZoom - 0.001} aria-label="Zoom in">+</button>
+                    <button type="button" onClick={() => zoomTo(1)} disabled={chart.zoom <= 1}>Fit</button>
+                </div>
+            )}
+            <div ref={wrapRef}
+                className={`${styles.chartScroll} ${drag?.moved || pan ? styles.dragging : ''} ${zooming ? styles.zooming : ''} ${chart?.scrolls ? styles.pannable : ''}`}
+                onPointerDown={panStart} onPointerMove={panMove} onPointerUp={() => setPan(null)} onPointerCancel={() => setPan(null)}>
                 {chart && (
                     <div className={styles.chartInner} style={{ width: chart.w, height: chart.h, margin: readOnly ? '0 auto' : undefined }}>
                         <svg width={chart.w} height={chart.h} role="group" className={focusId ? styles.hasFocus : ''}
@@ -167,38 +346,41 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
                                 )}
                             </g>
 
-                            {/* Items, biggest first */}
-                            {chart.circles.map(({ item, cx, r, slice }) => (
-                                <g
-                                    key={item.id}
-                                    className={`${styles.item} ${focusId === item.id ? styles.itemActive : ''} ${drag?.id === item.id ? styles.itemDragging : ''}`}
-                                    tabIndex={0}
-                                    role="button"
-                                    aria-label={`${item.name}, ${fmtRange(item.start, item.end)}${slice ? `, same dates as ${slice.count - 1} other item${slice.count > 2 ? 's' : ''}` : ''}, ${item.state}, ${item.progress}% done`}
-                                    onClick={readOnly ? () => setActive(item.id) : (e) => onTap(e, item)}
-                                    onKeyDown={readOnly ? undefined : (e) => onKey(e, item)}
-                                    onMouseEnter={() => !drag && setActive(item.id)}
-                                    onMouseLeave={(e) => leave(e, item.id)}
-                                    onFocus={() => setActive(item.id)}
-                                    onBlur={() => setActive((a) => (a === item.id ? null : a))}
-                                    {...(readOnly ? {} : pressHandlers(item, 'move'))}
-                                >
-                                    {slice ? (
-                                        <path className={styles.body} d={wedge(cx, chart.cy, Math.max(r, 1), slice)} fill={`url(#${gradientId}-${item.id})`} stroke={item.colour}
-                                            strokeLinejoin="round" strokeDasharray={item.state === 'Cancelled' ? '6 5' : undefined} />
-                                    ) : (
-                                        <circle className={styles.body} cx={cx} cy={chart.cy} r={Math.max(r, 1)} fill={`url(#${gradientId}-${item.id})`} stroke={item.colour}
-                                            strokeDasharray={item.state === 'Cancelled' ? '6 5' : undefined} />
-                                    )}
-                                    {item.progress > 0 && item.state !== 'Cancelled' && (slice ? (
-                                        <path className={`${styles.ring} ${styles.ringSlice}`} d={arc(cx, chart.cy, Math.max(r, 1), slice)} stroke={item.colour} pathLength={100}
-                                            strokeDasharray={`${item.progress} 100`} />
-                                    ) : (
-                                        <circle className={styles.ring} cx={cx} cy={chart.cy} r={Math.max(r, 1)} stroke={item.colour} pathLength={100}
-                                            strokeDasharray={`${item.progress} 100`} />
-                                    ))}
-                                </g>
-                            ))}
+                            {/* Items, biggest first, cut off above the date axis */}
+                            <clipPath id={`${gradientId}-clip`}><rect x={0} y={0} width={chart.w} height={chart.axisY} /></clipPath>
+                            <g clipPath={`url(#${gradientId}-clip)`}>
+                                {chart.circles.map(({ item, cx, r, slice }) => (
+                                    <g
+                                        key={item.id}
+                                        className={`${styles.item} ${focusId === item.id ? styles.itemActive : ''} ${drag?.id === item.id ? styles.itemDragging : ''}`}
+                                        tabIndex={0}
+                                        role="button"
+                                        aria-label={`${item.name}, ${fmtRange(item.start, item.end)}${slice ? `, same dates as ${slice.count - 1} other item${slice.count > 2 ? 's' : ''}` : ''}, ${item.state}, ${item.progress}% done`}
+                                        onClick={readOnly ? () => setActive(item.id) : (e) => onTap(e, item)}
+                                        onKeyDown={readOnly ? undefined : (e) => onKey(e, item)}
+                                        onMouseEnter={() => !drag && setActive(item.id)}
+                                        onMouseLeave={(e) => leave(e, item.id)}
+                                        onFocus={() => setActive(item.id)}
+                                        onBlur={() => setActive((a) => (a === item.id ? null : a))}
+                                        {...(readOnly ? {} : pressHandlers(item, 'move'))}
+                                    >
+                                        {slice ? (
+                                            <path className={styles.body} d={wedge(cx, chart.cy, Math.max(r, 1), slice)} fill={`url(#${gradientId}-${item.id})`} stroke={item.colour}
+                                                strokeLinejoin="round" strokeDasharray={item.state === 'Cancelled' ? '6 5' : undefined} />
+                                        ) : (
+                                            <circle className={styles.body} cx={cx} cy={chart.cy} r={Math.max(r, 1)} fill={`url(#${gradientId}-${item.id})`} stroke={item.colour}
+                                                strokeDasharray={item.state === 'Cancelled' ? '6 5' : undefined} />
+                                        )}
+                                        {item.progress > 0 && item.state !== 'Cancelled' && (slice ? (
+                                            <path className={`${styles.ring} ${styles.ringSlice}`} d={arc(cx, chart.cy, Math.max(r, 1), slice)} stroke={item.colour} pathLength={100}
+                                                strokeDasharray={`${item.progress} 100`} />
+                                        ) : (
+                                            <circle className={styles.ring} cx={cx} cy={chart.cy} r={Math.max(r, 1)} stroke={item.colour} pathLength={100}
+                                                strokeDasharray={`${item.progress} 100`} />
+                                        ))}
+                                    </g>
+                                ))}
+                            </g>
 
                             {/* Labels on top of everything, but not in the way of clicks */}
                             <g aria-hidden="true" pointerEvents="none">
@@ -229,15 +411,101 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
                 )}
                 {project.items.length === 0 && <p className={styles.chartEmpty}>No items yet. Add one to draw its circle.</p>}
             </div>
+            {!readOnly && chart && width > 0 && project.items.length > 0 && (
+                <Navigator project={project} items={items} chart={chart} scrollRef={wrapRef} width={width} zoomTo={zoomTo} redrawRef={navRedraw} />
+            )}
             {!readOnly && <p className={styles.hint}>
                 {hiddenLabels > 0 && <>{hiddenLabels} label{hiddenLabels === 1 ? ' is' : 's are'} hidden to keep the chart readable. </>}
-                <span className={styles.pointerHint}>Drag a circle to move it, or its side handles to change the dates. </span>
-                <span className={styles.touchHint}>Tap a circle to edit it, then drag its side handles to change the dates.</span>
+                <span className={styles.pointerHint}>Drag a circle to move it, or its side handles to change the dates. Pinch or <kbd>Ctrl</kbd>+scroll to zoom, and drag the window in the strip underneath to move along the timeline (stretch its ends to zoom). </span>
+                <span className={styles.touchHint}>Tap a circle to edit it, then drag its side handles to change the dates. Pinch to zoom, and drag the window in the strip underneath to move along the timeline.</span>
                 <span className={styles.pointerHint}>
-                    Keyboard: <kbd>←</kbd><kbd>→</kbd> move, <kbd>Shift</kbd>+<kbd>←</kbd><kbd>→</kbd> end date, <kbd>Alt</kbd>+<kbd>←</kbd><kbd>→</kbd> start date.
+                    Keyboard: <kbd>←</kbd><kbd>→</kbd> move, <kbd>Shift</kbd>+<kbd>←</kbd><kbd>→</kbd> end date, <kbd>Alt</kbd>+<kbd>←</kbd><kbd>→</kbd> start date, <kbd>+</kbd><kbd>−</kbd> zoom, <kbd>0</kbd> fit.
                 </span>
             </p>}
         </div>
+    )
+}
+
+// An overview of the whole project under the chart, with a window over the dates in view: drag the
+// window to pan, drag its ends to zoom, press anywhere else on the strip to jump there, and
+// double-click to fit everything.
+function Navigator({ project, items, chart, scrollRef, width, zoomTo, redrawRef }) {
+    const days = daysBetween(project.start, project.end)
+    const k = (width - NAV_PAD * 2) / days // strip pixels per day
+    const [grab, setGrab] = useState(null) // { mode: 'move' | 'start' | 'end', x, from, to, left }
+    const [, redraw] = useReducer((n) => n + 1, 0)
+
+    // The window is worked out from the chart's scroll position on every draw; scrolling redraws it,
+    // and so does the chart when a zoom moves the view.
+    useEffect(() => {
+        const el = scrollRef.current
+        redrawRef.current = redraw
+        el.addEventListener('scroll', redraw, { passive: true })
+        return () => {
+            el.removeEventListener('scroll', redraw)
+            redrawRef.current = null
+        }
+    }, [scrollRef, redrawRef])
+
+    const el = scrollRef.current
+    if (!el) return null
+    const view = { // in days since the start
+        from: Math.max(0, (el.scrollLeft - PAD_X) / chart.pxPerDay),
+        to: Math.min(days, (el.scrollLeft + el.clientWidth - PAD_X) / chart.pxPerDay),
+    }
+    const x0 = NAV_PAD + view.from * k
+    const x1 = NAV_PAD + view.to * k
+    const base = chart.pxPerDay / chart.zoom // pixels per day when everything fits
+    const dayAt = (e) => (e.clientX - e.currentTarget.getBoundingClientRect().left - NAV_PAD) / k
+
+    const down = (e) => {
+        if (e.button !== 0) return
+        const x = e.clientX - e.currentTarget.getBoundingClientRect().left
+        let mode = Math.abs(x - x0) <= NAV_EDGE && x < (x0 + x1) / 2 ? 'start' : Math.abs(x - x1) <= NAV_EDGE ? 'end' : 'move'
+        if (mode === 'move' && (x < x0 || x > x1)) {
+            // Outside the window: centre it there, then carry on dragging it.
+            el.scrollLeft = PAD_X + (dayAt(e) - (view.to - view.from) / 2) * chart.pxPerDay
+        }
+        e.currentTarget.setPointerCapture(e.pointerId)
+        setGrab({ mode, x: e.clientX, from: view.from, to: view.to, left: el.scrollLeft })
+    }
+    const move = (e) => {
+        if (!grab) return
+        if (grab.mode === 'move') {
+            el.scrollLeft = grab.left + ((e.clientX - grab.x) / k) * chart.pxPerDay
+        } else if (grab.mode === 'end') {
+            const to = Math.min(days, Math.max(grab.from + NAV_MIN_DAYS, dayAt(e)))
+            zoomTo(el.clientWidth / ((to - grab.from) * base), 0) // the start stays put
+        } else {
+            const from = Math.max(0, Math.min(grab.to - NAV_MIN_DAYS, dayAt(e)))
+            zoomTo(el.clientWidth / ((grab.to - from) * base), el.clientWidth) // the end stays put
+        }
+    }
+
+    return (
+        <svg className={`${styles.navigator} ${grab ? styles.navigatorGrabbing : ''}`} width={width} height={NAV_H} aria-hidden="true"
+            onPointerDown={down} onPointerMove={move} onPointerUp={() => setGrab(null)} onPointerCancel={() => setGrab(null)}
+            onDoubleClick={() => zoomTo(1)}>
+            <rect x={0} y={0} width={width} height={NAV_H} rx={10} className={styles.navBack} />
+            {ticksFor(project, k, 64).map((t) => (
+                <g key={t.date}>
+                    <line x1={NAV_PAD + t.day * k} x2={NAV_PAD + t.day * k} y1={4} y2={NAV_H - 4} className={styles.grid} />
+                    <text x={NAV_PAD + t.day * k + 4} y={NAV_H - 6} className={styles.navTick}>{t.label}</text>
+                </g>
+            ))}
+            {[...items].sort((a, b) => daysBetween(b.start, b.end) - daysBetween(a.start, a.end)).map((item) => {
+                const rx = Math.max((daysBetween(item.start, item.end) * k) / 2, 1)
+                return (
+                    <ellipse key={item.id} cx={NAV_PAD + (daysBetween(project.start, item.start) * k) + rx} cy={NAV_BAND / 2 + 2} rx={rx}
+                        ry={Math.min(rx, NAV_BAND / 2 - 4)} fill={item.colour} fillOpacity={0.18} stroke={item.colour} strokeOpacity={0.8} />
+                )
+            })}
+            {/* Everything outside the window is faded */}
+            <rect x={0} y={0} width={Math.max(x0, 0)} height={NAV_H} className={styles.navShade} />
+            <rect x={x1} y={0} width={Math.max(width - x1, 0)} height={NAV_H} className={styles.navShade} />
+            <rect x={x0} y={1} width={Math.max(x1 - x0, 2)} height={NAV_H - 2} rx={8} className={styles.navWindow} />
+            {[x0, x1].map((x, i) => <rect key={i} x={x - 3} y={NAV_H / 2 - 9} width={6} height={18} rx={3} className={styles.navGrip} />)}
+        </svg>
     )
 }
 
@@ -271,7 +539,7 @@ function wedge(cx, cy, r, slice) {
 }
 
 // Puts each label above its circle, or below if that's taken, or hides it if both would collide.
-function placeLabels(circles, cy, width) {
+function placeLabels(circles, cy, width, axisY) {
     const boxes = []
     const collides = (b) => boxes.some((o) => b.x1 < o.x2 && b.x2 > o.x1 && b.y1 < o.y2 && b.y2 > o.y1)
     return circles.map(({ item, cx, r, slice }) => {
@@ -283,7 +551,8 @@ function placeLabels(circles, cy, width) {
         const mid = (a0 + a1) / 2
         const lean = slice && Math.abs(Math.cos(mid)) > 0.2 ? Math.sign(Math.cos(mid)) * (half + 4) : 0
         const x = Math.min(Math.max(cx + lean, half + 2), width - half - 2)
-        const above = cy - r - 8, below = cy + r + 18
+        // A circle cut off by the chart's edge gets its label just inside the edge.
+        const above = Math.max(cy - r - 8, 18), below = Math.min(cy + r + 18, axisY - 6)
         for (const y of slice && Math.sin(mid) > 0.5 ? [below, above] : [above, below]) {
             const box = { x1: x - half, x2: x + half, y1: y - 14, y2: y + 4 }
             if (!collides(box)) {

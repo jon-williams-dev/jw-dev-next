@@ -532,12 +532,69 @@
 
 .itemDragging { cursor: grabbing; }
 
-// No gliding while the pointer is doing the moving.
+// No gliding while the pointer is doing the moving, or while zooming.
 .dragging {
   cursor: grabbing;
   user-select: none;
+}
 
+.dragging,
+.zooming {
   .item circle { transition: stroke-width 0.15s; }
+}
+
+// Zoomed in: the background can be dragged to look around.
+.pannable:not(.dragging) { cursor: grab; }
+
+// The strip under the chart: the whole project, with a window over the part in view.
+.navigator {
+  display: block;
+  margin-top: 0.5rem;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.navigatorGrabbing { cursor: grabbing; }
+
+.navBack { fill: var(--grid); opacity: 0.6; }
+.navTick { fill: var(--muted); font-size: 10px; }
+.navShade { fill: var(--card); opacity: 0.6; }
+
+.navWindow {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+.navGrip {
+  fill: var(--accent);
+  cursor: ew-resize;
+}
+
+.zoomBar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
+
+  button {
+    min-height: 32px;
+    min-width: 36px;
+    padding: 0 0.6rem;
+    font-size: 0.9rem;
+
+    &:disabled { opacity: 0.4; cursor: default; }
+  }
+}
+
+.zoomLevel {
+  min-width: 3.4em;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
 }
 
 .handle {

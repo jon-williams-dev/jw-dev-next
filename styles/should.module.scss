@@ -152,3 +152,66 @@ $pink-gradient: linear-gradient(135deg, $indigo, $pink);
 @keyframes blink {
   50% { opacity: 0.3; }
 }
+
+// Language and kind of joke.
+.pickers {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.chips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 999px;
+  background: $surface;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  button {
+    border: 0;
+    border-radius: 999px;
+    padding: 8px 16px;
+    background: transparent;
+    color: $muted;
+    font-size: 15px;
+    font-weight: 800;
+
+    &[aria-pressed='true'] { background: $pink-gradient; color: $text; }
+  }
+}
+
+.chipsSmall {
+  background: transparent;
+  border: 0;
+
+  button {
+    font-size: 13px;
+    padding: 6px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+
+    &[aria-pressed='true'] { border-color: transparent; }
+  }
+}
+
+// Knock knock: the exchange at the door, a line each, the replies dimmed.
+.dialogue {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: clamp(22px, 5.5vw, 34px);
+
+  span:nth-child(even) { color: $muted; }
+}
+
+.footnote {
+  margin: 20px 0 0;
+  color: $muted;
+  font-size: 13px;
+  font-weight: 600;
+  font-style: italic;
+}

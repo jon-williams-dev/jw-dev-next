@@ -355,6 +355,48 @@
   overflow-wrap: anywhere;
 }
 
+// Saved links: short, clickable chips.
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin: 0.25rem 0 0;
+  padding: 0;
+  list-style: none;
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    max-width: 100%;
+    padding: 0.05rem 0.55rem;
+    border-radius: 999px;
+    background: var(--grid);
+    font-size: 0.78rem;
+    font-weight: 500;
+    white-space: nowrap;
+    text-decoration: none;
+
+    &:hover { text-decoration: underline; }
+  }
+}
+
+.linkFields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.linkField {
+  display: flex;
+  gap: 0.4rem;
+
+  input { flex: 1; min-width: 0; }
+  button { flex: none; width: 2.5rem; padding: 0 !important; font-size: 1.1rem; }
+}
+
+.addLink { align-self: flex-start; }
+
 .summaryFoot {
   display: flex;
   flex-wrap: wrap;

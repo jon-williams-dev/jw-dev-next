@@ -4,8 +4,8 @@ import { Inter } from 'next/font/google'
 import { Fragment, useEffect, useId, useRef, useState } from 'react'
 import {
     COLOURS, ITEM_STATES, PRIORITIES, PROJECT_STATUSES,
-    blankItem, blankProject, busiest, daysBetween, fmtDuration, fmtRange, fmtShort, isDate,
-    lateDependencies, parseTags, projectProgress, sampleProject, sequenced, toMs, validateItem, validateProject, widenedFor, withProgress, withState,
+    blankItem, blankProject, busiest, daysBetween, fmtDuration, fmtRange, fmtShort, fullUrl, isDate,
+    lateDependencies, parseTags, projectProgress, sampleProject, sequenced, shortUrl, toMs, validateItem, validateProject, widenedFor, withProgress, withState,
 } from '../lib/overlap'
 import OverlapChart from '../components/overlap_chart'
 import { useOverlapStore } from '../components/overlap_store'
@@ -326,6 +326,7 @@ function ProjectSummary({ project, onEdit, onDelete }) {
                 {project.tags.length > 0 && <Tags tags={project.tags} />}
             </div>
             {project.notes && <p className={styles.notes}><Linkify text={project.notes} /></p>}
+            <Links urls={project.links} />
         </section>
     )
 }
@@ -345,11 +346,30 @@ function Tags({ tags }) {
     return <ul className={styles.tags}>{tags.map((t) => <li key={t}>{t}</li>)}</ul>
 }
 
-// Notes with any http(s) links made clickable.
+// Notes with any http(s) links made clickable (and shortened).
 function Linkify({ text }) {
     return text.split(/(https?:\/\/[^\s]+)/g).map((part, i) => (i % 2
-        ? <a key={i} href={part} target="_blank" rel="noopener noreferrer">{part}</a>
+        ? <a key={i} href={part} target="_blank" rel="noopener noreferrer" title={part}>{shortUrl(part)}</a>
         : <Fragment key={i}>{part}</Fragment>))
+}
+
+// The saved links, shortened; the full address shows on hover.
+function Links({ urls }) {
+    if (!urls?.length) return null
+    return (
+        <ul className={styles.links}>
+            {urls.map((url, i) => (
+                <li key={i}>
+                    <a href={url} target="_blank" rel="noopener noreferrer" title={url} onClick={(e) => e.stopPropagation()}>
+                        <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true">
+                            <path d="M6.5 9.5l3-3M7 4.5l1-1a2.8 2.8 0 014 4l-1 1M9 11.5l-1 1a2.8 2.8 0 01-4-4l1-1" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                        </svg>
+                        {shortUrl(url)}
+                    </a>
+                </li>
+            ))}
+        </ul>
+    )
 }
 
 // ── item list ────────────────────────────────────────────────────────────────
@@ -455,6 +475,7 @@ function ItemList({ project, active, setActive, onOpen, onDelete, onReorder }) {
                                     <span className={styles.swatch} style={{ background: item.colour }} aria-hidden="true" />
                                     {item.name}
                                 </button>
+                                <Links urls={item.links} />
                             </td>
                             <td className={styles.nowrap}>
                                 {fmtRange(item.start, item.end)}
@@ -500,8 +521,8 @@ function Modal({ title, onClose, children }) {
 }
 
 // The form's copy of a project or item: tags as text, the rest as stored.
-const toDraft = (v) => ({ ...v, tagsText: v.tags.join(', ') })
-const fromDraft = ({ tagsText, ...v }) => ({ ...v, name: v.name.trim(), tags: parseTags(tagsText), progress: Number(v.progress) })
+const toDraft = (v) => ({ ...v, tagsText: v.tags.join(', '), links: v.links || [] })
+const fromDraft = ({ tagsText, ...v }) => ({ ...v, name: v.name.trim(), tags: parseTags(tagsText), progress: Number(v.progress), links: v.links.map(fullUrl).filter(Boolean) })
 
 function useDraft(initial) {
     const [draft, setDraft] = useState(() => toDraft(initial))
@@ -523,10 +544,10 @@ function Field({ label, error, children, wide, hint }) {
     )
 }
 
-// Name, dates, owner, progress, priority, tags, description and notes: shared by both editors.
+// Name, dates, owner, progress, priority, tags, description, notes and links: shared by both editors.
 // A project's progress comes from its items, so it gets `progressNote` instead of a slider;
 // an item passes `onProgress` to keep its state in step.
-function CommonFields({ draft, set, errors, progressNote, onProgress }) {
+function CommonFields({ draft, set, setDraft, errors, progressNote, onProgress }) {
     return (
         <>
             <Field label="Name *" error={errors.name} wide>{(a) => <input {...a} value={draft.name} onChange={set('name')} autoFocus />}</Field>
@@ -546,13 +567,40 @@ function CommonFields({ draft, set, errors, progressNote, onProgress }) {
             )}
             <Field label="Tags" hint="Separate with commas">{(a) => <input {...a} value={draft.tagsText} onChange={set('tagsText')} />}</Field>
             <Field label="Description" wide>{(a) => <textarea {...a} rows={2} value={draft.description} onChange={set('description')} />}</Field>
-            <Field label="Notes or links" wide>{(a) => <textarea {...a} rows={2} value={draft.notes} onChange={set('notes')} />}</Field>
+            <Field label="Notes" wide>{(a) => <textarea {...a} rows={2} value={draft.notes} onChange={set('notes')} />}</Field>
+            <LinkFields links={draft.links} error={errors.links} onChange={(links) => setDraft((d) => ({ ...d, links }))} />
         </>
     )
 }
 
+// As many links as you like, one box each.
+function LinkFields({ links, error, onChange }) {
+    const list = useRef(null)
+    const add = () => {
+        onChange([...links, ''])
+        requestAnimationFrame(() => [...list.current.querySelectorAll('input')].pop()?.focus())
+    }
+    return (
+        <fieldset className={`${styles.field} ${styles.wide}`} aria-describedby={error ? 'links-error' : undefined}>
+            <legend>Links</legend>
+            <div className={styles.linkFields} ref={list}>
+                {links.map((url, i) => (
+                    <div key={i} className={styles.linkField}>
+                        <input type="url" inputMode="url" placeholder="https://…" aria-label={`Link ${i + 1}`} value={url}
+                            onChange={(e) => onChange(links.map((u, j) => (j === i ? e.target.value : u)))}
+                            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); add() } }} />
+                        <button type="button" aria-label={`Remove link ${i + 1}`} onClick={() => onChange(links.filter((_, j) => j !== i))}>×</button>
+                    </div>
+                ))}
+                <button type="button" className={styles.addLink} onClick={add}>+ Add link</button>
+            </div>
+            {error && <p className={styles.error} id="links-error">{error}</p>}
+        </fieldset>
+    )
+}
+
 function ProjectEditor({ project, isNew, onSave, onDelete, onClose }) {
-    const { draft, errors, setErrors, set } = useDraft(project)
+    const { draft, setDraft, errors, setErrors, set } = useDraft(project)
     const submit = (e) => {
         e.preventDefault()
         const next = fromDraft(draft)
@@ -565,7 +613,7 @@ function ProjectEditor({ project, isNew, onSave, onDelete, onClose }) {
             <form onSubmit={submit} noValidate>
                 {errors.dates && <p className={styles.alert} role="alert">{errors.dates}</p>}
                 <div className={styles.form}>
-                    <CommonFields draft={draft} set={set} errors={errors}
+                    <CommonFields draft={draft} set={set} setDraft={setDraft} errors={errors}
                         progressNote={isNew ? 'Worked out from the items as you add them' : `${projectProgress(project)}%, worked out from the items`} />
                     <Field label="Status">{(a) => <select {...a} value={draft.status} onChange={set('status')}>{PROJECT_STATUSES.map((s) => <option key={s}>{s}</option>)}</select>}</Field>
                 </div>
@@ -606,7 +654,7 @@ function ItemEditor({ item, project, isNew, onSave, onDelete, onClose }) {
                         : <>The project runs {fmtRange(project.start, project.end)}. Dates outside it widen the project.</>}
                 </p>
                 <div className={styles.form}>
-                    <CommonFields draft={draft} set={set} errors={errors}
+                    <CommonFields draft={draft} set={set} setDraft={setDraft} errors={errors}
                         onProgress={(e) => setDraft((d) => withProgress(d, Number(e.target.value)))} />
                     <Field label="State">{(a) => <select {...a} value={draft.state} onChange={(e) => setDraft((d) => withState(d, e.target.value))}>{ITEM_STATES.map((s) => <option key={s}>{s}</option>)}</select>}</Field>
 

@@ -2,7 +2,7 @@
 // edge = end. Used by /jw-overlap (editable) and the hallway screen's /stauperle13/overlap.
 
 import { Fragment, useEffect, useId, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react'
-import { addDays, circleFor, contains, daysBetween, fmtDate, fmtDuration, fmtRange, fmtShort, nudged, sharedDays, ticksFor, toMs } from '../lib/overlap'
+import { addDays, circleFor, contains, daysBetween, fmtDate, fmtDuration, fmtRange, fmtShort, nudged, sharedDays, shortUrl, ticksFor, toMs } from '../lib/overlap'
 import styles from '../styles/overlap.module.scss'
 
 const todayLocal = () => new Date().toLocaleDateString('sv-SE') // YYYY-MM-DD
@@ -625,6 +625,7 @@ function Tooltip({ circle: { item, cx, r }, cy, width, height, project, items, d
                     {twins.length > 0 && <span className={styles.tooltipList}>Same dates as <Names items={twins} /></span>}
                     {overlaps.length > 0 && <span className={styles.tooltipList}>Overlaps <Names items={overlaps} note={overlapNote} /></span>}
                     {deps.length > 0 && <span className={styles.tooltipList}>After {deps.map((d) => d.name).join(', ')}</span>}
+                    {item.links?.length > 0 && <span className={styles.tooltipList}>Links: {item.links.map((url) => shortUrl(url)).join(', ')}</span>}
                 </>
             )}
         </div>

@@ -88,7 +88,7 @@ export default function OverlapPage() {
         const exists = project.items.some((i) => i.id === item.id)
         const widened = widenedFor(project, item)
         const grew = widened.start !== project.start || widened.end !== project.end
-        commit(withProject({ ...widened, items: exists ? project.items.map((i) => (i.id === item.id ? item : i)) : [...project.items, item] }),
+        commit(withProject({ ...widened, items: withItem(project, item) }),
             (message || `${exists ? 'Saved' : 'Added'} “${item.name}”`) + (grew ? `: the project now runs ${fmtRange(widened.start, widened.end)}` : ''))
         setEditingItem(null)
     }
@@ -374,6 +374,18 @@ function Links({ urls }) {
 
 // ── item list ────────────────────────────────────────────────────────────────
 
+// The items with `item` added or saved. In a dragged (manual) order, an item whose dates changed
+// goes to its place by date among the others, so the table never contradicts the dates; the rest
+// keep their order.
+function withItem(project, item) {
+    const old = project.items.find((i) => i.id === item.id)
+    if (old && (!project.manualOrder || (old.start === item.start && old.end === item.end))) return project.items.map((i) => (i.id === item.id ? item : i))
+    const others = project.items.filter((i) => i.id !== item.id)
+    if (!project.manualOrder) return [...others, item]
+    const at = others.findIndex((o) => byDate([o, item])[0] === item)
+    return at < 0 ? [...others, item] : [...others.slice(0, at), item, ...others.slice(at)]
+}
+
 // The priority with signal bars, one more lit for each level up.
 function PriorityTag({ value }) {
     const level = PRIORITIES.indexOf(value) + 1
@@ -504,6 +516,8 @@ function Modal({ title, onClose, children }) {
     useEffect(() => {
         const dialog = ref.current
         dialog.showModal()
+        // showModal focuses the first button (the ×), undoing the form's autoFocus: put it back.
+        dialog.querySelector('form input, form textarea, form select')?.focus()
         return () => dialog.close()
     }, [])
     return (

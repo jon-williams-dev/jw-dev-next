@@ -846,6 +846,7 @@
 }
 
 .itemName {
+  justify-content: flex-start !important;
   gap: 0.5rem;
   min-width: 11rem;
   min-height: 32px !important;

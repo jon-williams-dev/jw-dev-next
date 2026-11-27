@@ -24,6 +24,7 @@ export default function OverlapPage() {
     const [editingProject, setEditingProject] = useState(null) // a draft project, new or existing
     const [editingItem, setEditingItem] = useState(null) // a draft item
     const [active, setActive] = useState(null) // item highlighted in both the chart and the list
+    const [filter, setFilter] = useState(NO_FILTER) // which items the chart and the list show
     const [toast, setToast] = useState(null) // { message, at }
     const history = useRef([]) // earlier states, for undo
 
@@ -31,6 +32,9 @@ export default function OverlapPage() {
     useEffect(() => { if (sync.message) setToast({ message: sync.message, at: Date.now() }) }, [sync.message])
 
     const project = state?.projects.find((p) => p.id === state.currentId) || state?.projects[0] || null
+    useEffect(() => setFilter(NO_FILTER), [project?.id])
+    const filtering = isFiltering(filter)
+    const shown = project && filtering ? { ...project, items: project.items.filter((i) => matches(i, filter)) } : project
 
     // Every change goes through here, so it can be undone.
     const commit = (next, message) => {
@@ -171,17 +175,19 @@ export default function OverlapPage() {
                                 <h2 id="chart-title">Timeline</h2>
                                 <button type="button" className={styles.primary} onClick={() => setEditingItem(blankItem(project))}>+ Add item</button>
                             </div>
-                            <OverlapChart project={project} active={active} setActive={setActive} onOpen={setEditingItem} onChange={moveItem} />
+                            <FilterBar project={project} filter={filter} setFilter={setFilter} count={shown.items.length} />
+                            <OverlapChart project={shown} active={active} setActive={setActive} onOpen={setEditingItem} onChange={moveItem} />
                         </section>
 
                         <section className={styles.card} aria-labelledby="items-title">
                             <div className={styles.cardHead}>
-                                <h2 id="items-title">Items <span className={styles.count}>{project.items.length}</span></h2>
+                                <h2 id="items-title">Items <span className={styles.count}>{filtering ? `${shown.items.length} of ${project.items.length}` : project.items.length}</span></h2>
                                 {project.manualOrder && <button type="button" onClick={sortByDate}>Sort by date</button>}
                             </div>
-                            <ItemList project={project} active={active} setActive={setActive} onOpen={setEditingItem}
+                            {/* Reordering needs every row in view, so it's off while filtering. */}
+                            <ItemList project={shown} active={active} setActive={setActive} onOpen={setEditingItem}
                                 onDelete={(item) => window.confirm(`Delete “${item.name}”?`) && deleteItem(item)}
-                                onReorder={reorderItems} />
+                                onReorder={filtering ? null : reorderItems} />
                         </section>
                     </>
                 )}
@@ -372,6 +378,47 @@ function Links({ urls }) {
     )
 }
 
+// ── filters ──────────────────────────────────────────────────────────────────
+
+// Within a group any chosen value will do (Elena or Jonny); across groups all must match.
+const NO_FILTER = { hideDone: false, owners: [], priorities: [], tags: [] }
+// "Elena, Jonny" (or "Elena & Jonny") is two owners.
+const ownersOf = (item) => item.owner.split(/[,&]/).map((o) => o.trim()).filter(Boolean)
+const isFiltering = (f) => f.hideDone || f.owners.length > 0 || f.priorities.length > 0 || f.tags.length > 0
+const matches = (item, f) => !(f.hideDone && item.state === 'Done')
+    && (!f.owners.length || ownersOf(item).some((o) => f.owners.includes(o)))
+    && (!f.priorities.length || f.priorities.includes(item.priority))
+    && (!f.tags.length || item.tags.some((t) => f.tags.includes(t)))
+
+// Chips to narrow down a busy project: only the choices its items actually have.
+function FilterBar({ project, filter, setFilter, count }) {
+    if (project.items.length < 2) return null
+    const distinct = (values) => [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b))
+    const groups = [
+        ['owners', 'Owner', distinct(project.items.flatMap(ownersOf))],
+        ['priorities', 'Priority', [...PRIORITIES].reverse().filter((p) => project.items.some((i) => i.priority === p))],
+        ['tags', 'Tag', distinct(project.items.flatMap((i) => i.tags))],
+    ].filter(([, , values]) => values.length > 1)
+    const toggle = (key, value) => setFilter((f) => ({ ...f, [key]: f[key].includes(value) ? f[key].filter((v) => v !== value) : [...f[key], value] }))
+    return (
+        <div className={styles.filters} role="group" aria-label="Show only">
+            <button type="button" aria-pressed={filter.hideDone} onClick={() => setFilter((f) => ({ ...f, hideDone: !f.hideDone }))}>Hide done</button>
+            {groups.map(([key, label, values]) => (
+                <span key={key} className={styles.filterGroup} role="group" aria-label={label}>
+                    <span className={styles.filterLabel}>{label}</span>
+                    {values.map((v) => <button key={v} type="button" aria-pressed={filter[key].includes(v)} onClick={() => toggle(key, v)}>{v}</button>)}
+                </span>
+            ))}
+            {isFiltering(filter) && (
+                <span className={styles.filterCount}>
+                    Showing {count} of {project.items.length}
+                    <button type="button" className={styles.link} onClick={() => setFilter(NO_FILTER)}>Clear</button>
+                </span>
+            )}
+        </div>
+    )
+}
+
 // ── item list ────────────────────────────────────────────────────────────────
 
 // The items with `item` added or saved. In a dragged (manual) order, an item whose dates changed
@@ -473,13 +520,13 @@ function ItemList({ project, active, setActive, onOpen, onDelete, onReorder }) {
                             style={{ '--item': item.colour, ...(drag?.id === item.id ? { transform: `translateY(${drag.dy}px)` } : {}) }}
                             onMouseEnter={() => setActive(item.id)} onMouseLeave={() => setActive((a) => (a === item.id ? null : a))}>
                             <td className={styles.gripCell}>
-                                <button type="button" className={styles.grip} aria-label={`Move ${item.name}: up and down arrows change its place in the order`}
+                                {onReorder && <button type="button" className={styles.grip} aria-label={`Move ${item.name}: up and down arrows change its place in the order`}
                                     onPointerDown={(e) => gripDown(e, item)} onPointerMove={gripMove} onPointerUp={() => gripUp(item)} onPointerCancel={() => setDrag(null)}
                                     onKeyDown={(e) => gripKey(e, item)}>
                                     <svg viewBox="0 0 10 16" width="10" height="16" aria-hidden="true">
                                         {[3, 8, 13].map((y) => <Fragment key={y}><circle cx="2.5" cy={y} r="1.4" /><circle cx="7.5" cy={y} r="1.4" /></Fragment>)}
                                     </svg>
-                                </button>
+                                </button>}
                             </td>
                             <td>
                                 <button type="button" className={styles.itemName} onClick={() => onOpen(item)}

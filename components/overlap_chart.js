@@ -7,6 +7,13 @@ import styles from '../styles/overlap.module.scss'
 
 const todayLocal = () => new Date().toLocaleDateString('sv-SE') // YYYY-MM-DD
 
+// The items going on today, or failing that, in the next couple of weeks.
+function runningAround(items, today) {
+    const t = toMs(today), soon = toMs(addDays(today, TODAY_DAYS))
+    const on = items.filter((i) => toMs(i.start) <= t && toMs(i.end) >= t)
+    return on.length ? on : items.filter((i) => toMs(i.start) <= soon && toMs(i.end) >= t)
+}
+
 // Whether today falls inside the project.
 function isRunning(project) {
     const today = toMs(todayLocal())
@@ -25,7 +32,10 @@ const TOOLTIP_NAMES = 4 // overlapping items named in the tooltip before "and N 
 const MAX_PX_PER_DAY = 160 // zooming in stops here
 const TYPICAL_D = 64 // a project opens zoomed so its typical item is about this wide
 const START_AT = 1 / 3 // ...with today (or the start) this far across the view
-const TODAY_DAYS = 14 // ...and, when today is in the project, zoomed in to about this many days around it
+const TODAY_DAYS = 14 // ...and, when today is in the project, zoomed in to about this many days around it,
+const NOW_SHARE = 0.75 // ...unless that would turn more than a quarter of today's items into ovals
+const FADE_R = 90 // items bigger than this (radius, px) fade towards an outline, so the small ones stay readable
+const MIN_FILL = 0.08
 const MAX_HEIGHT_SHARE = 0.7 // the chart is never taller than this much of the window
 const MIN_MAX_HEIGHT = 320
 const ZOOM_STEP = 1.5 // each press of + or −
@@ -89,10 +99,16 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
         const maxZoom = Math.max(1, MAX_PX_PER_DAY / pxPerDay)
         const z = Math.min(zoom, maxZoom)
         // The zoom a project opens at: enough for a typical (median-length) item to be readable, and
-        // in close on the days around today while the project is running.
+        // in close on the days around today while the project is running, but not so close that most
+        // of the items going on now are too big to be circles.
         const spans = project.items.map((i) => daysBetween(i.start, i.end)).sort((a, b) => a - b)
         const typical = spans[Math.floor(spans.length / 2)] || 1
-        const forToday = isRunning(project) ? Math.max(width - PAD_X * 2, 1) / (TODAY_DAYS * pxPerDay) : 1
+        let forToday = isRunning(project) ? Math.max(width - PAD_X * 2, 1) / (TODAY_DAYS * pxPerDay) : 1
+        if (forToday > 1 && windowH && !fitHeight) {
+            const room = Math.max(MIN_MAX_HEIGHT, Math.round(windowH * MAX_HEIGHT_SHARE)) - AXIS_H - (LABEL_H + 4) * 2
+            const now = runningAround(project.items, todayLocal()).map((i) => daysBetween(i.start, i.end)).sort((a, b) => a - b)
+            if (now.length) forToday = Math.max(Math.min(forToday, room / (now[Math.min(Math.floor(now.length * NOW_SHARE), now.length - 1)] * pxPerDay)), 1)
+        }
         const autoZoom = Math.min(Math.max(TYPICAL_D / (typical * pxPerDay), forToday, 1), maxZoom)
         // The height suits that view and stays put while zooming and dragging (zoomed further in, the
         // bigger circles are cut off at the top and bottom, their ends still on the centre line). It's
@@ -399,7 +415,7 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
                                         onBlur={() => setActive((a) => (a === item.id ? null : a))}
                                         {...(readOnly ? {} : pressHandlers(item, 'move'))}
                                     >
-                                        <g style={ry < r ? { transform: `translateY(${chart.cy}px) scaleY(${ry / r}) translateY(${-chart.cy}px)` } : undefined}>
+                                        <g style={{ '--fill': Math.min(Math.max(FADE_R / Math.max(ry, 1), MIN_FILL), 1), ...(ry < r ? { transform: `translateY(${chart.cy}px) scaleY(${ry / r}) translateY(${-chart.cy}px)` } : {}) }}>
                                             {slice ? (
                                                 <path className={styles.body} d={wedge(cx, chart.cy, Math.max(r, 1), slice)} fill={`url(#${gradientId}-${item.id})`} stroke={item.colour} vectorEffect="non-scaling-stroke"
                                                     strokeLinejoin="round" strokeDasharray={item.state === 'Cancelled' ? '6 5' : undefined} />

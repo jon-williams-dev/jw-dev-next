@@ -107,6 +107,9 @@
   --grid: #1c2734;
   min-height: 0;
   background: transparent;
+
+  // A tapped link would open a tab the hallway screen can't get back from: show them, don't follow them.
+  a { pointer-events: none; text-decoration: none; }
 }
 
 .primary {
@@ -539,9 +542,8 @@
   rect { fill: var(--line); }
   .prioOn { fill: currentColor; }
 
-  &[data-level='Low'] { color: var(--muted); }
-  &[data-level='High'] { color: #e67700; font-weight: 600; }
-  &[data-level='Critical'] { color: var(--danger); font-weight: 700; }
+  &[data-level='High'] { font-weight: 600; }
+  &[data-level='Critical'] { font-weight: 700; }
 }
 
 // ── chart ────────────────────────────────────────────────────────────────────
@@ -673,6 +675,7 @@
 
 .zoomBar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
   gap: 0.35rem;
@@ -1057,54 +1060,6 @@
   background: color-mix(in srgb, var(--danger) 10%, var(--card));
   color: var(--text);
   font-size: 0.9rem;
-}
-
-.colours {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.colourOption {
-  position: relative;
-  cursor: pointer;
-
-  input {
-    position: absolute;
-    opacity: 0;
-    inset: 0;
-  }
-
-  span:first-of-type {
-    display: block;
-    width: 32px;
-    height: 32px;
-    border: 3px solid var(--card);
-    border-radius: 50%;
-    box-shadow: 0 0 0 1px var(--line);
-  }
-
-  input:checked + span { box-shadow: 0 0 0 2px var(--text); }
-  input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: 2px; }
-}
-
-.customColour {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  color: var(--muted) !important;
-  font-weight: 500 !important;
-  cursor: pointer;
-
-  input {
-    width: 40px;
-    height: 32px;
-    padding: 0;
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    background: none;
-  }
 }
 
 .deps {

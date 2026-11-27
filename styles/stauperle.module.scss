@@ -185,20 +185,22 @@ $vacuum: #b18cff;
   }
 }
 
-.projectFacts {
-  margin-bottom: 0.25rem;
-  color: $muted;
-  font-size: clamp(0.95rem, 2.8vh, 1.15rem);
-}
-
-.overlapStage {
+.overlapScroll {
   flex: 1;
   min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: $surface-active transparent;
+}
+
+// The /jw-overlap summary, chart and table, stacked.
+.overlapPage {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-
-  > div { min-width: 0; }
+  gap: 1rem;
+  padding-bottom: 1rem;
 }
 
 .overlapPlaceholder svg {

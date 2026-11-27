@@ -1,12 +1,14 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import KioskLayout from '../../components/kiosk_layout'
 import OverlapChart from '../../components/overlap_chart'
+import { FilterBar, ItemList, NO_FILTER, ProjectSummary, isFiltering, matches } from '../../components/overlap_views'
 import { OverlapIcon } from '../../components/kiosk_icons'
-import { fmtRange, projectProgress } from '../../lib/overlap'
+import { coloured } from '../../lib/overlap'
 import overlapStyles from '../../styles/overlap.module.scss'
 import styles from '../../styles/stauperle.module.scss'
 
 const REFRESH_MS = 5 * 60 * 1000
+const CHART_SHARE = 0.62 // of the screen's height, so the start of the table peeks out below
 
 // The saved /jw-overlap projects (pages/api/overlap.js), refreshed every few minutes.
 function useProjects() {
@@ -30,7 +32,7 @@ function useProjects() {
     return state
 }
 
-// The height the chart has to fill, so the biggest circle fits without scrolling.
+// The height of the scrolling area, which sizes the chart.
 function useHeight() {
     const ref = useRef(null)
     const [height, setHeight] = useState(0)
@@ -42,43 +44,54 @@ function useHeight() {
     return [ref, height]
 }
 
-// Hallway screen: the JW Overlap Chart timelines, to look at (editing stays on /jw-overlap).
+// Hallway screen: everything /jw-overlap shows (summary, chart, filters, items), to look at and
+// scroll through; editing stays on /jw-overlap.
 export default function Overlap() {
     const { data, error } = useProjects()
     const [chosen, setChosen] = useState(null)
     const [active, setActive] = useState(null)
-    const [stageRef, height] = useHeight()
+    const [filter, setFilter] = useState(NO_FILTER)
+    const [scrollRef, height] = useHeight()
 
     const projects = data?.projects || []
-    const project = projects.find((p) => p.id === chosen) || projects.find((p) => p.id === data?.currentId) || projects[0]
+    const current = projects.find((p) => p.id === chosen) || projects.find((p) => p.id === data?.currentId) || projects[0]
+    const project = useMemo(() => coloured(current), [current])
+    const filtering = isFiltering(filter)
+    const shown = project && filtering ? { ...project, items: project.items.filter((i) => matches(i, filter)) } : project
 
     const choose = (id) => {
         setChosen(id)
         setActive(null)
+        setFilter(NO_FILTER)
     }
 
     return (
         <KioskLayout title="Projects">
-            {projects.length > 1 && (
-                <nav className={styles.projectSwitch} aria-label="Projects">
-                    {projects.map((p) => (
-                        <button key={p.id} type="button" aria-pressed={p.id === project.id} onClick={() => choose(p.id)}>{p.name}</button>
-                    ))}
-                </nav>
-            )}
-            {project && (
-                <p className={styles.projectFacts}>
-                    {fmtRange(project.start, project.end)} · {project.items.length} item{project.items.length === 1 ? '' : 's'} · {projectProgress(project)}% done
-                </p>
-            )}
-            {/* A tap away from the circles closes the details. */}
-            <div className={styles.overlapStage} ref={stageRef} onClick={(e) => !e.target.closest('[role=button]') && setActive(null)}>
+            {/* A tap away from the circles and rows closes the details. */}
+            <div className={styles.overlapScroll} ref={scrollRef} onClick={(e) => !e.target.closest('[role=button], tr, button') && setActive(null)}>
+                {projects.length > 1 && (
+                    <nav className={styles.projectSwitch} aria-label="Projects">
+                        {projects.map((p) => (
+                            <button key={p.id} type="button" aria-pressed={p.id === project.id} onClick={() => choose(p.id)}>{p.name}</button>
+                        ))}
+                    </nav>
+                )}
                 {project ? (
-                    height > 0 && (
-                        <div className={`${overlapStyles.app} ${overlapStyles.onKiosk}`}>
-                            <OverlapChart key={project.id} project={project} active={active} setActive={setActive} readOnly fitHeight={height} />
-                        </div>
-                    )
+                    <div className={`${overlapStyles.app} ${overlapStyles.onKiosk} ${styles.overlapPage}`}>
+                        <ProjectSummary project={project} />
+                        <section className={overlapStyles.card} aria-label="Timeline">
+                            <FilterBar project={project} filter={filter} setFilter={setFilter} count={shown.items.length} />
+                            {height > 0 && (
+                                <OverlapChart key={project.id} project={shown} active={active} setActive={setActive} readOnly fitHeight={Math.round(height * CHART_SHARE)} />
+                            )}
+                        </section>
+                        <section className={overlapStyles.card} aria-labelledby="items-title">
+                            <div className={overlapStyles.cardHead}>
+                                <h2 id="items-title">Items <span className={overlapStyles.count}>{filtering ? `${shown.items.length} of ${project.items.length}` : project.items.length}</span></h2>
+                            </div>
+                            <ItemList project={shown} active={active} setActive={setActive} />
+                        </section>
+                    </div>
                 ) : (
                     <section className={`${styles.placeholder} ${styles.overlapPlaceholder}`}>
                         <OverlapIcon />

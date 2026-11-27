@@ -14,6 +14,12 @@ function runningAround(items, today) {
     return on.length ? on : items.filter((i) => toMs(i.start) <= soon && toMs(i.end) >= t)
 }
 
+// The first of the month after `date`'s.
+function addMonth(date) {
+    const [y, m] = date.split('-').map(Number)
+    return m === 12 ? `${y + 1}-01-01` : `${y}-${String(m + 1).padStart(2, '0')}-01`
+}
+
 // Whether today falls inside the project.
 function isRunning(project) {
     const today = toMs(todayLocal())
@@ -36,6 +42,7 @@ const TODAY_DAYS = 14 // ...and, when today is in the project, zoomed in to abou
 const NOW_SHARE = 0.75 // ...unless that would turn more than a quarter of today's items into ovals
 const FADE_R = 90 // items bigger than this (radius, px) fade towards an outline, so the small ones stay readable
 const MIN_FILL = 0.08
+const RANGE_MARGIN = 16 // px either side of a week or month shown with its button
 const MAX_HEIGHT_SHARE = 0.7 // the chart is never taller than this much of the window
 const MIN_MAX_HEIGHT = 320
 const ZOOM_STEP = 1.5 // each press of + or −
@@ -178,6 +185,42 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
     }
     const zoomRef = useRef(zoomTo)
     zoomRef.current = zoomTo
+
+    // Today, this week (Monday to Sunday) or this month, as day offsets from the project start; null
+    // when it's outside the project.
+    const rangeFor = (which) => {
+        const today = todayLocal()
+        const weekday = (new Date(toMs(today)).getUTCDay() + 6) % 7 // Monday = 0
+        const [from, to] = which === 'week' ? [addDays(today, -weekday), addDays(today, 7 - weekday)]
+            : which === 'month' ? [`${today.slice(0, 8)}01`, addMonth(today)] : [today, addDays(today, 1)]
+        const total = daysBetween(project.start, project.end)
+        const a = Math.max(daysBetween(project.start, from), 0), b = Math.min(daysBetween(project.start, to), total)
+        return b > a ? [a, b] : null
+    }
+
+    // Today keeps the zoom and glides back to today; week and month zoom to fit them.
+    const showRange = (which) => {
+        const el = wrapRef.current
+        const range = rangeFor(which)
+        if (!chart || !el || !range) return
+        const [a, b] = range
+        if (which === 'today') {
+            el.scrollTo({ left: PAD_X + a * chart.pxPerDay - el.clientWidth * START_AT, behavior: 'smooth' })
+            return
+        }
+        const base = chart.pxPerDay / chart.zoom
+        const z = Math.min(Math.max((el.clientWidth - RANGE_MARGIN * 2) / ((b - a) * base), 1), chart.maxZoom)
+        const mid = { day: (a + b) / 2, vx: el.clientWidth / 2 }
+        if (Math.abs(z - chart.zoom) < 0.001) {
+            el.scrollTo({ left: PAD_X + mid.day * chart.pxPerDay - mid.vx, behavior: 'smooth' })
+            return
+        }
+        anchor.current = mid
+        setZoom(z)
+        setZooming(true)
+        clearTimeout(zoomTimer.current)
+        zoomTimer.current = setTimeout(() => setZooming(false), 250)
+    }
 
     useLayoutEffect(() => {
         const el = wrapRef.current
@@ -351,6 +394,10 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
                     <button type="button" onClick={() => zoomTo(chart.zoom / ZOOM_STEP)} disabled={chart.zoom <= 1} aria-label="Zoom out">−</button>
                     <span className={styles.zoomLevel} aria-live="polite">{Math.round(chart.zoom * 100)}%</span>
                     <button type="button" onClick={() => zoomTo(chart.zoom * ZOOM_STEP)} disabled={chart.zoom >= chart.maxZoom - 0.001} aria-label="Zoom in">+</button>
+                    {[['today', 'Today'], ['week', 'Week'], ['month', 'Month']].map(([which, label]) => (
+                        <button key={which} type="button" onClick={() => showRange(which)} disabled={!rangeFor(which)}
+                            title={rangeFor(which) ? undefined : `${label} is outside this project`}>{label}</button>
+                    ))}
                     <button type="button" onClick={() => zoomTo(1)} disabled={chart.zoom <= 1}>Fit</button>
                 </div>
             )}

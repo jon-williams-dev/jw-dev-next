@@ -8,7 +8,7 @@ import overlapStyles from '../../styles/overlap.module.scss'
 import styles from '../../styles/stauperle.module.scss'
 
 const REFRESH_MS = 5 * 60 * 1000
-const CHART_SHARE = 0.62 // of the screen's height, so the start of the table peeks out below
+const CHART_SHARE = 0.85 // of the scrolling area's height, so the top of the table peeks out below
 
 // The saved /jw-overlap projects (pages/api/overlap.js), refreshed every few minutes.
 function useProjects() {

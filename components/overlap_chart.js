@@ -54,7 +54,7 @@ const NAV_EDGE = 12 // grab zone at each end of the navigator's window
 const NAV_MIN_DAYS = 1 // the window can't be squeezed shorter than this
 
 // readOnly: look but don't touch (the hallway screen): a tap shows an item's details instead of
-// opening or moving it. fitHeight: squeeze the dates so the biggest circle fits that many pixels.
+// opening or moving it. fitHeight: the chart's height in pixels, rather than one that suits the project.
 // zoomable: the zoom buttons, strip and gestures (on unless readOnly; the hallway screen turns them on).
 // onReset: also called by the reset button, which takes the chart back to how it opened.
 export default function OverlapChart({ project, active, setActive, onOpen, onChange, onReset, readOnly, fitHeight, zoomable = !readOnly }) {
@@ -96,14 +96,6 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
         const days = daysBetween(project.start, project.end)
         let w = Math.max(width, MIN_WIDTH)
         let pxPerDay = (w - PAD_X * 2) / days
-        const longest = Math.max(1, ...items.map((i) => daysBetween(i.start, i.end)))
-        if (fitHeight) {
-            const fits = Math.max(fitHeight - LABEL_H * 2 - 24 - AXIS_H, 120) / longest
-            if (fits < pxPerDay) {
-                pxPerDay = fits
-                w = pxPerDay * days + PAD_X * 2
-            }
-        }
         // Zoomed in, the dates spread out and the chart scrolls sideways.
         const maxZoom = Math.max(1, MAX_PX_PER_DAY / pxPerDay)
         const z = Math.min(zoom, maxZoom)
@@ -113,18 +105,18 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
         const spans = project.items.map((i) => daysBetween(i.start, i.end)).sort((a, b) => a - b)
         const typical = spans[Math.floor(spans.length / 2)] || 1
         let forToday = isRunning(project) ? Math.max(width - PAD_X * 2, 1) / (TODAY_DAYS * pxPerDay) : 1
-        if (forToday > 1 && windowH && !fitHeight) {
-            const room = Math.max(MIN_MAX_HEIGHT, Math.round(windowH * MAX_HEIGHT_SHARE)) - AXIS_H - (LABEL_H + 4) * 2
+        if (forToday > 1 && (windowH || fitHeight)) {
+            const room = (fitHeight || Math.max(MIN_MAX_HEIGHT, Math.round(windowH * MAX_HEIGHT_SHARE))) - AXIS_H - (LABEL_H + 4) * 2
             const now = runningAround(project.items, todayLocal()).map((i) => daysBetween(i.start, i.end)).sort((a, b) => a - b)
             if (now.length) forToday = Math.max(Math.min(forToday, room / (now[Math.min(Math.floor(now.length * NOW_SHARE), now.length - 1)] * pxPerDay)), 1)
         }
         const autoZoom = Math.min(Math.max(TYPICAL_D / (typical * pxPerDay), forToday, 1), maxZoom)
         // The height suits that view and stays put while zooming and dragging (zoomed further in, the
-        // bigger circles are cut off at the top and bottom, their ends still on the centre line). It's
-        // never taller than most of the window; the hallway screen sizes its own.
+        // bigger circles flatten into ovals, their ends still on their dates). It's never taller than
+        // most of the window; the hallway screen sets its own (fitHeight).
         const longestSaved = Math.max(1, ...project.items.map((i) => daysBetween(i.start, i.end)))
-        const tallest = (LABEL_H + 12) * 2 + Math.max(120, longestSaved * pxPerDay * (fitHeight ? 1 : autoZoom)) + AXIS_H
-        const h = fitHeight || !windowH ? tallest : Math.min(tallest, Math.max(MIN_MAX_HEIGHT, Math.round(windowH * MAX_HEIGHT_SHARE)))
+        const tallest = (LABEL_H + 12) * 2 + Math.max(120, longestSaved * pxPerDay * autoZoom) + AXIS_H
+        const h = fitHeight || (!windowH ? tallest : Math.min(tallest, Math.max(MIN_MAX_HEIGHT, Math.round(windowH * MAX_HEIGHT_SHARE))))
         pxPerDay *= z
         w = pxPerDay * days + PAD_X * 2
         const circles = items
@@ -234,12 +226,12 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
     }, [chart])
 
     // Each project opens on a view that suits it (chart.autoZoom), scrolled to today if it's in the
-    // project; the hallway screen opens on the whole project. The reset button comes back here.
+    // project. The reset button comes back here.
     const initialView = (smooth) => {
         const el = wrapRef.current
         if (!chart || !el) return
-        const z = readOnly ? 1 : chart.autoZoom
-        const day = !readOnly && isRunning(project) ? daysBetween(project.start, todayLocal()) : 0
+        const z = chart.autoZoom
+        const day = isRunning(project) ? daysBetween(project.start, todayLocal()) : 0
         const vx = day ? el.clientWidth * START_AT : PAD_X
         if (Math.abs(z - chart.zoom) < 0.001) {
             el.scrollTo({ left: PAD_X + day * chart.pxPerDay - vx, behavior: smooth ? 'smooth' : 'instant' })
@@ -250,10 +242,10 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
     }
     const opened = useRef(null)
     useLayoutEffect(() => {
-        if (readOnly || !chart || !wrapRef.current || opened.current === project.id) return
+        if (!zoomable || !chart || !wrapRef.current || opened.current === project.id) return
         opened.current = project.id
         initialView(false)
-    }, [chart, project, readOnly])
+    }, [chart, project, zoomable])
 
     // After onReset (e.g. clearing filters) has redrawn the chart, so the view suits what's shown.
     const [resets, setResets] = useState(0)

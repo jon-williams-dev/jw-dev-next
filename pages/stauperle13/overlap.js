@@ -8,26 +8,39 @@ import overlapStyles from '../../styles/overlap.module.scss'
 import styles from '../../styles/stauperle.module.scss'
 
 const REFRESH_MS = 5 * 60 * 1000
+const RETRY_MS = 30 * 1000 // sooner while the server has nothing or can't be reached
+const CACHE = 'stauperle13:overlap' // the last projects seen, shown if the server comes back empty
 const CHART_SHARE = 0.85 // of the scrolling area's height, so the top of the table peeks out below
 
-// The saved /jw-overlap projects (pages/api/overlap.js), refreshed every few minutes.
+const cached = () => { try { return JSON.parse(localStorage.getItem(CACHE)) } catch { return null } }
+const remember = (data) => { try { localStorage.setItem(CACHE, JSON.stringify(data)) } catch { } }
+
+// The saved /jw-overlap projects (pages/api/overlap.js), refreshed every few minutes. The screen
+// can't be reloaded by hand, so it keeps the last projects it saw: if the server answers with none
+// (as it can for a while after a deploy) or not at all, those stay up and it asks again soon.
 function useProjects() {
-    const [state, setState] = useState({ data: null, error: null })
+    const [state, setState] = useState({ data: null, error: null, stale: false })
     useEffect(() => {
         let cancelled = false
+        let timer = null
         const load = async () => {
+            let ok = false
             try {
                 const res = await fetch('/api/overlap', { cache: 'no-store', signal: AbortSignal.timeout(15000) })
                 const body = await res.json().catch(() => ({}))
                 if (!res.ok) throw new Error(body.error || `HTTP ${res.status}`)
-                if (!cancelled) setState({ data: body.data || { projects: [] }, error: null })
+                const fresh = body.data?.projects?.length ? body.data : null
+                ok = Boolean(fresh)
+                if (fresh) remember(fresh)
+                if (!cancelled) setState({ data: fresh || cached() || { projects: [] }, error: null, stale: !fresh })
             } catch (err) {
-                if (!cancelled) setState((s) => ({ ...s, error: err.message }))
+                if (!cancelled) setState((s) => ({ data: s.data || cached(), error: err.message, stale: true }))
             }
+            if (!cancelled) timer = setTimeout(load, ok ? REFRESH_MS : RETRY_MS)
         }
+        setState((s) => ({ ...s, data: cached() }))
         load()
-        const id = setInterval(load, REFRESH_MS)
-        return () => { cancelled = true; clearInterval(id) }
+        return () => { cancelled = true; clearTimeout(timer) }
     }, [])
     return state
 }

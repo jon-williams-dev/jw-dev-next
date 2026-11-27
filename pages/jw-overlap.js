@@ -359,12 +359,15 @@ function Linkify({ text }) {
         : <Fragment key={i}>{part}</Fragment>))
 }
 
-// The saved links, shortened; the full address shows on hover.
-function Links({ urls }) {
+// The saved links, shortened; the full address shows on hover. With `max`, any beyond that wait
+// behind a "+N more" button.
+function Links({ urls, max = Infinity }) {
+    const [open, setOpen] = useState(false)
     if (!urls?.length) return null
+    const hidden = open || urls.length <= max + 1 ? 0 : urls.length - max
     return (
         <ul className={styles.links}>
-            {urls.map((url, i) => (
+            {urls.slice(0, urls.length - hidden).map((url, i) => (
                 <li key={i}>
                     <a href={url} target="_blank" rel="noopener noreferrer" title={url} onClick={(e) => e.stopPropagation()}>
                         <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true">
@@ -374,6 +377,13 @@ function Links({ urls }) {
                     </a>
                 </li>
             ))}
+            {(hidden > 0 || open) && (
+                <li>
+                    <button type="button" className={styles.moreLinks} aria-expanded={open} onClick={(e) => { e.stopPropagation(); setOpen(!open) }}>
+                        {open ? 'Show fewer' : `+${hidden} more`}
+                    </button>
+                </li>
+            )}
         </ul>
     )
 }
@@ -446,6 +456,9 @@ function PriorityTag({ value }) {
     )
 }
 
+// Whether the item is going on today.
+const isToday = (item, today) => toMs(item.start) <= toMs(today) && toMs(today) <= toMs(item.end)
+
 const byDate = (items) => [...items].sort((a, b) => toMs(a.start) - toMs(b.start) || toMs(a.end) - toMs(b.end) || a.name.localeCompare(b.name))
 
 // Rows can be dragged by their grip (or moved with ↑ ↓ on it) to change the running order: the item
@@ -455,6 +468,7 @@ function ItemList({ project, active, setActive, onOpen, onDelete, onReorder }) {
     const rows = useRef({})
     // In date order, or in the order rows were dragged into.
     const items = project.manualOrder ? project.items : byDate(project.items)
+    const today = todayLocal()
     if (!items.length) return <p className={styles.muted}>Nothing here yet. Use “Add item” to start the chart.</p>
 
     // Moves `item` into the gap before others[gap] (others = every item but this one, in order).
@@ -515,7 +529,7 @@ function ItemList({ project, active, setActive, onOpen, onDelete, onReorder }) {
                 <tbody>
                     {items.map((item, n) => (
                         <tr key={item.id} ref={(el) => { rows.current[item.id] = el }}
-                            className={[active === item.id && styles.rowActive, drag?.id === item.id && styles.rowDragging,
+                            className={[isToday(item, today) && styles.rowToday, active === item.id && styles.rowActive, drag?.id === item.id && styles.rowDragging,
                                 lineBefore === item.id && styles.dropBefore, lineAfterLast && n === items.length - 1 && styles.dropAfter].filter(Boolean).join(' ')}
                             style={{ '--item': item.colour, ...(drag?.id === item.id ? { transform: `translateY(${drag.dy}px)` } : {}) }}
                             onMouseEnter={() => setActive(item.id)} onMouseLeave={() => setActive((a) => (a === item.id ? null : a))}>
@@ -534,11 +548,15 @@ function ItemList({ project, active, setActive, onOpen, onDelete, onReorder }) {
                                     <span className={styles.swatch} style={{ background: item.colour }} aria-hidden="true" />
                                     {item.name}
                                 </button>
-                                <Links urls={item.links} />
+                                <Links urls={item.links} max={2} />
                             </td>
                             <td className={styles.nowrap}>
                                 {fmtRange(item.start, item.end)}
-                                <span className={styles.cellNote}>{fmtDuration(item.start, item.end)}</span>
+                                {isToday(item, today) ? (
+                                    <span className={`${styles.cellNote} ${styles.todayNote}`}>
+                                        Day {Math.min(daysBetween(item.start, today) + 1, daysBetween(item.start, item.end))} of {daysBetween(item.start, item.end)}
+                                    </span>
+                                ) : <span className={styles.cellNote}>{fmtDuration(item.start, item.end)}</span>}
                             </td>
                             <td>{item.owner || <span className={styles.muted}>–</span>}</td>
                             <td><span className={styles.badge} data-tone={item.state}>{item.state}</span></td>

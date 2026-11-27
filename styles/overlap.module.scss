@@ -424,6 +424,19 @@
   }
 }
 
+.moreLinks {
+  min-height: 0 !important;
+  padding: 0.05rem 0.55rem !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: none !important;
+  color: var(--muted) !important;
+  font-size: 0.78rem !important;
+  font-weight: 600;
+
+  &:hover { color: var(--text) !important; text-decoration: underline; }
+}
+
 .linkFields {
   display: flex;
   flex-direction: column;
@@ -863,6 +876,28 @@
 
   svg { fill: currentColor; }
   &:hover { color: var(--text) !important; }
+}
+
+// Going on today: tinted in the chart's Today red.
+.rowToday {
+  background: color-mix(in srgb, var(--today) 6%, transparent);
+  box-shadow: inset 3px 0 0 var(--today);
+}
+
+.todayNote {
+  color: var(--today) !important;
+  font-weight: 600;
+
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 0.45em;
+    height: 0.45em;
+    margin-right: 0.35em;
+    border-radius: 50%;
+    background: currentColor;
+    vertical-align: 0.1em;
+  }
 }
 
 .rowActive {

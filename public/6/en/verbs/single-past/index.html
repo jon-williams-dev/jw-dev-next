@@ -1,0 +1,684 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Practise irregular English simple past forms: flashcards, multiple choice and typing.">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Simple Past Trainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: one narrow column like a workbook page; base forms in ink, past forms in the textbook's red. */
+:root {
+  --paper: #f3f5fb;
+  --card: #ffffff;
+  --ink: #1b2350;
+  --muted: #5a618a;
+  --line: #dde1f0;
+  --past: #d23f26;
+  --past-soft: #fde8e3;
+  --good: #17825a;
+  --good-soft: #def3e9;
+  --accent: #2c45c4;
+  --accent-soft: #e5e9fb;
+  --hi: #ffe36b;
+  --star-off: #d7dbea;
+  --font-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --radius: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f1430; --card: #182044; --ink: #e9ecfa; --muted: #a4abd0; --line: #2b3463;
+    --past: #ff7e61; --past-soft: #3b2333; --good: #52d49d; --good-soft: #15393a;
+    --accent: #93a5ff; --accent-soft: #232d60; --hi: rgba(240, 200, 60, .38); --star-off: #333d6e;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0f1430; --card: #182044; --ink: #e9ecfa; --muted: #a4abd0; --line: #2b3463;
+  --past: #ff7e61; --past-soft: #3b2333; --good: #52d49d; --good-soft: #15393a;
+  --accent: #93a5ff; --accent-soft: #232d60; --hi: rgba(240, 200, 60, .38); --star-off: #333d6e;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--paper); color: var(--ink);
+  font-family: var(--font-body); font-size: 17px; line-height: 1.5;
+}
+.wrap {
+  max-width: 680px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 48px;
+  display: flex; flex-direction: column; gap: 22px;
+}
+h1, h2, h3 { font-family: var(--font-display); margin: 0; text-wrap: balance; line-height: 1.1; }
+p { margin: 0; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.past { color: var(--past); }
+.muted { color: var(--muted); }
+.eyebrow { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+
+/* top bar */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.brand { font-family: var(--font-display); font-weight: 800; font-size: 20px; background: none; border: 0; padding: 0; }
+.brand .past { font-weight: 800; }
+.linkbtn { background: none; border: 0; padding: 6px 2px; color: var(--accent); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+
+/* hero */
+.hero { display: flex; flex-direction: column; gap: 10px; padding-top: 8px; }
+.hero h1 { font-size: clamp(40px, 11vw, 68px); font-weight: 800; letter-spacing: -.02em; }
+.hero h1 .arrow { color: var(--muted); font-weight: 600; }
+.hero p { color: var(--muted); max-width: 52ch; }
+
+/* learned meter */
+.meter { display: flex; flex-direction: column; gap: 6px; }
+.meter-row { display: flex; justify-content: space-between; gap: 8px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.bar { height: 12px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.bar > i { display: block; height: 100%; background: var(--good); border-radius: 99px; transition: width .4s; }
+
+/* setup */
+.group { display: flex; flex-direction: column; gap: 10px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  border: 2px solid var(--line); background: var(--card); border-radius: 99px;
+  padding: 7px 14px; font-weight: 700; display: inline-flex; gap: 8px; align-items: baseline;
+}
+.chip small { font-weight: 400; color: var(--muted); font-size: 13px; }
+.chip[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+.chip[aria-pressed="true"] small { color: var(--accent); }
+
+.modes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 560px) { .modes { grid-template-columns: 1fr; } }
+.mode {
+  text-align: left; background: var(--card); border: 2px solid var(--line); border-radius: var(--radius);
+  padding: 16px; display: flex; flex-direction: column; gap: 6px; min-width: 0;
+  transition: border-color .15s, transform .15s;
+}
+.mode:hover { border-color: var(--accent); transform: translateY(-2px); }
+.mode h3 { font-size: 22px; }
+.mode .de { font-size: 13px; color: var(--muted); }
+.mode p { font-size: 15px; color: var(--muted); }
+.mode .ex { font-family: var(--font-display); font-weight: 600; font-size: 18px; margin-top: 4px; }
+
+.btn {
+  border: 0; border-radius: 12px; padding: 12px 20px; font-weight: 700;
+  background: var(--accent); color: var(--card);
+}
+.btn.ghost { background: transparent; color: var(--accent); border: 2px solid var(--accent); }
+.btn.good { background: var(--good); color: var(--card); }
+.btn.bad { background: var(--past); color: var(--card); }
+.btn:disabled { opacity: .45; cursor: default; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.notice { font-size: 15px; color: var(--muted); }
+
+/* play */
+.status { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-weight: 700; font-variant-numeric: tabular-nums; flex-wrap: wrap; }
+.streak { background: var(--hi); color: var(--ink); padding: 2px 10px; border-radius: 99px; }
+.card {
+  background: var(--card); border: 2px solid var(--line); border-radius: 20px;
+  padding: 28px 22px; display: flex; flex-direction: column; gap: 18px; align-items: center; text-align: center;
+}
+.card.ok { border-color: var(--good); }
+.card.no { border-color: var(--past); }
+.prompt-label { font-size: 14px; color: var(--muted); font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.word { font-family: var(--font-display); font-weight: 800; font-size: clamp(38px, 12vw, 64px); line-height: 1.05; overflow-wrap: anywhere; }
+.word .to { font-weight: 600; font-size: .45em; color: var(--muted); vertical-align: middle; }
+.gloss { color: var(--muted); font-size: 17px; }
+.answer-line { display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap; width: 100%; }
+.field { display: flex; flex-direction: column; gap: 4px; text-align: left; flex: 1 1 200px; max-width: 320px; min-width: 0; }
+.field label { font-size: 13px; color: var(--muted); font-weight: 700; }
+input[type="text"] {
+  width: 100%; font: inherit; font-size: 22px; font-weight: 700; color: var(--ink);
+  background: var(--paper); border: 2px solid var(--line); border-radius: 12px; padding: 10px 14px;
+}
+input[type="text"].ok { border-color: var(--good); background: var(--good-soft); }
+input[type="text"].no { border-color: var(--past); background: var(--past-soft); }
+.feedback { min-height: 28px; font-weight: 700; display: flex; flex-direction: column; gap: 4px; align-items: center; }
+.feedback .big { font-family: var(--font-display); font-size: 26px; }
+.feedback s { color: var(--muted); font-weight: 400; }
+.feedback.ok { color: var(--good); }
+.feedback.no { color: var(--ink); }
+.speak { background: var(--accent-soft); color: var(--accent); border: 0; border-radius: 99px; width: 44px; height: 44px; display: inline-grid; place-items: center; flex: none; }
+.speak svg { width: 22px; height: 22px; }
+
+.choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: 100%; }
+.choice {
+  background: var(--paper); border: 2px solid var(--line); border-radius: 12px; padding: 14px 10px;
+  font-family: var(--font-display); font-size: 22px; font-weight: 700; overflow-wrap: anywhere;
+  display: flex; gap: 8px; align-items: center; justify-content: center;
+}
+.choice kbd { font-family: var(--font-body); font-size: 12px; color: var(--muted); border: 1px solid var(--line); border-radius: 5px; padding: 0 5px; }
+.choice:hover:not(:disabled) { border-color: var(--accent); }
+.choice.ok { border-color: var(--good); background: var(--good-soft); color: var(--good); }
+.choice.no { border-color: var(--past); background: var(--past-soft); color: var(--past); }
+.choice:disabled { cursor: default; }
+
+.flip { width: 100%; min-height: 200px; background: none; border: 0; display: flex; flex-direction: column; gap: 12px; align-items: center; justify-content: center; }
+.flip .tap { font-size: 14px; color: var(--muted); }
+
+@keyframes pop { 0% { transform: scale(1); } 40% { transform: scale(1.03); } 100% { transform: scale(1); } }
+@keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+.card.ok { animation: pop .3s; }
+.card.no { animation: shake .3s; }
+@media (prefers-reduced-motion: reduce) { .card.ok, .card.no { animation: none; } .mode, .bar > i { transition: none; } }
+
+/* results */
+.stars { display: flex; gap: 8px; justify-content: center; }
+.stars svg { width: 52px; height: 52px; }
+.stars .on { fill: var(--hi); stroke: var(--ink); }
+.stars .off { fill: var(--star-off); stroke: var(--star-off); }
+.mistakes { display: flex; flex-direction: column; gap: 6px; width: 100%; text-align: left; }
+.mistakes li { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--line); padding: 6px 0; flex-wrap: wrap; }
+.mistakes ul { list-style: none; margin: 0; padding: 0; }
+.mistakes b { font-family: var(--font-display); }
+
+/* word list */
+.tablewrap { overflow-x: auto; background: var(--card); border: 2px solid var(--line); border-radius: var(--radius); }
+table { border-collapse: collapse; width: 100%; min-width: 440px; }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+th { font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+tr.listhead td { background: var(--accent-soft); color: var(--accent); font-weight: 700; font-size: 14px; }
+td.en { font-family: var(--font-display); font-weight: 700; font-size: 19px; white-space: nowrap; }
+td.de { color: var(--muted); font-size: 15px; }
+.dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: var(--star-off); }
+.dot.some { background: var(--hi); }
+.dot.done { background: var(--good); }
+td .speak { width: 36px; height: 36px; }
+td .speak svg { width: 18px; height: 18px; }
+.legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 14px; color: var(--muted); }
+.legend span { display: inline-flex; gap: 6px; align-items: center; }
+.confirm { background: var(--past-soft); border-radius: 12px; padding: 12px 14px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+
+<div class="wrap" id="app"></div>
+
+<script>
+// ---- Data: the "Unregelmäßige Vergangenheitsformen" boxes from the textbook ----
+const LISTS = [
+  { id: 1, name: "List 1" },
+  { id: 2, name: "List 2" },
+  { id: 3, name: "List 3" },
+  { id: 4, name: "List 4" },
+  { id: 5, name: "List 5" },
+];
+const RAW = [
+  [1, "choose", "chose", "aussuchen, (aus)wählen"],
+  [1, "come", "came", "kommen"],
+  [1, "do", "did", "machen, tun"],
+  [1, "go", "went", "gehen"],
+  [1, "make", "made", "machen; herstellen"],
+  [1, "meet", "met", "treffen; kennenlernen"],
+  [1, "say", "said", "sagen"],
+  [1, "see", "saw", "sehen"],
+  [1, "sit", "sat", "sitzen"],
+  [1, "take", "took", "nehmen; bringen"],
+  [1, "think", "thought", "denken, glauben"],
+  [2, "find", "found", "finden"],
+  [2, "forget", "forgot", "vergessen"],
+  [2, "have", "had", "haben"],
+  [2, "hear", "heard", "hören"],
+  [2, "hold", "held", "halten"],
+  [2, "leave", "left", "verlassen"],
+  [2, "ride a bike", "rode a bike", "Rad fahren", ["ride a bike", "ride"], ["rode a bike", "rode"]],
+  [2, "sing", "sang", "singen"],
+  [2, "speak", "spoke", "sprechen"],
+  [2, "stand", "stood", "stehen"],
+  [2, "swim", "swam", "schwimmen"],
+  [2, "tell", "told", "erzählen"],
+  [2, "write", "wrote", "schreiben"],
+  [3, "bring", "brought", "bringen"],
+  [3, "build", "built", "bauen"],
+  [3, "buy", "bought", "kaufen"],
+  [3, "fly", "flew", "fliegen"],
+  [3, "hang out", "hung out", "hängen, abhängen"],
+  [3, "hide", "hid", "(sich) verstecken"],
+  [3, "lead", "led", "führen, leiten"],
+  [3, "lose", "lost", "verlieren"],
+  [3, "mean", "meant", "meinen"],
+  [3, "ring", "rang", "klingeln, läuten"],
+  [3, "run", "ran", "rennen, laufen"],
+  [3, "wear", "wore", "tragen"],
+  [3, "win", "won", "gewinnen"],
+  [4, "beat", "beat", "schlagen"],
+  [4, "cost", "cost", "kosten"],
+  [4, "cut", "cut", "schneiden"],
+  [4, "hurt", "hurt", "verletzen"],
+  [4, "let", "let", "lassen"],
+  [4, "put", "put", "legen, stellen"],
+  [5, "sell", "sold", "verkaufen"],
+  [5, "sleep", "slept", "schlafen"],
+  [5, "swing", "swung", "schwingen"],
+  [5, "teach", "taught", "unterrichten"],
+  [5, "tear", "tore", "reißen"],
+  [5, "understand", "understood", "verstehen"],
+];
+const VERBS = RAW.map(([set, base, past, de, baseOk, pastOk]) => ({
+  set, base, past, de,
+  baseOk: (baseOk || [base]).map(norm),
+  pastOk: (pastOk || [past]).map(norm),
+}));
+
+// ---- Storage (safe) ----
+function load(key, fallback) {
+  try { const v = JSON.parse(localStorage.getItem(key)); return v ?? fallback; } catch (e) { return fallback; }
+}
+function store(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {} }
+
+let settings = Object.assign({ sets: [1, 2, 3, 4, 5], lang: "en", size: 10 }, load("spt-settings", {}));
+let progress = load("spt-progress", {});
+let view = "home";
+let round = null;
+let confirmReset = false;
+
+const LEARNED_AT = 3; // right this many times in a row = learned
+function prog(v) { return progress[v.base] || { r: 0, w: 0, s: 0 }; }
+function isLearned(v) { return prog(v).s >= LEARNED_AT; }
+function record(v, ok) {
+  const p = Object.assign({}, prog(v));
+  if (ok) { p.r++; p.s++; } else { p.w++; p.s = 0; }
+  progress[v.base] = p;
+  store("spt-progress", progress);
+}
+
+// ---- Helpers ----
+function norm(s) {
+  return String(s).toLowerCase().replace(/[’`´]/g, "'").replace(/[().,!?]/g, " ")
+    .replace(/^\s*to\s+/, "").replace(/\s+/g, " ").trim();
+}
+function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function lev(a, b) {
+  const d = Array.from({ length: a.length + 1 }, (_, i) => [i]);
+  for (let j = 1; j <= b.length; j++) d[0][j] = j;
+  for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++)
+    d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+  return d[a.length][b.length];
+}
+function weightedPick(pool, n) {
+  const items = pool.map(v => {
+    const p = prog(v);
+    const w = isLearned(v) ? 1 : 3 + Math.min(p.w, 4);
+    return { v, key: Math.pow(Math.random(), 1 / w) };
+  });
+  items.sort((a, b) => b.key - a.key);
+  return shuffle(items.slice(0, n).map(x => x.v));
+}
+function regularize(word) {
+  const [w, ...rest] = word.split(" ");
+  let r;
+  if (/e$/.test(w)) r = w + "d";
+  else if (/[^aeiou]y$/.test(w)) r = w.slice(0, -1) + "ied";
+  else r = w + "ed";
+  return [r, ...rest].join(" ");
+}
+const canSpeak = "speechSynthesis" in window;
+function speak(text) {
+  try {
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "en-GB"; u.rate = 0.85;
+    const voice = speechSynthesis.getVoices().find(x => x.lang === "en-GB") || speechSynthesis.getVoices().find(x => /^en/.test(x.lang));
+    if (voice) u.voice = voice;
+    speechSynthesis.cancel(); speechSynthesis.speak(u);
+  } catch (e) {}
+}
+const SPEAKER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19 6a8.5 8.5 0 0 1 0 12"/></svg>';
+function speakBtn(v) {
+  if (!canSpeak) return "";
+  return `<button class="speak" data-say="${esc(v.base + ", " + v.past)}" aria-label="Listen: ${esc(v.base)}, ${esc(v.past)}" title="Listen">${SPEAKER}</button>`;
+}
+function selectedPool() { return VERBS.filter(v => settings.sets.includes(v.set)); }
+function saveSettings() { store("spt-settings", settings); }
+
+// ---- Rendering ----
+const app = document.getElementById("app");
+function render() {
+  if (view === "home") renderHome();
+  else if (view === "play") renderPlay();
+  else if (view === "results") renderResults();
+  else if (view === "list") renderList();
+}
+function topBar(extra = "") {
+  return `<div class="top"><button class="brand" data-act="home">Simple <span class="past">past</span> trainer</button>${extra}</div>`;
+}
+function meter() {
+  const done = VERBS.filter(isLearned).length;
+  return `<div class="meter">
+    <div class="meter-row"><span>${done} of ${VERBS.length} verbs learned</span><span class="muted">${Math.round(done / VERBS.length * 100)}%</span></div>
+    <div class="bar"><i style="width:${done / VERBS.length * 100}%"></i></div>
+    <p class="notice">A verb counts as learned when you get it right ${LEARNED_AT} times in a row.</p>
+  </div>`;
+}
+
+let heroVerb = VERBS[Math.floor(Math.random() * VERBS.length)];
+function renderHome() {
+  const pool = selectedPool();
+  const tricky = pool.filter(v => prog(v).w > 0 && !isLearned(v));
+  const chips = LISTS.map(l => {
+    const vs = VERBS.filter(v => v.set === l.id);
+    const first = vs[0].base, last = vs[vs.length - 1].base;
+    const on = settings.sets.includes(l.id);
+    return `<button class="chip" aria-pressed="${on}" data-set="${l.id}">${l.name} <small>${esc(first)} … ${esc(last)} · ${vs.filter(isLearned).length}/${vs.length}</small></button>`;
+  }).join("");
+  const seg = (key, opts) => opts.map(([val, label]) =>
+    `<button class="chip" aria-pressed="${settings[key] === val}" data-opt="${key}" data-val="${val}">${label}</button>`).join("");
+
+  app.innerHTML = `
+    ${topBar(`<button class="linkbtn" data-act="list">All verbs</button>`)}
+    <section class="hero">
+      <span class="eyebrow">Unregelmäßige Vergangenheitsformen</span>
+      <h1>${esc(heroVerb.base)} <span class="arrow">→</span> <span class="past">${esc(heroVerb.past)}</span></h1>
+      <p>Practise the irregular simple past forms from your English book. Pick your lists, then choose a game.</p>
+    </section>
+    ${meter()}
+    <section class="group">
+      <h2 style="font-size:20px">Which lists?</h2>
+      <div class="chips">${chips}<button class="chip" data-act="allsets" aria-pressed="${settings.sets.length === LISTS.length}">All</button></div>
+    </section>
+    <section class="group">
+      <h2 style="font-size:20px">Ask me in</h2>
+      <div class="chips">${seg("lang", [["en", "English: go → ?"], ["de", "Deutsch: gehen → ? ?"]])}</div>
+    </section>
+    <section class="group">
+      <h2 style="font-size:20px">How many questions?</h2>
+      <div class="chips">${seg("size", [[10, "10"], [20, "20"], ["all", "All " + pool.length]])}</div>
+    </section>
+    <section class="group">
+      <h2 style="font-size:20px">Choose a game</h2>
+      ${pool.length === 0 ? `<p class="notice">Pick at least one list first.</p>` : ""}
+      <div class="modes">
+        <button class="mode" data-start="cards" ${pool.length ? "" : "disabled"}>
+          <h3>Flashcards</h3><span class="de">Lernkarten</span>
+          <p>Think of the answer, flip the card, and be honest.</p>
+          <span class="ex">see → <span class="past">saw</span></span>
+        </button>
+        <button class="mode" data-start="pick" ${pool.length ? "" : "disabled"}>
+          <h3>Choose it</h3><span class="de">Auswählen</span>
+          <p>Pick the right past form out of four.</p>
+          <span class="ex">buy → <span class="past">bought</span></span>
+        </button>
+        <button class="mode" data-start="type" ${pool.length ? "" : "disabled"}>
+          <h3>Type it</h3><span class="de">Schreiben</span>
+          <p>Write it yourself. Spelling counts, like in a test.</p>
+          <span class="ex">teach → <span class="past">taught</span></span>
+        </button>
+      </div>
+    </section>
+    ${tricky.length ? `<section class="group">
+      <div class="row"><button class="btn ghost" data-start="type" data-tricky="1">Practise my tricky verbs (${tricky.length})</button></div>
+      <p class="notice">Verbs from your lists that you got wrong and have not learned yet.</p>
+    </section>` : ""}
+  `;
+}
+
+// ---- Round logic ----
+function startRound(mode, verbs) {
+  round = {
+    mode, queue: verbs, i: 0, reinserted: new Map(), firstTry: new Map(),
+    streak: 0, best: 0, answered: false, state: null,
+  };
+  view = "play";
+  render();
+}
+function current() { return round.queue[round.i]; }
+function answer(ok) {
+  const v = current();
+  round.answered = true;
+  record(v, ok);
+  if (!round.firstTry.has(v.base)) round.firstTry.set(v.base, ok);
+  if (ok) { round.streak++; round.best = Math.max(round.best, round.streak); }
+  else {
+    round.streak = 0;
+    const n = round.reinserted.get(v.base) || 0;
+    if (n < 2) { round.reinserted.set(v.base, n + 1); round.queue.splice(Math.min(round.i + 3, round.queue.length), 0, v); }
+  }
+}
+function next() {
+  round.i++; round.answered = false; round.state = null;
+  if (round.i >= round.queue.length) view = "results";
+  render();
+}
+function makeChoices(v, pool) {
+  const wrong = new Set();
+  const add = w => { if (w && norm(w) !== norm(v.past)) wrong.add(w); };
+  add(regularize(v.base));
+  if (v.base !== v.past) add(v.base);
+  for (const o of shuffle(VERBS)) { if (wrong.size >= 6) break; if (o !== v) add(o.past); }
+  const picked = [...wrong].slice(0, 2).concat(shuffle([...wrong].slice(2)).slice(0, 1));
+  return shuffle([v.past, ...picked.slice(0, 3)]);
+}
+
+function statusBar() {
+  const total = round.queue.length;
+  return `<div class="status">
+    <span>Question ${Math.min(round.i + 1, total)} of ${total}</span>
+    ${round.streak >= 2 ? `<span class="streak">${round.streak} in a row</span>` : `<span class="muted">${round.mode === "cards" ? "Flashcards" : round.mode === "pick" ? "Choose it" : "Type it"}</span>`}
+  </div>
+  <div class="bar" aria-hidden="true"><i style="width:${round.i / total * 100}%"></i></div>`;
+}
+function promptBlock(v, forceEnglish) {
+  if (settings.lang === "de" && !forceEnglish) {
+    return `<span class="prompt-label">English verb and simple past?</span>
+      <div class="word">${esc(v.de)}</div>`;
+  }
+  return `<span class="prompt-label">Simple past?</span>
+    <div class="word"><span class="to">(to)</span> ${esc(v.base)}</div>
+    <div class="gloss">${esc(v.de)}</div>`;
+}
+function solution(v) {
+  return `<span class="big">${esc(v.base)} → <span class="past">${esc(v.past)}</span></span>`;
+}
+
+function renderPlay() {
+  const v = current();
+  const s = round.state || {};
+  let body = "";
+  let cardClass = round.answered ? (s.ok ? "ok" : "no") : "";
+
+  if (round.mode === "cards") {
+    if (!s.flipped) {
+      body = `<button class="flip" data-act="flip" id="flipbtn">${promptBlock(v)}<span class="tap">Tap to flip (or press Space)</span></button>`;
+      cardClass = "";
+    } else {
+      body = `<span class="prompt-label">Answer</span>
+        <div class="feedback">${solution(v)}<span class="gloss">${esc(v.de)}</span></div>
+        <div class="row" style="justify-content:center">${speakBtn(v)}</div>
+        ${round.answered ? "" : `<div class="row" style="justify-content:center">
+          <button class="btn bad" data-act="knew" data-val="0" id="notyet">Not yet</button>
+          <button class="btn good" data-act="knew" data-val="1" id="knewit">I knew it</button>
+        </div>`}`;
+    }
+  } else if (round.mode === "pick") {
+    if (!s.choices) s.choices = makeChoices(v), round.state = s;
+    body = `${promptBlock(v, true)}
+      <div class="choices">${s.choices.map((c, i) => {
+        let cls = "";
+        if (round.answered) { if (norm(c) === norm(v.past)) cls = "ok"; else if (c === s.picked) cls = "no"; }
+        return `<button class="choice ${cls}" data-pick="${i}" ${round.answered ? "disabled" : ""}><kbd>${i + 1}</kbd>${esc(c)}</button>`;
+      }).join("")}</div>
+      <div class="feedback ${round.answered ? (s.ok ? "ok" : "no") : ""}">${round.answered ? (s.ok ? `<span>Right!</span>` : `<span>The answer is</span>${solution(v)}`) : ""}</div>`;
+  } else {
+    const de = settings.lang === "de";
+    const cls = f => round.answered ? (s[f] ? "ok" : "no") : "";
+    body = `${promptBlock(v)}
+      <form class="answer-line" id="typeform" autocomplete="off">
+        ${de ? `<div class="field"><label for="in-base">English verb</label>
+          <input type="text" id="in-base" class="${cls("baseOk")}" value="${esc(s.baseIn || "")}" ${round.answered ? "readonly" : ""} autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next"></div>` : ""}
+        <div class="field"><label for="in-past">Simple past</label>
+          <input type="text" id="in-past" class="${cls("pastOk")}" value="${esc(s.pastIn || "")}" ${round.answered ? "readonly" : ""} autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done"></div>
+      </form>
+      <div class="feedback ${round.answered ? (s.ok ? "ok" : "no") : ""}">${
+        round.answered
+          ? (s.ok ? `<span>Right!</span>${solution(v)}` : `<span>${s.close ? "So close! Check the spelling:" : "Not quite. It's:"}</span>${solution(v)}`)
+          : (s.hint ? `<span class="muted">Hint: it starts with “${esc(s.hint)}”</span>` : "")
+      }</div>
+      ${round.answered ? "" : `<div class="row" style="justify-content:center">
+        <button class="btn ghost" data-act="hint">Hint</button>
+        <button class="btn" data-act="check">Check</button>
+      </div>`}`;
+  }
+
+  app.innerHTML = `
+    ${topBar(`<button class="linkbtn" data-act="home">Stop</button>`)}
+    ${statusBar()}
+    <div class="card ${cardClass}">${body}</div>
+    ${round.answered ? `<div class="row" style="justify-content:center">${round.mode !== "cards" ? speakBtn(v) : ""}<button class="btn" data-act="next" id="nextbtn">Next →</button></div>` : ""}
+  `;
+  // focus
+  const focusEl = round.answered ? document.getElementById("nextbtn")
+    : round.mode === "type" ? (document.getElementById("in-base") || document.getElementById("in-past"))
+    : round.mode === "cards" ? (document.getElementById("flipbtn") || document.getElementById("knewit")) : null;
+  if (focusEl) focusEl.focus({ preventScroll: true });
+}
+
+function checkTyped() {
+  const v = current();
+  const s = round.state || {};
+  const baseEl = document.getElementById("in-base");
+  const pastEl = document.getElementById("in-past");
+  s.pastIn = pastEl.value; s.baseIn = baseEl ? baseEl.value : "";
+  if (!norm(s.pastIn) || (baseEl && !norm(s.baseIn))) { (baseEl && !norm(s.baseIn) ? baseEl : pastEl).focus(); return; }
+  s.pastOk = v.pastOk.includes(norm(s.pastIn));
+  s.baseOk = baseEl ? v.baseOk.includes(norm(s.baseIn)) : true;
+  s.ok = s.pastOk && s.baseOk;
+  s.close = !s.ok && ((!s.pastOk && lev(norm(s.pastIn), norm(v.past)) <= 1) || (!s.baseOk && lev(norm(s.baseIn), norm(v.base)) <= 1));
+  round.state = s;
+  answer(s.ok);
+  render();
+}
+
+function starSvg(on) {
+  return `<svg viewBox="0 0 24 24" aria-hidden="true"><path class="${on ? "on" : "off"}" stroke-width="1.5" stroke-linejoin="round" d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z"/></svg>`;
+}
+function renderResults() {
+  const entries = [...round.firstTry.entries()];
+  const right = entries.filter(([, ok]) => ok).length;
+  const total = entries.length;
+  const pct = total ? right / total : 0;
+  const stars = pct >= 0.9 ? 3 : pct >= 0.7 ? 2 : pct >= 0.4 ? 1 : 0;
+  const missed = entries.filter(([, ok]) => !ok).map(([b]) => VERBS.find(v => v.base === b));
+  const msg = stars === 3 ? "Brilliant!" : stars === 2 ? "Great work!" : stars === 1 ? "Good effort!" : "Keep going, practice helps!";
+  app.innerHTML = `
+    ${topBar()}
+    <div class="card">
+      <div class="stars" role="img" aria-label="${stars} of 3 stars">${[0, 1, 2].map(i => starSvg(i < stars)).join("")}</div>
+      <h1 style="font-size:40px">${msg}</h1>
+      <p style="font-size:20px"><b>${right} of ${total}</b> verbs right first time${round.best >= 3 ? ` · best streak <b>${round.best}</b>` : ""}</p>
+      ${missed.length ? `<div class="mistakes"><span class="eyebrow">Look at these again</span><ul>${missed.map(v =>
+        `<li><b>${esc(v.base)} → <span class="past">${esc(v.past)}</span></b><span class="muted">${esc(v.de)}</span></li>`).join("")}</ul></div>` : ""}
+      <div class="row" style="justify-content:center">
+        ${missed.length ? `<button class="btn" data-act="redo-missed">Practise these ${missed.length}</button>` : ""}
+        <button class="btn ${missed.length ? "ghost" : ""}" data-act="again">Play again</button>
+        <button class="btn ghost" data-act="home">Home</button>
+      </div>
+    </div>
+    ${meter()}
+  `;
+  round.missed = missed;
+}
+
+function renderList() {
+  const rows = LISTS.map(l => {
+    const vs = VERBS.filter(v => v.set === l.id);
+    return `<tr class="listhead"><td colspan="5">${l.name}</td></tr>` + vs.map(v => {
+      const p = prog(v);
+      const cls = isLearned(v) ? "done" : p.r > 0 ? "some" : "";
+      const lab = isLearned(v) ? "Learned" : p.r > 0 ? "Practising" : "New";
+      return `<tr><td class="en">${esc(v.base)}</td><td class="en past">${esc(v.past)}</td><td class="de">${esc(v.de)}</td>
+        <td><span class="dot ${cls}" title="${lab}" aria-label="${lab}"></span></td><td>${speakBtn(v)}</td></tr>`;
+    }).join("");
+  }).join("");
+  app.innerHTML = `
+    ${topBar(`<button class="linkbtn" data-act="home">Back</button>`)}
+    <section class="hero"><span class="eyebrow">Irregular simple past forms</span><h1 style="font-size:40px">All ${VERBS.length} verbs</h1></section>
+    <div class="legend"><span><i class="dot"></i>New</span><span><i class="dot some"></i>Practising</span><span><i class="dot done"></i>Learned</span></div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Verb</th><th>Simple past</th><th>Deutsch</th><th></th><th></th></tr></thead>
+      <tbody>${rows}</tbody></table></div>
+    ${meter()}
+    ${confirmReset
+      ? `<div class="confirm"><span>Clear all progress and start again?</span><button class="btn bad" data-act="reset-yes">Yes, reset</button><button class="btn ghost" data-act="reset-no">Cancel</button></div>`
+      : `<div class="row"><button class="linkbtn" data-act="reset">Reset progress</button></div>`}
+  `;
+}
+
+// ---- Events ----
+app.addEventListener("click", e => {
+  const t = e.target.closest("button");
+  if (!t) return;
+  if (t.dataset.say) { speak(t.dataset.say); return; }
+  if (t.dataset.set) {
+    const id = +t.dataset.set;
+    settings.sets = settings.sets.includes(id) ? settings.sets.filter(x => x !== id) : [...settings.sets, id].sort();
+    saveSettings(); render(); return;
+  }
+  if (t.dataset.opt) {
+    const raw = t.dataset.val;
+    settings[t.dataset.opt] = /^\d+$/.test(raw) ? +raw : raw;
+    saveSettings(); render(); return;
+  }
+  if (t.dataset.start) {
+    let pool = selectedPool();
+    if (t.dataset.tricky) pool = pool.filter(v => prog(v).w > 0 && !isLearned(v));
+    const n = settings.size === "all" ? pool.length : Math.min(settings.size, pool.length);
+    if (!n) return;
+    startRound(t.dataset.start, weightedPick(pool, n));
+    return;
+  }
+  if (t.dataset.pick !== undefined && round && !round.answered) {
+    const v = current();
+    const c = round.state.choices[+t.dataset.pick];
+    round.state.picked = c;
+    round.state.ok = norm(c) === norm(v.past);
+    answer(round.state.ok); render(); return;
+  }
+  switch (t.dataset.act) {
+    case "home": view = "home"; confirmReset = false; heroVerb = VERBS[Math.floor(Math.random() * VERBS.length)]; render(); break;
+    case "list": view = "list"; render(); break;
+    case "allsets": settings.sets = settings.sets.length === LISTS.length ? [] : LISTS.map(l => l.id); saveSettings(); render(); break;
+    case "flip": round.state = { flipped: true }; render(); break;
+    case "knew": round.state.ok = t.dataset.val === "1"; answer(round.state.ok); next(); break;
+    case "check": checkTyped(); break;
+    case "hint": {
+      const v = current(); const s = round.state || {};
+      const target = settings.lang === "de" ? v.base : v.past;
+      const len = Math.min((s.hintLen || 0) + 1, Math.max(1, target.length - 1));
+      s.hintLen = len; s.hint = target.slice(0, len) + "…";
+      const p = document.getElementById("in-past"), b = document.getElementById("in-base");
+      s.pastIn = p ? p.value : ""; s.baseIn = b ? b.value : "";
+      round.state = s; render(); break;
+    }
+    case "next": next(); break;
+    case "again": startRound(round.mode, weightedPick(selectedPool(), settings.size === "all" ? selectedPool().length : Math.min(settings.size, selectedPool().length))); break;
+    case "redo-missed": startRound(round.mode, shuffle(round.missed)); break;
+    case "reset": confirmReset = true; render(); break;
+    case "reset-no": confirmReset = false; render(); break;
+    case "reset-yes": progress = {}; store("spt-progress", progress); confirmReset = false; render(); break;
+  }
+});
+app.addEventListener("submit", e => { e.preventDefault(); });
+app.addEventListener("keydown", e => {
+  if (view !== "play" || !round) return;
+  if (round.mode === "type" && !round.answered && e.key === "Enter" && e.target.tagName === "INPUT") {
+    e.preventDefault();
+    if (e.target.id === "in-base") { document.getElementById("in-past").focus(); return; }
+    checkTyped();
+  }
+});
+document.addEventListener("keydown", e => {
+  if (view !== "play" || !round || e.target.tagName === "INPUT") return;
+  if (round.mode === "pick" && !round.answered && /^[1-4]$/.test(e.key)) {
+    const b = app.querySelector(`[data-pick="${+e.key - 1}"]`); if (b) b.click();
+  }
+  if (round.mode === "cards" && e.key === " " && round.state === null) { e.preventDefault(); round.state = { flipped: true }; render(); }
+});
+if (canSpeak) { try { speechSynthesis.getVoices(); } catch (e) {} }
+render();
+</script>
+</body>
+</html>

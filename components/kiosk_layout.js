@@ -80,16 +80,18 @@ export function PairForm({ onPaired, className = styles.pair }) {
 const DRAG_PX = 8
 const SCROLLS = /(auto|scroll)/
 
-function scrollableParent(el) {
+// The nearest panel that scrolls along `axis` ('x' or 'y'), so a drag over a sideways-scrolling
+// strip (e.g. a zoomed chart) inside a page that scrolls down still moves both.
+function scrollableParent(el, axis) {
   const doc = el.ownerDocument
   for (; el && el !== doc.body; el = el.parentElement) {
     const style = doc.defaultView.getComputedStyle(el)
-    if ((SCROLLS.test(style.overflowY) && el.scrollHeight > el.clientHeight) ||
-        (SCROLLS.test(style.overflowX) && el.scrollWidth > el.clientWidth)) return el
+    if (axis === 'y' ? SCROLLS.test(style.overflowY) && el.scrollHeight > el.clientHeight
+      : SCROLLS.test(style.overflowX) && el.scrollWidth > el.clientWidth) return el
   }
   // A plain page that scrolls as a whole, e.g. /varta in the Sunbank overlay.
   const page = doc.scrollingElement
-  return page && page.scrollHeight > page.clientHeight ? page : null
+  return page && (axis === 'y' ? page.scrollHeight > page.clientHeight : page.scrollWidth > page.clientWidth) ? page : null
 }
 
 // Some Pi touchscreens reach Chromium as a mouse, so a swipe never scrolls (and with the
@@ -100,8 +102,9 @@ export function dragToScroll(win) {
 
   const down = (e) => {
     if (e.pointerType !== 'mouse' || e.button !== 0 || !e.target.ownerDocument) return
-    const el = scrollableParent(e.target)
-    drag = el && { el, x: e.clientX, y: e.clientY, left: el.scrollLeft, top: el.scrollTop, moved: false }
+    const across = scrollableParent(e.target, 'x')
+    const upDown = scrollableParent(e.target, 'y')
+    drag = (across || upDown) && { across, upDown, x: e.clientX, y: e.clientY, left: across?.scrollLeft, top: upDown?.scrollTop, moved: false }
   }
   const move = (e) => {
     if (!drag) return
@@ -110,8 +113,8 @@ export function dragToScroll(win) {
     const dy = e.clientY - drag.y
     if (!drag.moved && Math.hypot(dx, dy) < DRAG_PX) return
     drag.moved = true
-    drag.el.scrollLeft = drag.left - dx
-    drag.el.scrollTop = drag.top - dy
+    if (drag.across) drag.across.scrollLeft = drag.left - dx
+    if (drag.upDown) drag.upDown.scrollTop = drag.top - dy
   }
   // A drag that scrolled shouldn't also tap whatever it ended on.
   const up = () => {

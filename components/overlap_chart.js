@@ -55,7 +55,9 @@ const NAV_MIN_DAYS = 1 // the window can't be squeezed shorter than this
 
 // readOnly: look but don't touch (the hallway screen): a tap shows an item's details instead of
 // opening or moving it. fitHeight: squeeze the dates so the biggest circle fits that many pixels.
-export default function OverlapChart({ project, active, setActive, onOpen, onChange, readOnly, fitHeight }) {
+// zoomable: the zoom buttons, strip and gestures (on unless readOnly; the hallway screen turns them on).
+// onReset: also called by the reset button, which takes the chart back to how it opened.
+export default function OverlapChart({ project, active, setActive, onOpen, onChange, onReset, readOnly, fitHeight, zoomable = !readOnly }) {
     const wrapRef = useRef(null)
     const gradientId = useId()
     const [width, setWidth] = useState(0)
@@ -173,7 +175,7 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
     // Zooms to `next`, keeping the date under the point vx of the visible box still.
     const zoomTo = (next, vx) => {
         const el = wrapRef.current
-        if (!chart || !el || readOnly) return
+        if (!chart || !el || !zoomable) return
         const z = Math.min(Math.max(next, 1), chart.maxZoom)
         if (Math.abs(z - chart.zoom) < 0.001) return
         vx ??= el.clientWidth / 2
@@ -231,28 +233,41 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
         navRedraw.current?.()
     }, [chart])
 
-    // Each project opens on a view that suits it (chart.autoZoom), scrolled to today if it's in the project.
-    const opened = useRef(null)
-    useLayoutEffect(() => {
+    // Each project opens on a view that suits it (chart.autoZoom), scrolled to today if it's in the
+    // project; the hallway screen opens on the whole project. The reset button comes back here.
+    const initialView = (smooth) => {
         const el = wrapRef.current
-        if (readOnly || !chart || !el || opened.current === project.id) return
-        opened.current = project.id
-        const z = chart.autoZoom
-        const day = isRunning(project) ? daysBetween(project.start, todayLocal()) : 0
+        if (!chart || !el) return
+        const z = readOnly ? 1 : chart.autoZoom
+        const day = !readOnly && isRunning(project) ? daysBetween(project.start, todayLocal()) : 0
         const vx = day ? el.clientWidth * START_AT : PAD_X
         if (Math.abs(z - chart.zoom) < 0.001) {
-            el.scrollLeft = PAD_X + day * chart.pxPerDay - vx
+            el.scrollTo({ left: PAD_X + day * chart.pxPerDay - vx, behavior: smooth ? 'smooth' : 'instant' })
         } else {
             anchor.current = { day, vx }
             setZoom(z)
         }
+    }
+    const opened = useRef(null)
+    useLayoutEffect(() => {
+        if (readOnly || !chart || !wrapRef.current || opened.current === project.id) return
+        opened.current = project.id
+        initialView(false)
     }, [chart, project, readOnly])
+
+    // After onReset (e.g. clearing filters) has redrawn the chart, so the view suits what's shown.
+    const [resets, setResets] = useState(0)
+    useLayoutEffect(() => { if (resets) initialView(true) }, [resets])
+    const reset = () => {
+        onReset?.()
+        setResets((n) => n + 1)
+    }
 
     // Trackpad pinch (which arrives as Ctrl + wheel) and Ctrl/⌘ + wheel zoom around the pointer;
     // two fingers on a touchscreen pinch-zoom around their midpoint. Both need non-passive listeners.
     useEffect(() => {
         const el = wrapRef.current
-        if (!el || readOnly) return
+        if (!el || !zoomable) return
         const local = (x) => x - el.getBoundingClientRect().left
         const onWheel = (e) => {
             if (!e.ctrlKey && !e.metaKey) return
@@ -284,14 +299,14 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
             el.removeEventListener('touchend', onTouchEnd)
             el.removeEventListener('touchcancel', onTouchEnd)
         }
-    }, [readOnly])
+    }, [zoomable])
     const currentZoom = useRef(1)
     currentZoom.current = chart?.zoom ?? 1
 
     // With the mouse, dragging the background pans, and so does dragging anywhere with Space held or
     // with the middle button. Circles still move items; touch scrolls natively.
     useEffect(() => {
-        if (readOnly) return
+        if (!zoomable) return
         const typing = (e) => e.target.closest?.('input, textarea, select, [contenteditable]')
         const down = (e) => { if (e.key === ' ' && !typing(e) && wrapRef.current?.classList.contains(styles.pannable)) { spaceHeld.current = true; if (!e.target.closest?.('button, [role=button]')) e.preventDefault() } }
         const up = (e) => { if (e.key === ' ') spaceHeld.current = false }
@@ -304,11 +319,11 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
             window.removeEventListener('keyup', up)
             window.removeEventListener('blur', reset)
         }
-    }, [readOnly])
+    }, [zoomable])
 
     const panStart = (e) => {
         const el = wrapRef.current
-        if (readOnly || e.pointerType !== 'mouse') return
+        if (!zoomable || e.pointerType !== 'mouse') return
         const anywhere = e.button === 1 || (e.button === 0 && spaceHeld.current)
         if (!anywhere && (e.button !== 0 || e.target.closest('[role=button], [data-handle]'))) return
         if (el.scrollWidth <= el.clientWidth) return
@@ -323,7 +338,7 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
 
     // + and − zoom and 0 fits, from anywhere in the chart (the circles pass these keys on).
     const onZoomKey = (e) => {
-        if (readOnly || e.ctrlKey || e.metaKey || e.altKey) return
+        if (!zoomable || e.ctrlKey || e.metaKey || e.altKey) return
         if (ZOOM_KEYS[e.key]) { e.preventDefault(); zoomTo(chart.zoom * ZOOM_KEYS[e.key]) }
         else if (e.key === '0') { e.preventDefault(); zoomTo(1) }
     }
@@ -389,7 +404,7 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
 
     return (
         <div className={styles.chartWrap} onKeyDown={onZoomKey}>
-            {!readOnly && chart && project.items.length > 0 && (
+            {zoomable && chart && project.items.length > 0 && (
                 <div className={styles.zoomBar} role="group" aria-label="Zoom">
                     <button type="button" onClick={() => zoomTo(chart.zoom / ZOOM_STEP)} disabled={chart.zoom <= 1} aria-label="Zoom out">−</button>
                     <span className={styles.zoomLevel} aria-live="polite">{Math.round(chart.zoom * 100)}%</span>
@@ -399,6 +414,11 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
                             title={rangeFor(which) ? undefined : `${label} is outside this project`}>{label}</button>
                     ))}
                     <button type="button" onClick={() => zoomTo(1)} disabled={chart.zoom <= 1}>Fit</button>
+                    <button type="button" onClick={reset} aria-label="Reset view" title="Back to how it opened">
+                        <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true">
+                            <path d="M3 8a5 5 0 1 0 1.5-3.6M3 2.5v2.2h2.2" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                    </button>
                 </div>
             )}
             <div ref={wrapRef}
@@ -511,7 +531,7 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
                 )}
                 {project.items.length === 0 && <p className={styles.chartEmpty}>No items yet. Add one to draw its circle.</p>}
             </div>
-            {!readOnly && chart && width > 0 && project.items.length > 0 && (
+            {zoomable && chart && width > 0 && project.items.length > 0 && (
                 <Navigator project={project} items={items} chart={chart} scrollRef={wrapRef} width={width} zoomTo={zoomTo} redrawRef={navRedraw} />
             )}
             {!readOnly && <p className={styles.hint}>

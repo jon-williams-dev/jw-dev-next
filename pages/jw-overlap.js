@@ -178,7 +178,8 @@ export default function OverlapPage() {
                                 <button type="button" className={styles.primary} onClick={() => setEditingItem(blankItem(project))}>+ Add item</button>
                             </div>
                             <FilterBar project={project} filter={filter} setFilter={setFilter} count={shown.items.length} />
-                            <OverlapChart project={shown} active={active} setActive={setActive} onOpen={setEditingItem} onChange={moveItem} />
+                            <OverlapChart project={shown} active={active} setActive={setActive} onOpen={setEditingItem} onChange={moveItem}
+                                onReset={() => { setFilter(NO_FILTER); setActive(null) }} />
                         </section>
 
                         <section className={styles.card} aria-labelledby="items-title">

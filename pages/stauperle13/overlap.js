@@ -82,7 +82,8 @@ export default function Overlap() {
                         <section className={overlapStyles.card} aria-label="Timeline">
                             <FilterBar project={project} filter={filter} setFilter={setFilter} count={shown.items.length} />
                             {height > 0 && (
-                                <OverlapChart key={project.id} project={shown} active={active} setActive={setActive} readOnly fitHeight={Math.round(height * CHART_SHARE)} />
+                                <OverlapChart key={project.id} project={shown} active={active} setActive={setActive} readOnly zoomable fitHeight={Math.round(height * CHART_SHARE)}
+                                    onReset={() => { setFilter(NO_FILTER); setActive(null) }} />
                             )}
                         </section>
                         <section className={overlapStyles.card} aria-labelledby="items-title">

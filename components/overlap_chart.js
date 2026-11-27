@@ -6,6 +6,13 @@ import { addDays, circleFor, contains, daysBetween, fmtDate, fmtDuration, fmtRan
 import styles from '../styles/overlap.module.scss'
 
 const todayLocal = () => new Date().toLocaleDateString('sv-SE') // YYYY-MM-DD
+
+// Whether today falls inside the project.
+function isRunning(project) {
+    const today = toMs(todayLocal())
+    return today > toMs(project.start) && today < toMs(project.end)
+}
+
 const PAD_X = 36
 const MIN_WIDTH = 560 // below this the chart scrolls sideways rather than squashing the dates
 const LABEL_H = 26
@@ -18,6 +25,7 @@ const TOOLTIP_NAMES = 4 // overlapping items named in the tooltip before "and N 
 const MAX_PX_PER_DAY = 160 // zooming in stops here
 const TYPICAL_D = 64 // a project opens zoomed so its typical item is about this wide
 const START_AT = 1 / 3 // ...with today (or the start) this far across the view
+const TODAY_DAYS = 14 // ...and, when today is in the project, zoomed in to about this many days around it
 const MAX_HEIGHT_SHARE = 0.7 // the chart is never taller than this much of the window
 const MIN_MAX_HEIGHT = 320
 const ZOOM_STEP = 1.5 // each press of + or −
@@ -38,6 +46,7 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
     const lastPointer = useRef(null) // 'mouse', 'pen' or 'touch'
     const [zoom, setZoom] = useState(1) // 1 = the whole project fits the width
     const [zooming, setZooming] = useState(false) // circles jump rather than glide while zooming
+    const [view, setView] = useState(null) // { left, width }: the part of the chart scrolled into view
     const zoomTimer = useRef(null)
     const anchor = useRef(null) // the point to keep still while zooming, applied once the chart redraws
     const [windowH, setWindowH] = useState(0)
@@ -79,10 +88,12 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
         // Zoomed in, the dates spread out and the chart scrolls sideways.
         const maxZoom = Math.max(1, MAX_PX_PER_DAY / pxPerDay)
         const z = Math.min(zoom, maxZoom)
-        // The zoom a project opens at: enough for a typical (median-length) item to be readable.
+        // The zoom a project opens at: enough for a typical (median-length) item to be readable, and
+        // in close on the days around today while the project is running.
         const spans = project.items.map((i) => daysBetween(i.start, i.end)).sort((a, b) => a - b)
         const typical = spans[Math.floor(spans.length / 2)] || 1
-        const autoZoom = Math.min(Math.max(TYPICAL_D / (typical * pxPerDay), 1), maxZoom)
+        const forToday = isRunning(project) ? Math.max(width - PAD_X * 2, 1) / (TODAY_DAYS * pxPerDay) : 1
+        const autoZoom = Math.min(Math.max(TYPICAL_D / (typical * pxPerDay), forToday, 1), maxZoom)
         // The height suits that view and stays put while zooming and dragging (zoomed further in, the
         // bigger circles are cut off at the top and bottom, their ends still on the centre line). It's
         // never taller than most of the window; the hallway screen sizes its own.
@@ -105,10 +116,35 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
             }
         }
         return {
-            w, h, pxPerDay, cy, axisY, circles, weekends, labels: placeLabels(circles, cy, w, axisY), ticks: ticksFor(project, pxPerDay),
+            w, h, pxPerDay, cy, axisY, circles, weekends, ticks: ticksFor(project, pxPerDay),
             zoom: z, maxZoom, autoZoom, scrolls: w > width + 1,
         }
     }, [project, items, width, fitHeight, zoom, windowH])
+
+    // Fitted to the height: an item too tall for the chart is flattened into an oval exactly as tall
+    // as there's room for (its dates, the left and right ends, stay exact); the rest stay circles.
+    // `ry` is each one's half-height. Labels go over the part of the chart in view.
+    const fitted = useMemo(() => {
+        if (!chart) return null
+        const left = view?.left ?? 0
+        const room = Math.max(chart.cy - LABEL_H - 4, 1)
+        const circles = chart.circles.map((c) => ({ ...c, ry: Math.min(c.r, room) }))
+        return { circles, labels: placeLabels(circles, chart.cy, chart.w, chart.axisY, [left, left + (view?.width ?? width)]) }
+    }, [chart, view, width])
+
+    // Follows the scrolling, a frame at a time.
+    useEffect(() => {
+        const el = wrapRef.current
+        if (!el) return
+        let frame = 0
+        const update = () => {
+            cancelAnimationFrame(frame)
+            frame = requestAnimationFrame(() => setView((v) => (v && v.left === el.scrollLeft && v.width === el.clientWidth ? v : { left: el.scrollLeft, width: el.clientWidth })))
+        }
+        update()
+        el.addEventListener('scroll', update, { passive: true })
+        return () => { el.removeEventListener('scroll', update); cancelAnimationFrame(frame) }
+    }, [!!chart, width])
 
     // ── zooming and panning (not on the hallway screen) ──
     // Zooms to `next`, keeping the date under the point vx of the visible box still.
@@ -143,8 +179,7 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
         if (readOnly || !chart || !el || opened.current === project.id) return
         opened.current = project.id
         const z = chart.autoZoom
-        const today = todayLocal()
-        const day = toMs(today) > toMs(project.start) && toMs(today) < toMs(project.end) ? daysBetween(project.start, today) : 0
+        const day = isRunning(project) ? daysBetween(project.start, todayLocal()) : 0
         const vx = day ? el.clientWidth * START_AT : PAD_X
         if (Math.abs(z - chart.zoom) < 0.001) {
             el.scrollLeft = PAD_X + day * chart.pxPerDay - vx
@@ -238,8 +273,8 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
     const today = todayLocal()
     const todayX = chart && toMs(today) >= toMs(project.start) && toMs(today) <= toMs(project.end)
         ? PAD_X + daysBetween(project.start, today) * chart.pxPerDay : null
-    const hiddenLabels = chart ? chart.circles.length - chart.labels.filter((l) => l.shown).length : 0
-    const focused = chart && focusId && chart.circles.find((c) => c.item.id === focusId)
+    const hiddenLabels = fitted ? fitted.labels.filter((l) => !l.shown && !l.away).length : 0
+    const focused = fitted && focusId && fitted.circles.find((c) => c.item.id === focusId)
 
     // ── dragging: the circle moves the whole item, the side handles move one end ──
     const pressStart = (e, item, mode) => {
@@ -349,7 +384,7 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
                             {/* Items, biggest first, cut off above the date axis */}
                             <clipPath id={`${gradientId}-clip`}><rect x={0} y={0} width={chart.w} height={chart.axisY} /></clipPath>
                             <g clipPath={`url(#${gradientId}-clip)`}>
-                                {chart.circles.map(({ item, cx, r, slice }) => (
+                                {fitted.circles.map(({ item, cx, r, ry, slice }) => (
                                     <g
                                         key={item.id}
                                         className={`${styles.item} ${focusId === item.id ? styles.itemActive : ''} ${drag?.id === item.id ? styles.itemDragging : ''}`}
@@ -364,27 +399,29 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
                                         onBlur={() => setActive((a) => (a === item.id ? null : a))}
                                         {...(readOnly ? {} : pressHandlers(item, 'move'))}
                                     >
-                                        {slice ? (
-                                            <path className={styles.body} d={wedge(cx, chart.cy, Math.max(r, 1), slice)} fill={`url(#${gradientId}-${item.id})`} stroke={item.colour}
-                                                strokeLinejoin="round" strokeDasharray={item.state === 'Cancelled' ? '6 5' : undefined} />
-                                        ) : (
-                                            <circle className={styles.body} cx={cx} cy={chart.cy} r={Math.max(r, 1)} fill={`url(#${gradientId}-${item.id})`} stroke={item.colour}
-                                                strokeDasharray={item.state === 'Cancelled' ? '6 5' : undefined} />
-                                        )}
-                                        {item.progress > 0 && item.state !== 'Cancelled' && (slice ? (
-                                            <path className={`${styles.ring} ${styles.ringSlice}`} d={arc(cx, chart.cy, Math.max(r, 1), slice)} stroke={item.colour} pathLength={100}
-                                                strokeDasharray={`${item.progress} 100`} />
-                                        ) : (
-                                            <circle className={styles.ring} cx={cx} cy={chart.cy} r={Math.max(r, 1)} stroke={item.colour} pathLength={100}
-                                                strokeDasharray={`${item.progress} 100`} />
-                                        ))}
+                                        <g style={ry < r ? { transform: `translateY(${chart.cy}px) scaleY(${ry / r}) translateY(${-chart.cy}px)` } : undefined}>
+                                            {slice ? (
+                                                <path className={styles.body} d={wedge(cx, chart.cy, Math.max(r, 1), slice)} fill={`url(#${gradientId}-${item.id})`} stroke={item.colour} vectorEffect="non-scaling-stroke"
+                                                    strokeLinejoin="round" strokeDasharray={item.state === 'Cancelled' ? '6 5' : undefined} />
+                                            ) : (
+                                                <circle className={styles.body} cx={cx} cy={chart.cy} r={Math.max(r, 1)} fill={`url(#${gradientId}-${item.id})`} stroke={item.colour} vectorEffect="non-scaling-stroke"
+                                                    strokeDasharray={item.state === 'Cancelled' ? '6 5' : undefined} />
+                                            )}
+                                            {item.progress > 0 && item.state !== 'Cancelled' && (slice ? (
+                                                <path className={`${styles.ring} ${styles.ringSlice}`} d={arc(cx, chart.cy, Math.max(r, 1), slice)} stroke={item.colour} pathLength={100} vectorEffect="non-scaling-stroke"
+                                                    strokeDasharray={`${item.progress} 100`} />
+                                            ) : (
+                                                <circle className={styles.ring} cx={cx} cy={chart.cy} r={Math.max(r, 1)} stroke={item.colour} pathLength={100} vectorEffect="non-scaling-stroke"
+                                                    strokeDasharray={`${item.progress} 100`} />
+                                            ))}
+                                        </g>
                                     </g>
                                 ))}
                             </g>
 
                             {/* Labels on top of everything, but not in the way of clicks */}
                             <g aria-hidden="true" pointerEvents="none">
-                                {chart.labels.filter((l) => l.shown).map((l) => (
+                                {fitted.labels.filter((l) => l.shown).map((l) => (
                                     <text key={l.id} x={l.x} y={l.y} textAnchor="middle" style={{ fill: l.colour }}
                                         className={`${styles.label} ${focusId && focusId !== l.id ? styles.labelDim : ''}`}>{l.text}</text>
                                 ))}
@@ -539,10 +576,13 @@ function wedge(cx, cy, r, slice) {
 }
 
 // Puts each label above its circle, or below if that's taken, or hides it if both would collide.
-function placeLabels(circles, cy, width, axisY) {
+// `seen` is the stretch of the chart in view: an item reaching off the side is labelled over the
+// part of it that's showing.
+function placeLabels(circles, cy, width, axisY, seen = [0, width]) {
     const boxes = []
     const collides = (b) => boxes.some((o) => b.x1 < o.x2 && b.x2 > o.x1 && b.y1 < o.y2 && b.y2 > o.y1)
-    return circles.map(({ item, cx, r, slice }) => {
+    return circles.map(({ item, cx, r, ry = r, left, right, slice }) => {
+        if (right <= seen[0] || left >= seen[1]) return { id: item.id, shown: false, away: true }
         const name = item.state === 'Done' ? `✓ ${item.name}` : item.name
         const text = name.length > MAX_LABEL ? `${name.slice(0, MAX_LABEL - 1)}…` : name
         const half = (text.length * CHAR_W) / 2 + 4
@@ -550,9 +590,10 @@ function placeLabels(circles, cy, width, axisY) {
         const [a0, a1] = slice ? sliceAngles(slice) : [0, 0]
         const mid = (a0 + a1) / 2
         const lean = slice && Math.abs(Math.cos(mid)) > 0.2 ? Math.sign(Math.cos(mid)) * (half + 4) : 0
-        const x = Math.min(Math.max(cx + lean, half + 2), width - half - 2)
+        const from = Math.max(seen[0], 0) + half + 2, to = Math.min(seen[1], width) - half - 2
+        const x = Math.min(Math.max(cx + lean, from), to)
         // A circle cut off by the chart's edge gets its label just inside the edge.
-        const above = Math.max(cy - r - 8, 18), below = Math.min(cy + r + 18, axisY - 6)
+        const above = Math.max(cy - ry - 8, 18), below = Math.min(cy + ry + 18, axisY - 6)
         for (const y of slice && Math.sin(mid) > 0.5 ? [below, above] : [above, below]) {
             const box = { x1: x - half, x2: x + half, y1: y - 14, y2: y + 4 }
             if (!collides(box)) {
@@ -600,13 +641,13 @@ function Names({ items, note }) {
     )
 }
 
-function Tooltip({ circle: { item, cx, r }, cy, width, height, project, items, dragging }) {
+function Tooltip({ circle: { item, cx, ry }, cy, width, height, project, items, dragging }) {
     const ref = useRef(null)
     const [boxHeight, setBoxHeight] = useState(0)
     useLayoutEffect(() => { setBoxHeight(ref.current.offsetHeight) })
 
     // Above the circle if it fits, else just inside its top, else as high as the chart allows.
-    const top = cy - r
+    const top = cy - ry
     const y = top - 14 - boxHeight >= 4 ? top - 14 - boxHeight : Math.max(4, Math.min(top + 14, height - boxHeight - 4))
 
     const deps = project.items.filter((i) => item.dependsOn.includes(i.id))

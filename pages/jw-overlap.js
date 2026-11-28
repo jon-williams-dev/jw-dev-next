@@ -4,7 +4,7 @@ import { Inter } from 'next/font/google'
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import {
     ITEM_STATES, PRIORITIES, PROJECT_STATUSES,
-    blankItem, blankProject, coloured, fmtRange, fullUrl, isDate,
+    blankItem, blankProject, coloured, dailyUpdate, fmtRange, fullUrl, isDate,
     lateDependencies, parseTags, projectProgress, sampleProject, toMs, validateItem, validateProject, widenedFor, withProgress, withState,
 } from '../lib/overlap'
 import OverlapChart from '../components/overlap_chart'
@@ -24,6 +24,7 @@ export default function OverlapPage() {
     const [askingKey, setAskingKey] = useState(false)
     const [editingProject, setEditingProject] = useState(null) // a draft project, new or existing
     const [editingItem, setEditingItem] = useState(null) // a draft item
+    const [sharing, setSharing] = useState(false) // the daily update dialog
     const [active, setActive] = useState(null) // item highlighted in both the chart and the list
     const [filter, setFilter] = useState(NO_FILTER) // which items the chart and the list show
     const [toast, setToast] = useState(null) // { message, at }
@@ -170,7 +171,7 @@ export default function OverlapPage() {
                     </section>
                 ) : (
                     <>
-                        <ProjectSummary project={project} onEdit={() => setEditingProject(project)} onDelete={() => deleteProject(project)} />
+                        <ProjectSummary project={project} onDailyUpdate={() => setSharing(true)} onEdit={() => setEditingProject(project)} onDelete={() => deleteProject(project)} />
 
                         <section className={styles.card} aria-labelledby="chart-title">
                             <div className={styles.cardHead}>
@@ -219,6 +220,8 @@ export default function OverlapPage() {
             )}
 
             {askingKey && <KeyDialog rejected={sync.status === 'badkey'} onSubmit={(key) => { signIn(key); setAskingKey(false) }} onClose={() => setAskingKey(false)} />}
+
+            {sharing && project && <DailyUpdateDialog project={project} onClose={() => setSharing(false)} />}
 
             {editingProject && (
                 <ProjectEditor
@@ -284,6 +287,38 @@ function KeyDialog({ rejected, onSubmit, onClose }) {
                     <button type="submit" className={styles.primary}>Connect</button>
                 </div>
             </form>
+        </Modal>
+    )
+}
+
+// ── daily update ─────────────────────────────────────────────────────────────
+
+// Today's update, ready to post to the group: WhatsApp opens with it filled in, Share hands it to
+// the phone's share sheet (Signal, WhatsApp, …), Copy is for pasting anywhere else. Sending is
+// always one tap by hand: neither app lets a website post to a group on its own.
+function DailyUpdateDialog({ project, onClose }) {
+    const text = useMemo(() => dailyUpdate(project, todayLocal(), `${window.location.origin}/jw-overlap`), [project])
+    const [copied, setCopied] = useState(false)
+    const canShare = typeof navigator.share === 'function'
+
+    const copy = async () => {
+        try {
+            await navigator.clipboard.writeText(text)
+            setCopied(true)
+        } catch { window.prompt('Copy the update:', text) }
+    }
+    const share = () => navigator.share({ text }).catch(() => { /* closed the share sheet */ })
+
+    return (
+        <Modal title="Daily update" onClose={onClose}>
+            <p className={styles.dialogNote}>Today’s update for the group. Send it, then pick the group in the app.</p>
+            <pre className={styles.digest}>{text}</pre>
+            <div className={styles.dialogActions}>
+                <button type="button" onClick={copy}>{copied ? 'Copied' : 'Copy'}</button>
+                <span className={styles.spacer} />
+                {canShare && <button type="button" onClick={share}>Share…</button>}
+                <a className={`${styles.button} ${styles.primary}`} href={`https://wa.me/?text=${encodeURIComponent(text)}`} target="_blank" rel="noreferrer">WhatsApp</a>
+            </div>
         </Modal>
     )
 }

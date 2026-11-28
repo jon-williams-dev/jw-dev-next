@@ -37,7 +37,8 @@
     color: var(--text);
   }
 
-  button {
+  button,
+  .button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -49,6 +50,7 @@
     font-weight: 500;
     cursor: pointer;
     white-space: nowrap;
+    text-decoration: none;
 
     &:hover { border-color: var(--muted); }
   }
@@ -996,6 +998,22 @@
   margin-bottom: 0.75rem !important;
   color: var(--muted);
   font-size: 0.9rem;
+}
+
+// The daily update as it will appear in the chat.
+.digest {
+  max-height: 50vh;
+  margin: 0;
+  padding: 0.85rem 1rem;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+  font: inherit;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .form {

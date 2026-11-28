@@ -9,7 +9,7 @@ const todayLocal = () => new Date().toLocaleDateString('sv-SE') // YYYY-MM-DD
 
 // ── project summary ──────────────────────────────────────────────────────────
 
-export function ProjectSummary({ project, onEdit, onDelete }) {
+export function ProjectSummary({ project, onEdit, onDelete, onDailyUpdate }) {
     const count = (state) => project.items.filter((i) => i.state === state).length
     const peak = busiest(project)
     const today = todayLocal()
@@ -37,6 +37,7 @@ export function ProjectSummary({ project, onEdit, onDelete }) {
                 </div>
                 {onEdit && (
                     <div className={styles.row}>
+                        <button type="button" onClick={onDailyUpdate}>Daily update</button>
                         <button type="button" onClick={onEdit}>Edit project</button>
                         <button type="button" className={styles.danger} onClick={onDelete}>Delete</button>
                     </div>

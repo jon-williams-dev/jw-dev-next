@@ -2,7 +2,7 @@
 // by the hallway screen's /stauperle13/overlap (look only: leave out the on… handlers).
 
 import { Fragment, useRef, useState } from 'react'
-import { PRIORITIES, PRIORITY_COLOURS, busiest, daysBetween, fmtDuration, fmtRange, fmtShort, projectProgress, sequenced, shortUrl, toMs } from '../lib/overlap'
+import { PRIORITIES, PRIORITY_COLOURS, busiest, daysBetween, fmtDuration, fmtRange, fmtShort, isOverdue, overdueBy, projectProgress, sequenced, shortUrl, toMs } from '../lib/overlap'
 import styles from '../styles/overlap.module.scss'
 
 const todayLocal = () => new Date().toLocaleDateString('sv-SE') // YYYY-MM-DD
@@ -13,12 +13,14 @@ export function ProjectSummary({ project, onEdit, onDelete, onDailyUpdate }) {
     const count = (state) => project.items.filter((i) => i.state === state).length
     const peak = busiest(project)
     const today = todayLocal()
+    const overdue = project.items.filter((i) => isOverdue(i, today)).length
     const left = daysBetween(today, project.end)
     const started = toMs(today) >= toMs(project.start)
     const stats = [
         ['Items', project.items.length],
         ['In progress', count('In progress')],
         ['Blocked', count('Blocked'), count('Blocked') > 0 ? 'warn' : null],
+        ['Overdue', overdue, overdue > 0 ? 'danger' : null, overdue > 0 && 'past their dates, not done'],
         ['Done', count('Done')],
         ['Peak overlap', peak.count ? `${peak.count} at once` : '–', null, peak.date && `on ${fmtShort(peak.date)}`],
         [started ? 'Days left' : 'Starts in', !started ? daysBetween(today, project.start) : left > 0 ? left : 'Ended', null, started && left > 0 ? `until ${fmtShort(project.end)}` : null],
@@ -243,7 +245,7 @@ export function ItemList({ project, active, setActive, onOpen, onDelete, onReord
                 <tbody>
                     {items.map((item, n) => (
                         <tr key={item.id} ref={(el) => { rows.current[item.id] = el }}
-                            className={[isToday(item, today) && styles.rowToday, active === item.id && styles.rowActive, drag?.id === item.id && styles.rowDragging,
+                            className={[isToday(item, today) && styles.rowToday, isOverdue(item, today) && styles.rowOverdue, active === item.id && styles.rowActive, drag?.id === item.id && styles.rowDragging,
                                 lineBefore === item.id && styles.dropBefore, lineAfterLast && n === items.length - 1 && styles.dropAfter].filter(Boolean).join(' ')}
                             style={{ '--item': item.colour, ...(drag?.id === item.id ? { transform: `translateY(${drag.dy}px)` } : {}) }}
                             onMouseEnter={() => setActive(item.id)} onMouseLeave={() => setActive((a) => (a === item.id ? null : a))}>
@@ -266,14 +268,19 @@ export function ItemList({ project, active, setActive, onOpen, onDelete, onReord
                             </td>
                             <td className={styles.nowrap}>
                                 {fmtRange(item.start, item.end)}
-                                {isToday(item, today) ? (
+                                {isOverdue(item, today) ? (
+                                    <span className={`${styles.cellNote} ${styles.overdueNote}`}>{overdueBy(item, today)}</span>
+                                ) : isToday(item, today) ? (
                                     <span className={`${styles.cellNote} ${styles.todayNote}`}>
                                         Day {Math.min(daysBetween(item.start, today) + 1, daysBetween(item.start, item.end))} of {daysBetween(item.start, item.end)}
                                     </span>
                                 ) : <span className={styles.cellNote}>{fmtDuration(item.start, item.end)}</span>}
                             </td>
                             <td>{item.owner || <span className={styles.muted}>–</span>}</td>
-                            <td><span className={styles.badge} data-tone={item.state}>{item.state}</span></td>
+                            <td>
+                                <span className={styles.badge} data-tone={item.state}>{item.state}</span>
+                                {isOverdue(item, today) && <span className={styles.badge} data-tone="Overdue">Overdue</span>}
+                            </td>
                             <td><PriorityTag value={item.priority} /></td>
                             <td className={styles.progressCell}><Progress value={item.progress} label={`${item.name} progress`} colour={item.colour} /></td>
                             {onOpen && (

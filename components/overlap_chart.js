@@ -2,7 +2,7 @@
 // edge = end. Used by /jw-overlap (editable) and the hallway screen's /stauperle13/overlap.
 
 import { Fragment, useEffect, useId, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react'
-import { addDays, circleFor, contains, daysBetween, fmtDate, fmtDuration, fmtRange, fmtShort, nudged, sharedDays, shortUrl, ticksFor, toMs } from '../lib/overlap'
+import { addDays, circleFor, contains, daysBetween, fmtDate, fmtDuration, fmtRange, fmtShort, isOverdue, nudged, overdueBy, sharedDays, shortUrl, ticksFor, toMs } from '../lib/overlap'
 import styles from '../styles/overlap.module.scss'
 
 const todayLocal = () => new Date().toLocaleDateString('sv-SE') // YYYY-MM-DD
@@ -465,7 +465,7 @@ export default function OverlapChart({ project, active, setActive, onOpen, onCha
                                         className={`${styles.item} ${focusId === item.id ? styles.itemActive : ''} ${drag?.id === item.id ? styles.itemDragging : ''}`}
                                         tabIndex={0}
                                         role="button"
-                                        aria-label={`${item.name}, ${fmtRange(item.start, item.end)}${slice ? `, same dates as ${slice.count - 1} other item${slice.count > 2 ? 's' : ''}` : ''}, ${item.state}, ${item.progress}% done`}
+                                        aria-label={`${item.name}, ${fmtRange(item.start, item.end)}${slice ? `, same dates as ${slice.count - 1} other item${slice.count > 2 ? 's' : ''}` : ''}, ${item.state}${isOverdue(item, todayLocal()) ? ', overdue' : ''}, ${item.progress}% done`}
                                         onClick={readOnly ? () => setActive(item.id) : (e) => onTap(e, item)}
                                         onKeyDown={readOnly ? undefined : (e) => onKey(e, item)}
                                         onMouseEnter={() => !drag && setActive(item.id)}
@@ -655,10 +655,11 @@ function wedge(cx, cy, r, slice) {
 // part of it that's showing.
 function placeLabels(circles, cy, width, axisY, seen = [0, width]) {
     const boxes = []
+    const today = todayLocal()
     const collides = (b) => boxes.some((o) => b.x1 < o.x2 && b.x2 > o.x1 && b.y1 < o.y2 && b.y2 > o.y1)
     return circles.map(({ item, cx, r, ry = r, left, right, slice }) => {
         if (right <= seen[0] || left >= seen[1]) return { id: item.id, shown: false, away: true }
-        const name = item.state === 'Done' ? `✓ ${item.name}` : item.name
+        const name = item.state === 'Done' ? `✓ ${item.name}` : isOverdue(item, today) ? `⚠ ${item.name}` : item.name
         const text = name.length > MAX_LABEL ? `${name.slice(0, MAX_LABEL - 1)}…` : name
         const half = (text.length * CHAR_W) / 2 + 4
         // A slice's label leans towards its side of the circle, and starts below for a bottom slice.
@@ -738,6 +739,7 @@ function Tooltip({ circle: { item, cx, ry }, cy, width, height, project, items, 
             {!dragging && (
                 <>
                     <span><span className={styles.badge} data-tone={item.state}>{item.state}</span> {item.progress}%{item.owner ? ` · ${item.owner}` : ''}</span>
+                    {isOverdue(item, todayLocal()) && <span className={styles.tooltipOverdue}>{overdueBy(item, todayLocal())}</span>}
                     {twins.length > 0 && <span className={styles.tooltipList}>Same dates as <Names items={twins} /></span>}
                     {overlaps.length > 0 && <span className={styles.tooltipList}>Overlaps <Names items={overlaps} note={overlapNote} /></span>}
                     {deps.length > 0 && <span className={styles.tooltipList}>After {deps.map((d) => d.name).join(', ')}</span>}

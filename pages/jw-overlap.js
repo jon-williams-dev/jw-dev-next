@@ -4,8 +4,8 @@ import { Inter } from 'next/font/google'
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import {
     ITEM_STATES, PRIORITIES, PROJECT_STATUSES,
-    blankItem, blankProject, coloured, dailyUpdate, fmtRange, fullUrl, isDate,
-    lateDependencies, parseTags, projectProgress, sampleProject, timeProgress, toMs, validateItem, validateProject, widenedFor, withProgress, withState,
+    blankItem, blankProject, coloured, dailyUpdate, fmtRange, followsDates, fullUrl, isDate,
+    lateDependencies, paced, parseTags, projectProgress, sampleProject, timeProgress, toMs, validateItem, validateProject, widenedFor, withProgress, withState,
 } from '../lib/overlap'
 import OverlapChart from '../components/overlap_chart'
 import { useOverlapStore } from '../components/overlap_store'
@@ -34,7 +34,8 @@ export default function OverlapPage() {
     useEffect(() => { if (sync.message) setToast({ message: sync.message, at: Date.now() }) }, [sync.message])
 
     const current = state?.projects.find((p) => p.id === state.currentId) || state?.projects[0] || null
-    const project = useMemo(() => coloured(current), [current])
+    const today = todayLocal()
+    const project = useMemo(() => coloured(paced(current, today)), [current, today])
     useEffect(() => setFilter(NO_FILTER), [project?.id])
     const filtering = isFiltering(filter)
     const shown = project && filtering ? { ...project, items: project.items.filter((i) => matches(i, filter)) } : project
@@ -476,9 +477,13 @@ function ItemEditor({ item, project, isNew, onSave, onDelete, onClose }) {
     const late = lateDependencies(draft, project)
     const wider = isDate(draft.start) && isDate(draft.end) && toMs(draft.end) > toMs(draft.start) ? widenedFor(project, draft) : project
     const widens = wider.start !== project.start || wider.end !== project.end
-    // While it's in progress, one tap sets the progress to how much of its time has gone.
+    // While it's in progress the progress follows the dates, until the slider is moved.
     const pace = draft.state === 'In progress' && isDate(draft.start) && isDate(draft.end) && toMs(draft.end) > toMs(draft.start)
         ? timeProgress(draft, todayLocal()) : null
+    const following = pace && followsDates(draft)
+    useEffect(() => {
+        if (following && Number(draft.progress) !== pace.progress) setDraft((d) => ({ ...d, progress: pace.progress }))
+    }, [following, pace?.progress, draft.progress, setDraft])
 
     const toggleDependency = (id) => setDraft((d) => ({ ...d, dependsOn: d.dependsOn.includes(id) ? d.dependsOn.filter((x) => x !== id) : [...d.dependsOn, id] }))
 
@@ -500,13 +505,18 @@ function ItemEditor({ item, project, isNew, onSave, onDelete, onClose }) {
                 </p>
                 <div className={styles.form}>
                     <CommonFields draft={draft} set={set} setDraft={setDraft} errors={errors}
-                        onProgress={(e) => setDraft((d) => withProgress(d, Number(e.target.value)))}
-                        progressExtra={pace && pace.day > 0 && Number(draft.progress) !== pace.progress && (
-                            <button type="button" className={styles.paceButton} onClick={() => setDraft((d) => withProgress(d, pace.progress))}>
-                                Match the dates: {pace.progress}% <span className={styles.muted}>(day {pace.day} of {pace.total})</span>
+                        onProgress={(e) => setDraft((d) => ({ ...withProgress(d, Number(e.target.value)), manualProgress: true }))}
+                        progressExtra={following ? (
+                            <p className={styles.fieldHint}>
+                                {pace.day > 0 ? `Follows the dates: day ${pace.day} of ${pace.total}.` : 'Follows the dates once it starts.'} Move the slider to set it yourself.
+                            </p>
+                        ) : pace && (
+                            <button type="button" className={styles.paceButton} onClick={() => setDraft((d) => ({ ...d, manualProgress: false }))}>
+                                Follow the dates: {pace.progress}% <span className={styles.muted}>(day {pace.day} of {pace.total})</span>
                             </button>
                         )} />
-                    <Field label="State">{(a) => <select {...a} value={draft.state} onChange={(e) => setDraft((d) => withState(d, e.target.value))}>{ITEM_STATES.map((s) => <option key={s}>{s}</option>)}</select>}</Field>
+                    <Field label="State">{(a) => <select {...a} value={draft.state}
+                        onChange={(e) => setDraft((d) => ({ ...withState(d, e.target.value), manualProgress: e.target.value === 'In progress' ? false : d.manualProgress }))}>{ITEM_STATES.map((s) => <option key={s}>{s}</option>)}</select>}</Field>
 
                     <fieldset className={`${styles.field} ${styles.wide}`} aria-describedby={errors.dependsOn ? 'deps-error' : undefined}>
                         <legend>Depends on</legend>

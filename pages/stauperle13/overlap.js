@@ -3,7 +3,7 @@ import KioskLayout from '../../components/kiosk_layout'
 import OverlapChart from '../../components/overlap_chart'
 import { FilterBar, ItemList, NO_FILTER, ProjectSummary, isFiltering, matches } from '../../components/overlap_views'
 import { OverlapIcon } from '../../components/kiosk_icons'
-import { coloured } from '../../lib/overlap'
+import { coloured, paced } from '../../lib/overlap'
 import overlapStyles from '../../styles/overlap.module.scss'
 import styles from '../../styles/stauperle.module.scss'
 
@@ -68,7 +68,8 @@ export default function Overlap() {
 
     const projects = data?.projects || []
     const current = projects.find((p) => p.id === chosen) || projects.find((p) => p.id === data?.currentId) || projects[0]
-    const project = useMemo(() => coloured(current), [current])
+    const today = new Date().toLocaleDateString('sv-SE') // YYYY-MM-DD: progress moves on at midnight
+    const project = useMemo(() => coloured(paced(current, today)), [current, today])
     const filtering = isFiltering(filter)
     const shown = project && filtering ? { ...project, items: project.items.filter((i) => matches(i, filter)) } : project
 

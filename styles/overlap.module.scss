@@ -374,6 +374,7 @@
   }
 
   [data-tone='warn'] dd { color: #e67700; }
+  [data-tone='danger'] dd { color: var(--danger); }
 }
 
 .summaryHead {
@@ -523,6 +524,7 @@
   &[data-tone='On hold'],
   &[data-tone='Blocked'] { background: #fff3bf; color: #a35f00; }
   &[data-tone='Cancelled'] { background: #f1f3f5; color: #868e96; text-decoration: line-through; }
+  &[data-tone='Overdue'] { margin-left: 0.3rem; background: #ffe3e3; color: #c92a2a; }
 }
 
 // A second, quieter line in a table cell.
@@ -884,6 +886,18 @@
 }
 
 // Going on today: tinted in the chart's Today red.
+// Past its end date and not done: a red edge, and the dates say by how long.
+.rowOverdue {
+  background: color-mix(in srgb, var(--danger) 6%, transparent);
+  box-shadow: inset 3px 0 0 var(--danger);
+}
+
+.overdueNote,
+.tooltipOverdue {
+  color: var(--danger) !important;
+  font-weight: 600;
+}
+
 .rowToday {
   background: color-mix(in srgb, var(--today) 6%, transparent);
   box-shadow: inset 3px 0 0 var(--today);

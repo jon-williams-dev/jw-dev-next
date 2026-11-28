@@ -2,7 +2,7 @@
 // by the hallway screen's /stauperle13/overlap (look only: leave out the on… handlers).
 
 import { Fragment, useRef, useState } from 'react'
-import { PRIORITIES, PRIORITY_COLOURS, busiest, daysBetween, fmtDuration, fmtRange, fmtShort, isOverdue, overdueBy, projectProgress, sequenced, shortUrl, toMs } from '../lib/overlap'
+import { PRIORITIES, PRIORITY_COLOURS, busiest, daysBetween, fmtDuration, fmtRange, fmtShort, isOverdue, overdueBy, projectProgress, sequenced, shortUrl, ticket, toMs } from '../lib/overlap'
 import styles from '../styles/overlap.module.scss'
 
 const todayLocal = () => new Date().toLocaleDateString('sv-SE') // YYYY-MM-DD
@@ -262,7 +262,7 @@ export function ItemList({ project, active, setActive, onOpen, onDelete, onReord
                                 <button type="button" className={styles.itemName} onClick={() => (onOpen ? onOpen(item) : setActive(item.id))}
                                     onFocus={() => setActive(item.id)} onBlur={() => setActive((a) => (a === item.id ? null : a))}>
                                     <span className={styles.swatch} style={{ background: item.colour }} aria-hidden="true" />
-                                    {item.name}
+                                    <span><span className={styles.ticket}>{ticket(project, item)}</span> {item.name}</span>
                                 </button>
                                 <Links urls={item.links} max={2} />
                             </td>

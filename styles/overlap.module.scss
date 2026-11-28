@@ -943,6 +943,15 @@
   font-weight: 500;
 }
 
+// An item's reference (STA-12), before its name.
+.ticket {
+  color: var(--muted);
+  font-size: 0.8em;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
 .itemName {
   justify-content: flex-start !important;
   gap: 0.5rem;

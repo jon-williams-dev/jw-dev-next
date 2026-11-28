@@ -4,8 +4,8 @@ import { Inter } from 'next/font/google'
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import {
     ITEM_STATES, PRIORITIES, PROJECT_STATUSES,
-    blankItem, blankProject, coloured, dailyUpdate, fmtRange, followsDates, fullUrl, isDate,
-    lateDependencies, paced, parseTags, projectProgress, sampleProject, timeProgress, toMs, validateItem, validateProject, widenedFor, withProgress, withState,
+    blankItem, blankProject, cleanKey, coloured, dailyUpdate, fmtRange, followsDates, fullUrl, isDate,
+    lateDependencies, numbered, paced, parseTags, projectProgress, sampleProject, shortName, ticket, timeProgress, toMs, validateItem, validateProject, widenedFor, withProgress, withState,
 } from '../lib/overlap'
 import OverlapChart from '../components/overlap_chart'
 import { useOverlapStore } from '../components/overlap_store'
@@ -35,7 +35,7 @@ export default function OverlapPage() {
 
     const current = state?.projects.find((p) => p.id === state.currentId) || state?.projects[0] || null
     const today = todayLocal()
-    const project = useMemo(() => coloured(paced(current, today)), [current, today])
+    const project = useMemo(() => coloured(paced(numbered(current), today)), [current, today])
     useEffect(() => setFilter(NO_FILTER), [project?.id])
     const filtering = isFiltering(filter)
     const shown = project && filtering ? { ...project, items: project.items.filter((i) => matches(i, filter)) } : project
@@ -94,9 +94,11 @@ export default function OverlapPage() {
 
     const saveItem = (item, message) => {
         const exists = project.items.some((i) => i.id === item.id)
+        const fresh = !item.number // a new item takes the next reference number
+        if (fresh) item = { ...item, number: project.nextNumber }
         const widened = widenedFor(project, item)
         const grew = widened.start !== project.start || widened.end !== project.end
-        commit(withProject({ ...widened, items: withItem(project, item) }),
+        commit(withProject({ ...widened, ...(fresh ? { nextNumber: project.nextNumber + 1 } : {}), items: withItem(project, item) }),
             (message || `${exists ? 'Saved' : 'Added'} “${item.name}”`) + (grew ? `: the project now runs ${fmtRange(widened.start, widened.end)}` : ''))
         setEditingItem(null)
     }
@@ -459,6 +461,10 @@ function ProjectEditor({ project, isNew, onSave, onDelete, onClose }) {
                     <CommonFields draft={draft} set={set} setDraft={setDraft} errors={errors}
                         progressNote={isNew ? 'Worked out from the items as you add them' : `${projectProgress(project)}%, worked out from the items`} />
                     <Field label="Status">{(a) => <select {...a} value={draft.status} onChange={set('status')}>{PROJECT_STATUSES.map((s) => <option key={s}>{s}</option>)}</select>}</Field>
+                    <Field label="Short name" hint={`Items are referred to as ${draft.key || shortName(draft.name)}-1, ${draft.key || shortName(draft.name)}-2…`}>
+                        {(a) => <input {...a} value={draft.key || ''} placeholder={shortName(draft.name)} autoCapitalize="characters"
+                            onChange={(e) => setDraft((d) => ({ ...d, key: cleanKey(e.target.value) }))} />}
+                    </Field>
                 </div>
                 <div className={styles.dialogActions}>
                     {!isNew && <button type="button" className={styles.danger} onClick={() => onDelete(project)}>Delete project</button>}
@@ -496,7 +502,7 @@ function ItemEditor({ item, project, isNew, onSave, onDelete, onClose }) {
     }
 
     return (
-        <Modal title={isNew ? 'New item' : 'Edit item'} onClose={onClose}>
+        <Modal title={isNew ? 'New item' : `Edit ${ticket(project, item) || 'item'}`} onClose={onClose}>
             <form onSubmit={submit} noValidate>
                 <p className={styles.dialogNote}>
                     {widens

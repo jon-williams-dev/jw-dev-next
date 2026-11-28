@@ -2,7 +2,7 @@
 // edge = end. Used by /jw-overlap (editable) and the hallway screen's /stauperle13/overlap.
 
 import { Fragment, useEffect, useId, useLayoutEffect, useMemo, useReducer, useRef, useState } from 'react'
-import { addDays, circleFor, contains, daysBetween, fmtDate, fmtDuration, fmtRange, fmtShort, isOverdue, nudged, overdueBy, sharedDays, shortUrl, ticksFor, toMs } from '../lib/overlap'
+import { addDays, circleFor, contains, daysBetween, fmtDate, fmtDuration, fmtRange, fmtShort, isOverdue, nudged, overdueBy, sharedDays, shortUrl, ticket, ticksFor, toMs } from '../lib/overlap'
 import styles from '../styles/overlap.module.scss'
 
 const todayLocal = () => new Date().toLocaleDateString('sv-SE') // YYYY-MM-DD
@@ -734,7 +734,7 @@ function Tooltip({ circle: { item, cx, ry }, cy, width, height, project, items, 
     return (
         <div ref={ref} className={`${styles.tooltip} ${dragging ? styles.tooltipLive : ''}`}
             style={{ left: Math.min(Math.max(cx, 140), width - 140), top: y, transform: 'translateX(-50%)', visibility: boxHeight ? undefined : 'hidden' }}>
-            <strong><span className={styles.swatch} style={{ background: item.colour }} />{item.name}</strong>
+            <strong><span className={styles.swatch} style={{ background: item.colour }} /><span className={styles.ticket}>{ticket(project, item)}</span> {item.name}</strong>
             <span className={styles.tooltipDates}>{fmtRange(item.start, item.end)} · {fmtDuration(item.start, item.end)}</span>
             {!dragging && (
                 <>

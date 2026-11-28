@@ -5,7 +5,7 @@ import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import {
     ITEM_STATES, PRIORITIES, PROJECT_STATUSES,
     blankItem, blankProject, coloured, dailyUpdate, fmtRange, fullUrl, isDate,
-    lateDependencies, parseTags, projectProgress, sampleProject, toMs, validateItem, validateProject, widenedFor, withProgress, withState,
+    lateDependencies, parseTags, projectProgress, sampleProject, timeProgress, toMs, validateItem, validateProject, widenedFor, withProgress, withState,
 } from '../lib/overlap'
 import OverlapChart from '../components/overlap_chart'
 import { useOverlapStore } from '../components/overlap_store'
@@ -389,7 +389,7 @@ function Field({ label, error, children, wide, hint }) {
 // Name, dates, owner, progress, priority, tags, description, notes and links: shared by both editors.
 // A project's progress comes from its items, so it gets `progressNote` instead of a slider;
 // an item passes `onProgress` to keep its state in step.
-function CommonFields({ draft, set, setDraft, errors, progressNote, onProgress }) {
+function CommonFields({ draft, set, setDraft, errors, progressNote, onProgress, progressExtra }) {
     return (
         <>
             <Field label="Name *" error={errors.name} wide>{(a) => <input {...a} value={draft.name} onChange={set('name')} autoFocus />}</Field>
@@ -404,7 +404,7 @@ function CommonFields({ draft, set, setDraft, errors, progressNote, onProgress }
                 </div>
             ) : (
                 <Field label={`Progress: ${draft.progress}%`} error={errors.progress}>
-                    {(a) => <input {...a} type="range" min={0} max={100} step={5} value={draft.progress} onChange={onProgress || set('progress')} />}
+                    {(a) => <><input {...a} type="range" min={0} max={100} step={5} value={draft.progress} onChange={onProgress || set('progress')} />{progressExtra}</>}
                 </Field>
             )}
             <Field label="Tags" hint="Separate with commas">{(a) => <input {...a} value={draft.tagsText} onChange={set('tagsText')} />}</Field>
@@ -476,6 +476,9 @@ function ItemEditor({ item, project, isNew, onSave, onDelete, onClose }) {
     const late = lateDependencies(draft, project)
     const wider = isDate(draft.start) && isDate(draft.end) && toMs(draft.end) > toMs(draft.start) ? widenedFor(project, draft) : project
     const widens = wider.start !== project.start || wider.end !== project.end
+    // While it's in progress, one tap sets the progress to how much of its time has gone.
+    const pace = draft.state === 'In progress' && isDate(draft.start) && isDate(draft.end) && toMs(draft.end) > toMs(draft.start)
+        ? timeProgress(draft, todayLocal()) : null
 
     const toggleDependency = (id) => setDraft((d) => ({ ...d, dependsOn: d.dependsOn.includes(id) ? d.dependsOn.filter((x) => x !== id) : [...d.dependsOn, id] }))
 
@@ -497,7 +500,12 @@ function ItemEditor({ item, project, isNew, onSave, onDelete, onClose }) {
                 </p>
                 <div className={styles.form}>
                     <CommonFields draft={draft} set={set} setDraft={setDraft} errors={errors}
-                        onProgress={(e) => setDraft((d) => withProgress(d, Number(e.target.value)))} />
+                        onProgress={(e) => setDraft((d) => withProgress(d, Number(e.target.value)))}
+                        progressExtra={pace && pace.day > 0 && Number(draft.progress) !== pace.progress && (
+                            <button type="button" className={styles.paceButton} onClick={() => setDraft((d) => withProgress(d, pace.progress))}>
+                                Match the dates: {pace.progress}% <span className={styles.muted}>(day {pace.day} of {pace.total})</span>
+                            </button>
+                        )} />
                     <Field label="State">{(a) => <select {...a} value={draft.state} onChange={(e) => setDraft((d) => withState(d, e.target.value))}>{ITEM_STATES.map((s) => <option key={s}>{s}</option>)}</select>}</Field>
 
                     <fieldset className={`${styles.field} ${styles.wide}`} aria-describedby={errors.dependsOn ? 'deps-error' : undefined}>

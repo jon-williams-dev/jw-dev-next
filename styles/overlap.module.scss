@@ -1051,6 +1051,14 @@
   font-weight: 600;
 }
 
+// Under an item's progress slider: sets it to how far through its dates it is.
+.paceButton {
+  align-self: flex-start;
+  min-height: 32px !important;
+  padding: 0 0.7rem !important;
+  font-size: 0.85rem;
+}
+
 .autoValue {
   display: flex;
   align-items: center;
